@@ -1,5 +1,6 @@
 # mojito-server
-Backend web server for mojito application
+Backend web server microservice for mojito application.
+The web server microservice will handle the GraphQL API and WebSocket server.
 
 
 ### Initial Set-up
