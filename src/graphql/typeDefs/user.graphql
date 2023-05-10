@@ -1,0 +1,55 @@
+##############
+## Types
+##############
+
+type User {
+  email: String
+  role: Role
+}
+
+type getUserRes {
+  response: Response
+  user: User
+}
+
+##############
+## Input Types
+##############
+
+input userInput {
+  email: String
+ 
+  password: String
+  
+  role: Role
+}
+
+input userUpdateInput {
+  email: String
+  password: String
+ 
+  role: Role
+}
+enum Role {
+  ADMIN
+  MARKETER
+  CLIENT
+    
+}
+##############
+##  Queries
+##############
+
+type Query {
+  getUserByEmail(id: String): getUserRes
+}
+
+##############
+##  Mutations
+##############
+
+type Mutation {
+  createUser(user: userInput): Response
+  updateUser(user: userUpdateInput): Response
+  enrollInCourse( studentEmail:String courseId: String): Response
+}

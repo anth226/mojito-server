@@ -1,3 +1,5 @@
+import { urlAlphabet } from "nanoid";
+import { customAlphabet } from "nanoid/non-secure";
 import { validationResult } from "express-validator";
 import { ErrorHandler } from "../utils/CommonTypes";
 // import { DEFAULT_LANGUAGE, LANGUAGES } from "../constants/DefaultConstants";
@@ -32,8 +34,33 @@ export const roundUptoTwoDecimals = (num: string) => {
 //   return DEFAULT_LANGUAGE;
 // };
 
+export const getCustomSizeNanoId = (size: number) => {
+  const nanoid = customAlphabet(urlAlphabet, size);
+  return nanoid();
+};
+
+export const getAlphaNumericNanoId = (size: number) => {
+  const nanoid = customAlphabet("0123456789abcdefghijklmnopqrstuvwxyz", size);
+  return nanoid();
+};
+
+export const getNumericNanoId = (size: number) => {
+  const nanoid = customAlphabet("0123456789", size);
+  return nanoid();
+};
+
 export const getTimestampBasedUniqueId = () => {
   return Date.now().toString(36) + Math.random().toString(36).slice(2);
+};
+
+export const getUniqueId = (size: number) => {
+  if (size < 6)
+    throw new ErrorHandler(400, "Size must be greater than or equal to 6");
+  const date = new Date();
+  const year = date.getFullYear().toString().slice(2);
+  let month = (date.getMonth() + 1).toString();
+  month = month.padStart(2, "0");
+  return year + month + getNumericNanoId(size - 4);
 };
 
 export const delay = (ms: number) => {
@@ -58,10 +85,9 @@ export const validate = async (req: any, validations: any) => {
   }
   const errors = validationResult(req).formatWith(errorFormatter);
   if (!errors.isEmpty()) {
-    console.log(errors.array()[0].msg);
     throw new ErrorHandler(
       400,
-      "Validation Error: " + errors.array()[0].msg,
+      "Validation Error",
       errors.array({ onlyFirstError: true })
     );
   }

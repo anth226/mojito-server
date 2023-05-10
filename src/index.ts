@@ -1,29 +1,48 @@
-import express from "express";
-import bodyParser from "body-parser";
-import database from "./config/db";
-import userController from "./controllers/user-controllers";
-import userRouter from "./routers/user-router";
 import dotenv from "dotenv";
-
+import isAuth from "./middleware/is-auth";
+import { ApolloServer } from "@apollo/server";
+import jwt from "jsonwebtoken";
+import resolvers from "./graphql/resolvers";
+import { startStandaloneServer } from "@apollo/server/standalone";
+import { loadFiles } from "graphql-import-files";
+import UserAPI from "./datasources/user-datasources";
+//  * INTIALIZE  DOTENV TO LOAD VARIABLES FROM .ENV fILE
 dotenv.config();
-const app = express();
-const PORT = process.env.PORT || 3001;
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+//  * CREATE PORT VARIABLE FROM .ENV FILE
+const PORT: number = (process.env.PORT as unknown as number) || 7000;
 
-// API endpoints
-app.get("/", (req, res) => {
-  res.send("Hello world!");
+// * CONNECT TO DATA SERVICE
+
+//  * MIDDLEWARE
+
+//  * SETTING UP GRAPHQL
+interface MyContext {
+  token?: string;
+}
+const server = new ApolloServer<MyContext>({
+  typeDefs: loadFiles("**/typeDefs/*.{graphql,gql}"),
+  resolvers,
 });
 
-app.use("/users", userRouter);
+startStandaloneServer(server, {
+  context: async ({ req, res }) => {
+    const { cache } = server;
+    return {
+      // We create new instances of our data sources with each request,
+      // passing in our server's cache.
+      datasource: {
+        userAPI: new UserAPI({ cache }),
+      },
 
-// Connect to MongoDB
-database.connect();
-
-// Connect to RabbitMQ
-// rabbitmq.connect();
-
-// Start server
-app.listen(PORT, () => console.log(`Data server listening on port ${PORT}`));
+      token: req.headers.token,
+    };
+  },
+  listen: { port: PORT },
+})
+  .then(({ url }) => {
+    console.log(`🚀  Server ready at ${url}`);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
