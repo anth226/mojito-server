@@ -1,27 +1,31 @@
-const createUser = async (parents: any, { user }: any, { datasource }: any) => {
-  console.log(user);
+import { IDataSources } from "../../../../datasources/datasource";
+import { IUser } from "../../../../types/user";
+import logger from "../../../../utils/logger";
+
+const createUser = async (
+  parents: any,
+  { user }: { user: IUser },
+  { dataSources }: { dataSources: IDataSources }
+) => {
   try {
-    const exists = await datasource.userAPI.create(user);
+    const exists = await dataSources.user.getByEmail(user.email);
     if (exists)
       return {
-        status: 200,
+        status: 400,
         message: "User already exists!",
       };
-    await datasource.userApi.create(user);
-    console.log("user created succsfully");
+    await dataSources.user.create(user);
+    logger.info("user created succsfully");
     return {
       status: 200,
       message: "User created succsfully!",
     };
   } catch (error: any) {
-    console.log(error.message);
     return {
       status: 404,
       message: "User creation failed!",
     };
   }
-
-  console.log("user create resolver");
 };
 
 export default createUser;

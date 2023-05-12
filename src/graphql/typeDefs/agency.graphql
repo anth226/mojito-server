@@ -1,0 +1,54 @@
+##############
+## Types
+##############
+
+type Agency {
+  id:String
+  name:String
+  address:String
+  contactPerson:String
+  contactEmail:String
+  createdAt:String
+}
+
+type getAgencyResponse {
+  response: Response
+  agency: Agency
+}
+
+##############
+## Input Types
+##############
+
+input AgencyInput {
+  name:String
+  address:String
+  contactPerson:String
+  contactEmail:String
+
+}
+input AgencyUpdateInput {
+  name:String
+  address:String
+  contactPerson:String
+  contactEmail:String
+
+}
+
+##############
+##  Queries
+##############
+
+type Query {
+  getAgencyByID(id: String): getAgencyResponse
+  getAgencyByContactEmail(email: String): getAgencyResponse
+}
+
+##############
+##  Mutations
+##############
+
+type Mutation {
+  createAgency(agency: AgencyInput): Response
+  updateAgency(agency: AgencyUpdateInput): Response
+}
