@@ -3,11 +3,15 @@
 ##############
 
 type User {
+  _id:String
   email: String
+  name:String
   role: Role
+  createdAt:String
+
 }
 
-type getUserRes {
+type getUserResponse {
   response: Response
   user: User
 }
@@ -17,18 +21,14 @@ type getUserRes {
 ##############
 
 input userInput {
-  email: String
- 
-  password: String
-  
-  role: Role
+  email: String!
+  name:String
+  password: String!
+  role: Role!
 }
-
 input userUpdateInput {
-  email: String
-  password: String
- 
-  role: Role
+  name:String
+
 }
 enum Role {
   ADMIN
@@ -41,7 +41,8 @@ enum Role {
 ##############
 
 type Query {
-  getUserByEmail(id: String): getUserRes
+  getUserByID(id: String): getUserResponse
+  getUserByEmail(email: String): getUserResponse
 }
 
 ##############
@@ -51,5 +52,4 @@ type Query {
 type Mutation {
   createUser(user: userInput): Response
   updateUser(user: userUpdateInput): Response
-  enrollInCourse( studentEmail:String courseId: String): Response
 }
