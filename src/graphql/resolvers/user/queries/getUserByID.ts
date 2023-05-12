@@ -1,14 +1,17 @@
-import { IDataSources } from "../../../../datasources/datasource";
+import {
+  IUserDataSource,
+  IDataSources,
+} from "../../../../datasources/datasource";
 import logger from "../../../../utils/logger";
 
-const getUserByEmail = async (
+const getUserByID = async (
   parents: any,
-  { email }: { email: string },
+  { id }: { id: string },
   { dataSources }: { dataSources: IDataSources }
 ) => {
   try {
-    const user = await dataSources.user.getByEmail(email);
-    logger.info("get user by email", user);
+    const user = await dataSources.user.getById(id);
+    logger.info("get user by Id", user);
     return {
       user: user,
       response: {
@@ -27,4 +30,4 @@ const getUserByEmail = async (
   }
 };
 
-export default getUserByEmail;
+export default getUserByID;

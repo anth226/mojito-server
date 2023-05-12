@@ -1,18 +1,18 @@
 import { IDataSources } from "../../../../datasources/datasource";
-import { IUser } from "../../../../types/user";
+import { IAgency } from "../../../../types/agency";
 import logger from "../../../../utils/logger";
 
-const updateUser = async (
+const updateAgency = async (
   parents: any,
-  { id, userInput }: { id: string; userInput: Pick<IUser, "name"> },
+  { id, agencyInput }: { id: string; agencyInput: Partial<IAgency> },
   { dataSources }: { dataSources: IDataSources }
 ) => {
   try {
-    const user = await dataSources.user.updateById(id, userInput);
-    logger.info(user);
+    const Agency = await dataSources.agency.updateById(id, agencyInput);
+    logger.info(Agency);
     return {
       status: 200,
-      message: "User Update Successfully!",
+      message: "Agency Update Successfully!",
     };
   } catch (error) {
     return {
@@ -22,4 +22,4 @@ const updateUser = async (
   }
 };
 
-export default updateUser;
+export default updateAgency;

@@ -5,44 +5,57 @@ import jwt from "jsonwebtoken";
 import resolvers from "./graphql/resolvers";
 import { startStandaloneServer } from "@apollo/server/standalone";
 import { loadFiles } from "graphql-import-files";
-import UserAPI from "./datasources/user-datasources";
-//  * INTIALIZE  DOTENV TO LOAD VARIABLES FROM .ENV fILE
-dotenv.config();
+import { UserDataSource } from "./datasources/user-datasource";
+import User from "./models/user-model";
 
-//  * CREATE PORT VARIABLE FROM .ENV FILE
+import connectDB from "./utils/connection";
+import { IDataSources, IUserDataSource } from "./datasources/datasource";
+import { AgencyDataSource } from "./datasources/agency-datasource";
+import Agency from "./models/agency-model";
+import logger from "./utils/logger";
+
+dotenv.config();
 const PORT: number = (process.env.PORT as unknown as number) || 7000;
 
-// * CONNECT TO DATA SERVICE
-
-//  * MIDDLEWARE
-
-//  * SETTING UP GRAPHQL
 interface MyContext {
   token?: string;
+  dataSources: IDataSources;
 }
 const server = new ApolloServer<MyContext>({
   typeDefs: loadFiles("**/typeDefs/*.{graphql,gql}"),
   resolvers,
 });
+connectDB()
+  .then(() => {
+    logger.info("Connected to database");
+  })
+  .catch((error) => {
+    console.error("Error connecting to database:", error);
+    server.stop();
+  });
 
+// data sources
+
+// const dataSources: DataSources<IDataSources> = {
+//   user: new UserDataSource({ User }),
+// };
 startStandaloneServer(server, {
-  context: async ({ req, res }) => {
-    const { cache } = server;
+  context: async ({ req }) => {
     return {
       // We create new instances of our data sources with each request,
       // passing in our server's cache.
-      datasource: {
-        userAPI: new UserAPI({ cache }),
+      dataSources: {
+        user: new UserDataSource({ User }),
+        agency: new AgencyDataSource({ Agency }),
       },
-
-      token: req.headers.token,
+      token: req.headers.authorization || "",
     };
   },
   listen: { port: PORT },
 })
   .then(({ url }) => {
-    console.log(`🚀  Server ready at ${url}`);
+    logger.info(`🚀  Server ready at ${url}`);
   })
   .catch((err) => {
-    console.log(err);
+    logger.info(err);
   });
