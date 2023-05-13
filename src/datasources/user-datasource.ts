@@ -56,7 +56,7 @@ export class UserDataSource {
   }
 
   async deleteById(id: string): Promise<IUser | null> {
-    const user = await this.user.findByIdAndDelete(id).lean();
+    const user = await this.user.findByIdAndDelete(id);
     return user;
   }
 }

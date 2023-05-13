@@ -23,7 +23,7 @@ const createUser = async (
   } catch (error: any) {
     return {
       status: 404,
-      message: "User creation failed!",
+      message: "User creation failed!" + " : " + error.message,
     };
   }
 };

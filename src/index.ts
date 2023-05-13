@@ -13,6 +13,8 @@ import { IDataSources, IUserDataSource } from "./datasources/datasource";
 import { AgencyDataSource } from "./datasources/agency-datasource";
 import Agency from "./models/agency-model";
 import logger from "./utils/logger";
+import { ClientDataSource } from "./datasources/client-datasources";
+import Client from "./models/client-model";
 
 dotenv.config();
 const PORT: number = (process.env.PORT as unknown as number) || 7000;
@@ -36,9 +38,6 @@ connectDB()
 
 // data sources
 
-// const dataSources: DataSources<IDataSources> = {
-//   user: new UserDataSource({ User }),
-// };
 startStandaloneServer(server, {
   context: async ({ req }) => {
     return {
@@ -47,6 +46,7 @@ startStandaloneServer(server, {
       dataSources: {
         user: new UserDataSource({ User }),
         agency: new AgencyDataSource({ Agency }),
+        client: new ClientDataSource({ Client }),
       },
       token: req.headers.authorization || "",
     };
