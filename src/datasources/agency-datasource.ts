@@ -42,16 +42,16 @@ export class AgencyDataSource {
 
   async updateById(
     id: string,
-    AgencyData: Partial<IAgency>
+    agencyData: Partial<IAgency>
   ): Promise<IAgency | null> {
-    logger.info(AgencyData);
+    logger.info(agencyData);
     const Agency = await this.Agency.findByIdAndUpdate(
       id,
       {
-        $set: AgencyData,
+        $set: agencyData,
       },
       { new: true }
-    ).lean();
+    );
     return Agency;
   }
 

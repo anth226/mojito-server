@@ -17,7 +17,7 @@ const createAgency = async (
   } catch (error: any) {
     return {
       status: 404,
-      message: "Agency creation failed!",
+      message: "Agency creation failed!" + " : " + error.message,
     };
   }
 };

@@ -1,30 +1,30 @@
 import { IDataSources } from "../../../../datasources/datasource";
 import logger from "../../../../utils/logger";
 
-const getAgencyByContactEmail = async (
+const getClientByContactEmail = async (
   parents: any,
   { email }: { email: string },
   { dataSources }: { dataSources: IDataSources }
 ) => {
   try {
-    const agency = await dataSources.agency.getByContactEmail(email);
-    logger.info("get Agency by email", agency);
+    const client = await dataSources.client.getByContactEmail(email);
+    logger.info("get Client by email", client);
     return {
-      agency: agency,
+      client: client,
       response: {
         status: 200,
         message: "Query successfully!",
       },
     };
-  } catch (error: any) {
+  } catch (error) {
     return {
-      Agency: null,
+      Client: null,
       response: {
         status: 404,
-        message: "Query failed!" + " : " + error.message,
+        message: "Query failed!",
       },
     };
   }
 };
 
-export default getAgencyByContactEmail;
+export default getClientByContactEmail;

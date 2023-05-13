@@ -3,7 +3,7 @@
 ##############
 
 type Agency {
-  id:String
+  _id:String
   name:String
   address:String
   contactPerson:String
@@ -42,6 +42,7 @@ input AgencyUpdateInput {
 type Query {
   getAgencyByID(id: String): getAgencyResponse
   getAgencyByContactEmail(email: String): getAgencyResponse
+  getAgencies(limit: Int, offset: Int): [Agency]
 }
 
 ##############
@@ -51,4 +52,5 @@ type Query {
 type Mutation {
   createAgency(agency: AgencyInput): Response
   updateAgency(agency: AgencyUpdateInput): Response
+  deleteAgency(id: String): Response
 }

@@ -1,6 +1,7 @@
 export interface IDataSources {
   user: IUserDataSource;
   agency: IAgencyDataSource;
+  client: IClientDataSource;
 }
 
 export interface IUserDataSource {
@@ -17,6 +18,15 @@ export interface IAgencyDataSource {
   getById(id: string): Promise<IAgency | null>;
   getByContactEmail(email: string): Promise<IAgency | null>;
   create(userData: IAgency): Promise<IAgency>;
-  updateById(id: string, userData: Partial<IAgency>): Promise<IAgency | null>;
+  updateById(id: string, agencyData: Partial<IAgency>): Promise<IAgency | null>;
   deleteById(id: string): Promise<IAgency | null>;
+}
+
+export interface IClientDataSource {
+  getAll(): Promise<IClient[]>;
+  getById(id: string): Promise<IClient | null>;
+  getByContactEmail(email: string): Promise<IClient | null>;
+  create(userData: IClient): Promise<IClient>;
+  updateById(id: string, clientData: Partial<IClient>): Promise<IClient | null>;
+  deleteById(id: string): Promise<IClient | null>;
 }
