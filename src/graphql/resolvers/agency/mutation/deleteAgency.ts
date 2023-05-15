@@ -1,5 +1,5 @@
 import { MongooseError } from "mongoose";
-import { IDataSources } from "../../../../datasources/datasource";
+import { IDataSources } from "../../../../types/datasource";
 import logger from "../../../../utils/logger";
 
 const deleteAgency = async (

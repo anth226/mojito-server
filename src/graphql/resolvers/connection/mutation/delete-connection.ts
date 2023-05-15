@@ -1,18 +1,17 @@
 import { IDataSources } from "../../../../types/datasource";
-import { IUser } from "../../../../types/user";
 import logger from "../../../../utils/logger";
 
-const deleteUser = async (
+const deleteConnection = async (
   parents: any,
   { id }: { id: string },
   { dataSources }: { dataSources: IDataSources }
 ) => {
   try {
-    const user = dataSources.user.deleteById(id);
-    logger.info(user);
+    const Connection = dataSources.connections.deleteById(id);
+    logger.info(Connection);
     return {
       status: 200,
-      message: "User Delete Successfully!",
+      message: "Connection Delete Successfully!",
     };
   } catch (error) {
     return {
@@ -22,4 +21,4 @@ const deleteUser = async (
   }
 };
 
-export default deleteUser;
+export default deleteConnection;

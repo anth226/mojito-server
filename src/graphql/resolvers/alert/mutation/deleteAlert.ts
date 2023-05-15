@@ -1,18 +1,18 @@
+import { MongooseError } from "mongoose";
 import { IDataSources } from "../../../../types/datasource";
-import { IAgency } from "../../../../types/agency";
 import logger from "../../../../utils/logger";
 
-const updateAgency = async (
+const deleteAlert = async (
   parents: any,
-  { id, agencyInput }: { id: string; agencyInput: Partial<IAgency> },
+  { id }: { id: string },
   { dataSources }: { dataSources: IDataSources }
 ) => {
   try {
-    const Agency = await dataSources.agency.updateById(id, agencyInput);
-    logger.info(Agency);
+    const Alert = dataSources.alert.deleteById(id);
+    logger.info(Alert);
     return {
       status: 200,
-      message: "Agency Update Successfully!",
+      message: "Alert Delete Successfully!",
     };
   } catch (error: any) {
     return {
@@ -22,4 +22,4 @@ const updateAgency = async (
   }
 };
 
-export default updateAgency;
+export default deleteAlert;

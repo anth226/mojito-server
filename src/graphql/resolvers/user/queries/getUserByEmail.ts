@@ -1,4 +1,4 @@
-import { IDataSources } from "../../../../datasources/datasource";
+import { IDataSources } from "../../../../types/datasource";
 import logger from "../../../../utils/logger";
 
 const getUserByEmail = async (

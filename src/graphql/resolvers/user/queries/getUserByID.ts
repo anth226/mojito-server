@@ -1,7 +1,4 @@
-import {
-  IUserDataSource,
-  IDataSources,
-} from "../../../../datasources/datasource";
+import { IUserDataSource, IDataSources } from "../../../../types/datasource";
 import logger from "../../../../utils/logger";
 
 const getUserByID = async (

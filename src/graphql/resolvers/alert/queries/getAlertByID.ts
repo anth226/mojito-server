@@ -1,35 +1,30 @@
 import { IDataSources } from "../../../../types/datasource";
 import logger from "../../../../utils/logger";
 
-const getClients = async (
+const getAlertByID = async (
   parents: any,
-  {
-    limit,
-    offset,
-  }: {
-    limit: number;
-    offset: number;
-  },
+  { id }: { id: string },
   { dataSources }: { dataSources: IDataSources }
 ) => {
   try {
-    const clients = await dataSources.client.getAll();
+    const alert = await dataSources.alert.getById(id);
+    logger.info("get Alert by Id", alert);
     return {
-      clients: clients,
+      alert: alert,
       response: {
         status: 200,
         message: "Query successfully!",
       },
     };
-  } catch (error) {
+  } catch (error: any) {
     return {
-      clients: null,
+      Alert: null,
       response: {
         status: 404,
-        message: "Query failed!",
+        message: "Query failed!" + " : " + error.message,
       },
     };
   }
 };
 
-export default getClients;
+export default getAlertByID;

@@ -1,4 +1,4 @@
-import { IDataSources } from "../../../../datasources/datasource";
+import { IDataSources } from "../../../../types/datasource";
 import { IAgency } from "../../../../types/agency";
 import logger from "../../../../utils/logger";
 
