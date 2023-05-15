@@ -1,21 +1,16 @@
 import { IDataSources } from "../../../../types/datasource";
 import logger from "../../../../utils/logger";
 
-const getClients = async (
+const getConnectionByID = async (
   parents: any,
-  {
-    limit,
-    offset,
-  }: {
-    limit: number;
-    offset: number;
-  },
+  { id }: { id: string },
   { dataSources }: { dataSources: IDataSources }
 ) => {
   try {
-    const clients = await dataSources.client.getAll();
+    const connection = await dataSources.connections.getById(id);
+    logger.info("get Connection by Id", connection);
     return {
-      clients: clients,
+      connection: connection,
       response: {
         status: 200,
         message: "Query successfully!",
@@ -23,7 +18,7 @@ const getClients = async (
     };
   } catch (error) {
     return {
-      clients: null,
+      Connection: null,
       response: {
         status: 404,
         message: "Query failed!",
@@ -32,4 +27,4 @@ const getClients = async (
   }
 };
 
-export default getClients;
+export default getConnectionByID;

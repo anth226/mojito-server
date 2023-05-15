@@ -1,4 +1,4 @@
-import { IAgencyDataSource } from "../datasources/datasource";
+import { IAgencyDataSource } from "./datasource";
 export interface IAgency {
   name: string;
   address: string;
@@ -14,4 +14,4 @@ export interface IAgency_d extends Document {
   contactEmail: string;
 }
 
-export type AgencyModel = Model<IAgency_d, {}, IAgencyMethods>;
+export type AgencyModel = Model<IAgency_d, object, IAgencyMethods>;

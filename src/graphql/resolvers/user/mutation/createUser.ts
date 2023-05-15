@@ -1,4 +1,4 @@
-import { IDataSources } from "../../../../datasources/datasource";
+import { IDataSources } from "../../../../types/datasource";
 import { IUser } from "../../../../types/user";
 import logger from "../../../../utils/logger";
 

@@ -1,4 +1,4 @@
-import { IClientDataSource } from "../datasources/datasource";
+import { IClientDataSource } from "./datasource";
 
 export interface IClient {
   name: string;
@@ -17,4 +17,4 @@ export interface IClient_d extends Document {
   contactEmail: string;
 }
 
-export type ClientModel = Model<IClient_d, {}, IClientMethods>;
+export type ClientModel = Model<IClient_d, object, IClientMethods>;

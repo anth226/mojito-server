@@ -9,12 +9,16 @@ import { UserDataSource } from "./datasources/user-datasource";
 import User from "./models/user-model";
 
 import connectDB from "./utils/connection";
-import { IDataSources, IUserDataSource } from "./datasources/datasource";
+import { IDataSources, IUserDataSource } from "./types/datasource";
 import { AgencyDataSource } from "./datasources/agency-datasource";
 import Agency from "./models/agency-model";
 import logger from "./utils/logger";
 import { ClientDataSource } from "./datasources/client-datasources";
 import Client from "./models/client-model";
+import Alert from "./models/alert-model";
+import { AlertDataSource } from "./datasources/alert-datasource";
+import Connection from "./models/connection-model";
+import { ConnectionDataSource } from "./datasources/connection-datasource";
 
 dotenv.config();
 const PORT: number = (process.env.PORT as unknown as number) || 7000;
@@ -47,6 +51,8 @@ startStandaloneServer(server, {
         user: new UserDataSource({ User }),
         agency: new AgencyDataSource({ Agency }),
         client: new ClientDataSource({ Client }),
+        alert: new AlertDataSource({ Alert }),
+        connections: new ConnectionDataSource({ Connection }),
       },
       token: req.headers.authorization || "",
     };

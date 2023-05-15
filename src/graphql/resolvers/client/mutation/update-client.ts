@@ -1,6 +1,6 @@
-import { IDataSources } from "../../../../datasources/datasource";
-import { IClient } from "../../../../types/client";
+import { IDataSources } from "../../../../types/datasource";
 import logger from "../../../../utils/logger";
+import { IClient } from "../../../../types/client";
 
 const updateClient = async (
   parents: any,

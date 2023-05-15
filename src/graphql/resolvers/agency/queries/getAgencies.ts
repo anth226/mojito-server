@@ -1,4 +1,4 @@
-import { IDataSources } from "../../../../datasources/datasource";
+import { IDataSources } from "../../../../types/datasource";
 import logger from "../../../../utils/logger";
 
 const getAgencies = async (
@@ -13,7 +13,7 @@ const getAgencies = async (
   { dataSources }: { dataSources: IDataSources }
 ) => {
   try {
-    const agencies = await dataSources.user.getAll();
+    const agencies = await dataSources.agency.getAll();
     return {
       agencies: agencies,
       response: {

@@ -17,6 +17,11 @@ type getClientResponse {
   client: Client
 }
 
+type getClientsReponse {
+  response: Response
+  clients: [Client]
+}
+
 type clientMutateResponse {
   client:Client
   response:Response
@@ -50,7 +55,7 @@ input ClientUpdateInput {
 type Query {
   getClientByID(id: String): getClientResponse
   getClientByContactEmail(email: String): getClientResponse
-  getClients(limit: Int, offset: Int): [Client]
+  getClients(limit: Int, offset: Int): getClientsReponse
 }
 
 ##############
