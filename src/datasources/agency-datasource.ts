@@ -12,7 +12,7 @@ export class AgencyDataSource {
   }
 
   private batchAgencys = new DataLoader(async (ids: readonly string[]) => {
-    const AgencyList = await this.Agency.find({ _id: { $in: ids } }).lean();
+    const AgencyList = await this.Agency.find({ _id: { $in: ids } });
     return ids.map((id) =>
       AgencyList.find((Agency) => Agency._id.toString() === id)
     );
@@ -24,12 +24,12 @@ export class AgencyDataSource {
   }
 
   async getById(id: string): Promise<IAgency | null> {
-    const Agency = await this.Agency.findById(id).lean();
+    const Agency = await this.Agency.findById(id);
     return Agency;
   }
 
   async getByContactEmail(email: string): Promise<IAgency | null> {
-    const Agency = await this.Agency.findOne({ contactPerson: email }).lean();
+    const Agency = await this.Agency.findOne({ contactPerson: email });
     return Agency;
   }
 
@@ -56,7 +56,7 @@ export class AgencyDataSource {
   }
 
   async deleteById(id: string): Promise<IAgency | null> {
-    const Agency = await this.Agency.findByIdAndDelete(id).lean();
+    const Agency = await this.Agency.findByIdAndDelete(id);
     return Agency;
   }
 }

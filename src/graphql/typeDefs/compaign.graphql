@@ -1,0 +1,68 @@
+##############
+## Types
+##############
+
+type campaign {
+    _id: String
+    name:String
+    startDate:String
+    endDate:String
+    budget:Int
+    impressions:Int
+    client:String
+    createdAt: String
+}
+
+type getcampaignResponse {
+  response: Response
+  campaign: campaign
+}
+type getcampaignsResponse {
+  response: Response
+  campaigns:[campaign]
+}
+
+type campaignMutateResponse {
+  campaign:campaign
+  response:Response
+
+}
+
+##############
+## Input Types
+##############
+
+input campaignInput {
+    name:String!
+    startDate:String
+    endDate:String
+    budget:Int!
+    client:String!
+}
+
+input campaignUpdateInput {
+    name:String
+    startDate:String
+    endDate:String
+    budget:Int
+    client:String
+}
+
+##############
+##  Queries
+##############
+
+type Query {
+  getcampaignByID(id: String): getcampaignResponse
+  getcampaigns(limit: Int, offset: Int): getcampaignsResponse
+}
+  
+##############
+##  Mutations
+##############
+ 
+type Mutation {
+  createcampaign(campaign: campaignInput): campaignMutateResponse
+  updatecampaign(campaign: campaignUpdateInput,id:String): campaignMutateResponse
+  deletecampaign(id: String): Response
+}

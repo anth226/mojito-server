@@ -12,7 +12,7 @@ export class AlertDataSource {
   }
 
   private batchAlerts = new DataLoader(async (ids: readonly string[]) => {
-    const AlertList = await this.Alert.find({ _id: { $in: ids } }).lean();
+    const AlertList = await this.Alert.find({ _id: { $in: ids } });
     return ids.map((id) =>
       AlertList.find((Alert) => Alert._id.toString() === id)
     );
@@ -24,12 +24,12 @@ export class AlertDataSource {
   }
 
   async getById(id: string): Promise<IAlert | null> {
-    const Alert = await this.Alert.findById(id).lean();
+    const Alert = await this.Alert.findById(id);
     return Alert;
   }
 
   async getByContactEmail(email: string): Promise<IAlert | null> {
-    const Alert = await this.Alert.findOne({ contactPerson: email }).lean();
+    const Alert = await this.Alert.findOne({ contactPerson: email });
     return Alert;
   }
 
@@ -56,7 +56,7 @@ export class AlertDataSource {
   }
 
   async deleteById(id: string): Promise<IAlert | null> {
-    const Alert = await this.Alert.findByIdAndDelete(id).lean();
+    const Alert = await this.Alert.findByIdAndDelete(id);
     return Alert;
   }
 }

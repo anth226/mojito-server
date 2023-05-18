@@ -18,3 +18,12 @@ export interface IClient_d extends Document {
 }
 
 export type ClientModel = Model<IClient_d, object, IClientMethods>;
+
+export interface IClientDataSource {
+  getAll(): Promise<IClient[]>;
+  getById(id: string): Promise<IClient | null>;
+  getByContactEmail(email: string): Promise<IClient | null>;
+  create(input: IClient): Promise<IClient>;
+  updateById(id: string, input: Partial<IClient>): Promise<IClient | null>;
+  deleteById(id: string): Promise<IClient | null>;
+}

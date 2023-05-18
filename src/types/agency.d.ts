@@ -15,3 +15,11 @@ export interface IAgency_d extends Document {
 }
 
 export type AgencyModel = Model<IAgency_d, object, IAgencyMethods>;
+export interface IAgencyDataSource {
+  getAll(): Promise<IAgency[]>;
+  getById(id: string): Promise<IAgency | null>;
+  getByContactEmail(email: string): Promise<IAgency | null>;
+  create(input: IAgency): Promise<IAgency>;
+  updateById(id: string, agencyData: Partial<IAgency>): Promise<IAgency | null>;
+  deleteById(id: string): Promise<IAgency | null>;
+}

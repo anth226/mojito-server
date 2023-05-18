@@ -16,3 +16,12 @@ export interface IUserMethods {
 }
 
 export type UserModel = Model<IUser_d, object, IUserMethods>;
+
+export interface IUserDataSource {
+  getAll(): Promise<IUser[]>;
+  getById(id: string): Promise<IUser | null>;
+  getByEmail(email: string): Promise<IUser | null>;
+  create(input: IUser): Promise<IUser>;
+  updateById(id: string, input: Partial<IUser>): Promise<IUser | null>;
+  deleteById(id: string): Promise<IUser | null>;
+}
