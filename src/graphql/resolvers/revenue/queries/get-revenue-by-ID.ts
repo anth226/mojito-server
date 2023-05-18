@@ -1,30 +1,30 @@
 import { IDataSources } from "../../../../types/datasource";
 import logger from "../../../../utils/logger";
 
-const getUserByID = async (
+const getRevenueByID = async (
   parents: any,
   { id }: { id: string },
   { dataSources }: { dataSources: IDataSources }
 ) => {
   try {
-    const user = await dataSources.user.getById(id);
-    logger.info("get user by Id", user);
+    const revenue = await dataSources.revenue.getById(id);
+    logger.info("get Revenue by Id", revenue);
     return {
-      user: user,
+      revenue: revenue,
       response: {
         status: 200,
         message: "Query successfully!",
       },
     };
-  } catch (error) {
+  } catch (error: any) {
     return {
-      user: null,
+      Revenue: null,
       response: {
         status: 404,
-        message: "Query failed!",
+        message: "Query failed!" + " : " + error.message,
       },
     };
   }
 };
 
-export default getUserByID;
+export default getRevenueByID;

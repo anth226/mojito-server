@@ -9,7 +9,7 @@ import { UserDataSource } from "./datasources/user-datasource";
 import User from "./models/user-model";
 
 import connectDB from "./utils/connection";
-import { IDataSources, IUserDataSource } from "./types/datasource";
+import { IDataSources } from "./types/datasource";
 import { AgencyDataSource } from "./datasources/agency-datasource";
 import Agency from "./models/agency-model";
 import logger from "./utils/logger";
@@ -19,6 +19,16 @@ import Alert from "./models/alert-model";
 import { AlertDataSource } from "./datasources/alert-datasource";
 import Connection from "./models/connection-model";
 import { ConnectionDataSource } from "./datasources/connection-datasource";
+import { campaignDataSource } from "./datasources/campaign-datasource";
+import campaign from "./models/campaign-model";
+import { AdvertisementDataSource } from "./datasources/advertisement-datasource";
+import Advertisement from "./models/advertisement-model";
+import Spending from "./models/spending-model";
+import { SpendingDataSource } from "./datasources/spending-datasources";
+import { ImpressionDataSource } from "./datasources/impression-datasource";
+import Impression from "./models/impression-model";
+import { RevenueDataSource } from "./datasources/revenue-datasource";
+import Revenue from "./models/revenue-model";
 
 dotenv.config();
 const PORT: number = (process.env.PORT as unknown as number) || 7000;
@@ -53,6 +63,11 @@ startStandaloneServer(server, {
         client: new ClientDataSource({ Client }),
         alert: new AlertDataSource({ Alert }),
         connections: new ConnectionDataSource({ Connection }),
+        campaigns: new campaignDataSource({ campaign }),
+        advertisement: new AdvertisementDataSource({ Advertisement }),
+        spending: new SpendingDataSource({ Spending }),
+        impression: new ImpressionDataSource({ Impression }),
+        revenue: new RevenueDataSource({ Revenue }),
       },
       token: req.headers.authorization || "",
     };

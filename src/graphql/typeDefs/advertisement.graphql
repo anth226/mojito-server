@@ -1,0 +1,64 @@
+##############
+## Types
+##############
+
+type Advertisement {
+  _id:String
+  name: String
+  type: String
+  costPerImpression: Int
+  campaign: String
+  createdAt:String
+}
+
+type getAdvertisementResponse {
+  response: Response
+  advertisement: Advertisement
+}
+
+type getAdvertisementsReponse {
+  response: Response
+  advertisements: [Advertisement]
+}
+
+type advertisementMutateResponse {
+  advertisement:Advertisement
+  response:Response
+
+}
+
+##############
+## Input Types
+##############
+
+input AdvertisementInput {
+  name: String!
+  type: String!
+  costPerImpression: Int!
+  campaign: String!
+}
+input AdvertisementUpdateInput {
+  name: String
+  type: String
+  costPerImpression: Int
+}
+
+##############
+##  Queries
+##############
+
+type Query {
+  getAdvertisementByID(id: String): getAdvertisementResponse
+  getAdvertisementByContactEmail(email: String): getAdvertisementResponse
+  getAdvertisements(limit: Int, offset: Int): getAdvertisementsReponse
+}
+
+##############
+##  Mutations
+##############
+
+type Mutation {
+  createAdvertisement(advertisement: AdvertisementInput): advertisementMutateResponse
+  updateAdvertisement(advertisement: AdvertisementUpdateInput,id:String!): advertisementMutateResponse
+  deleteAdvertisement(id: String): Response
+}

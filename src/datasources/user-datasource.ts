@@ -12,7 +12,7 @@ export class UserDataSource {
   }
 
   private batchusers = new DataLoader(async (ids: readonly string[]) => {
-    const userList = await this.user.find({ _id: { $in: ids } }).lean();
+    const userList = await this.user.find({ _id: { $in: ids } });
     return ids.map((id) => userList.find((user) => user._id.toString() === id));
   });
 
@@ -22,12 +22,12 @@ export class UserDataSource {
   }
 
   async getById(id: string): Promise<IUser | null> {
-    const user = await this.user.findById(id).lean();
+    const user = await this.user.findById(id);
     return user;
   }
 
   async getByEmail(email: string): Promise<IUser | null> {
-    const user = await this.user.findOne({ email }).lean();
+    const user = await this.user.findOne({ email });
     return user;
   }
 
@@ -43,15 +43,13 @@ export class UserDataSource {
     userData: Partial<IUser>
   ): Promise<IUser | null> {
     logger.info(userData);
-    const user = await this.user
-      .findByIdAndUpdate(
-        id,
-        {
-          $set: userData,
-        },
-        { new: true }
-      )
-      .lean();
+    const user = await this.user.findByIdAndUpdate(
+      id,
+      {
+        $set: userData,
+      },
+      { new: true }
+    );
     return user;
   }
 

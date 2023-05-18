@@ -1,0 +1,62 @@
+##############
+## Types
+##############
+
+type Revenue {
+  _id:String
+  amount: Int
+  date: String
+  campaign: String
+}
+
+type getRevenueResponse {
+  response: Response
+  revenue: Revenue
+}
+
+type getRevenuesReponse {
+  response: Response
+  revenues: [Revenue]
+}
+
+type revenueMutateResponse {
+  revenue:Revenue
+  response:Response
+
+}
+
+##############
+## Input Types
+##############
+
+input RevenueInput {
+  amount: Int
+  date: String
+  campaign: String
+}
+input RevenueUpdateInput {
+  amount: Int
+  date: String
+  campaign: String
+
+}
+
+##############
+##  Queries
+##############
+
+type Query {
+  getRevenueByID(id: String): getRevenueResponse
+  getRevenueByContactEmail(email: String): getRevenueResponse
+  getRevenues(limit: Int, offset: Int): getRevenuesReponse
+}
+
+##############
+##  Mutations
+##############
+
+type Mutation {
+  createRevenue(revenue: RevenueInput): revenueMutateResponse
+  updateRevenue(revenue: RevenueUpdateInput,id:String!): revenueMutateResponse
+  deleteRevenue(id: String): Response
+}

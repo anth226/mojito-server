@@ -12,7 +12,7 @@ export class ClientDataSource {
   }
 
   private batchClients = new DataLoader(async (ids: readonly string[]) => {
-    const ClientList = await this.Client.find({ _id: { $in: ids } }).lean();
+    const ClientList = await this.Client.find({ _id: { $in: ids } });
     return ids.map((id) =>
       ClientList.find((Client) => Client._id.toString() === id)
     );
@@ -24,12 +24,12 @@ export class ClientDataSource {
   }
 
   async getById(id: string): Promise<IClient | null> {
-    const Client = await this.Client.findById(id).lean();
+    const Client = await this.Client.findById(id);
     return Client;
   }
 
   async getByContactEmail(email: string): Promise<IClient | null> {
-    const Client = await this.Client.findOne({ contactPerson: email }).lean();
+    const Client = await this.Client.findOne({ contactPerson: email });
     return Client;
   }
 
@@ -57,7 +57,7 @@ export class ClientDataSource {
   }
 
   async deleteById(id: string): Promise<IClient | null> {
-    const Client = await this.Client.findByIdAndDelete(id).lean();
+    const Client = await this.Client.findByIdAndDelete(id);
     return Client;
   }
 }

@@ -1,0 +1,62 @@
+##############
+## Types
+##############
+
+type Impression {
+  _id:String
+ count: Int
+  date: String
+  campaign: String
+}
+
+type getImpressionResponse {
+  response: Response
+  impression: Impression
+}
+
+type getImpressionsReponse {
+  response: Response
+  impressions: [Impression]
+}
+
+type impressionMutateResponse {
+  impression:Impression
+  response:Response
+
+}
+
+##############
+## Input Types
+##############
+
+input ImpressionInput {
+  count: Int
+  date: String
+  campaign: String
+}
+input ImpressionUpdateInput {
+ count: Int
+  date: String
+  campaign: String
+
+}
+
+##############
+##  Queries
+##############
+
+type Query {
+  getImpressionByID(id: String): getImpressionResponse
+  getImpressionByContactEmail(email: String): getImpressionResponse
+  getImpressions(limit: Int, offset: Int): getImpressionsReponse
+}
+
+##############
+##  Mutations
+##############
+
+type Mutation {
+  createImpression(impression: ImpressionInput): impressionMutateResponse
+  updateImpression(impression: ImpressionUpdateInput,id:String!): impressionMutateResponse
+  deleteImpression(id: String): Response
+}
