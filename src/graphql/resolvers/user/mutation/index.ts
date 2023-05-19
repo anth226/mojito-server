@@ -1,10 +1,12 @@
-import createUser from "./createUser";
 import deleteUser from "./deleteUser";
 import updateUser from "./updateUser";
+import registerUser from "./registerUser";
+import login from "./login";
 
 const userMutation = {
-  createUser,
+  registerUser,
   updateUser,
   deleteUser,
+  login,
 };
 export default userMutation;

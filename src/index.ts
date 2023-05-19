@@ -29,6 +29,7 @@ import { ImpressionDataSource } from "./datasources/impression-datasource";
 import Impression from "./models/impression-model";
 import { RevenueDataSource } from "./datasources/revenue-datasource";
 import Revenue from "./models/revenue-model";
+import { verifyJWT } from "./utils/AuthUtils";
 
 dotenv.config();
 const PORT: number = (process.env.PORT as unknown as number) || 7000;
@@ -41,35 +42,37 @@ const server = new ApolloServer<MyContext>({
   typeDefs: loadFiles("**/typeDefs/*.{graphql,gql}"),
   resolvers,
 });
-connectDB()
-  .then(() => {
-    logger.info("Connected to database");
-  })
-  .catch((error) => {
-    console.error("Error connecting to database:", error);
-    server.stop();
-  });
 
 // data sources
 
 startStandaloneServer(server, {
   context: async ({ req }) => {
+    try {
+      const db = await connectDB();
+    } catch (error) {
+      logger.error(error);
+    }
+
+    const dataSources = {
+      user: new UserDataSource({ User }),
+      agency: new AgencyDataSource({ Agency }),
+      client: new ClientDataSource({ Client }),
+      alert: new AlertDataSource({ Alert }),
+      connections: new ConnectionDataSource({ Connection }),
+      campaigns: new campaignDataSource({ campaign }),
+      advertisement: new AdvertisementDataSource({ Advertisement }),
+      spending: new SpendingDataSource({ Spending }),
+      impression: new ImpressionDataSource({ Impression }),
+      revenue: new RevenueDataSource({ Revenue }),
+    };
+    // const data = await verifyJWT(req.headers.authorization);
+    // console.log(data);
     return {
       // We create new instances of our data sources with each request,
       // passing in our server's cache.
-      dataSources: {
-        user: new UserDataSource({ User }),
-        agency: new AgencyDataSource({ Agency }),
-        client: new ClientDataSource({ Client }),
-        alert: new AlertDataSource({ Alert }),
-        connections: new ConnectionDataSource({ Connection }),
-        campaigns: new campaignDataSource({ campaign }),
-        advertisement: new AdvertisementDataSource({ Advertisement }),
-        spending: new SpendingDataSource({ Spending }),
-        impression: new ImpressionDataSource({ Impression }),
-        revenue: new RevenueDataSource({ Revenue }),
-      },
-      token: req.headers.authorization || "",
+      dataSources,
+      token: (req.headers["api-key"] as string) || "",
+      authToken: req.headers.authorization || "",
     };
   },
   listen: { port: PORT },

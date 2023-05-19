@@ -7,7 +7,7 @@
     "dev": "nodemon src/index.ts",
     "build": "rimraf dist && tsc",
     "serve": "node dist/index.js",
-    "build-and-serve": "npm run build && npm run serve"
+    "build-and-serve": "tsc && npm run serve"
   },
   "author": "Developer",
   "license": "ISC",

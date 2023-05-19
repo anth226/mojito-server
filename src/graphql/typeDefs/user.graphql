@@ -3,14 +3,21 @@
 ##############
 
 type User {
-  _id:String
   email: String
   name:String
   role: Role
   createdAt:String
 
 }
-
+type  RegisterResponse {
+  response: Response
+  user: User
+  token: String
+}
+type LoginResponse{
+  response: Response
+  token: String
+}
 type getUserResponse {
   response: Response
   user: User
@@ -26,7 +33,7 @@ type usersResponse {
 
 input userInput {
   email: String!
-  name:String
+  name:String!
   password: String!
   role: Role!
 }
@@ -56,7 +63,8 @@ type Query {
 ##############
 
 type Mutation {
-  createUser(user: userInput): Response
+  registerUser(user: userInput): RegisterResponse
+  login(email: String, password: String): LoginResponse
   updateUser(user: userUpdateInput): Response
   deleteUser(id:String):Response
 }
