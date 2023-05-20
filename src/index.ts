@@ -66,11 +66,8 @@ startStandaloneServer(server, {
       impression: new ImpressionDataSource({ Impression }),
       revenue: new RevenueDataSource({ Revenue }),
     };
-    // const data = await verifyJWT(req.headers.authorization);
-    // console.log(data);
+
     return {
-      // We create new instances of our data sources with each request,
-      // passing in our server's cache.
       dataSources,
       token: (req.headers["api-key"] as string) || "",
       authToken: req.headers.authorization || "",

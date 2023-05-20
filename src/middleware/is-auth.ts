@@ -1,5 +1,7 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
+import dotenv from "dotenv";
+dotenv.config();
 
 interface ReqProps extends Request {
   isAuth?: boolean;

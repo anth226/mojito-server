@@ -1,14 +1,15 @@
 import { IDataSources } from "../../../../types/datasource";
 import { IUser } from "../../../../types/user";
 import { generateJWT } from "../../../../utils/AuthUtils";
-
+import dotenv from "dotenv";
+dotenv.config();
 const registerUser = async (
   parents: any,
   { user }: { user: IUser },
-  { dataSources, key }: { dataSources: IDataSources; key: string }
+  { dataSources, token }: { dataSources: IDataSources; token: string }
 ) => {
   try {
-    if (!key && key !== (process.env.BACKEND_API_KEY as string)) {
+    if (token !== (process.env.BACKEND_API_KEY as string)) {
       return {
         response: {
           status: 401,
@@ -25,14 +26,14 @@ const registerUser = async (
 
     const userResponse = await dataSources.user.create(user);
     console.log(userResponse._id.toString());
-    const token = await generateJWT({
+    const authtoken = await generateJWT({
       id: userResponse._id.toString(),
       email: userResponse.email,
       password: userResponse.password,
     });
 
     return {
-      token: token,
+      token: authtoken,
       user: userResponse,
       reponse: {
         status: 200,

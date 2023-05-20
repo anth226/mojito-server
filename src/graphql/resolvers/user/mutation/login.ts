@@ -1,6 +1,8 @@
 import { IDataSources } from "../../../../types/datasource";
 import { IUser } from "../../../../types/user";
 import { generateJWT, matchPassword } from "../../../../utils/AuthUtils";
+import dotenv from "dotenv";
+dotenv.config();
 
 const login = async (
   parents: any,
