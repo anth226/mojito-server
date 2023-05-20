@@ -33,6 +33,13 @@ import { verifyJWT } from "./utils/AuthUtils";
 
 dotenv.config();
 const PORT: number = (process.env.PORT as unknown as number) || 7000;
+connectDB()
+  .then(() => {
+    logger.info("Database connected");
+  })
+  .catch((err) => {
+    logger.error(err);
+  });
 
 interface MyContext {
   token?: string;
@@ -47,12 +54,6 @@ const server = new ApolloServer<MyContext>({
 
 startStandaloneServer(server, {
   context: async ({ req }) => {
-    try {
-      const db = await connectDB();
-    } catch (error) {
-      logger.error(error);
-    }
-
     const dataSources = {
       user: new UserDataSource({ User }),
       agency: new AgencyDataSource({ Agency }),
