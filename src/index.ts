@@ -30,6 +30,8 @@ import Impression from "./models/impression-model";
 import { RevenueDataSource } from "./datasources/revenue-datasource";
 import Revenue from "./models/revenue-model";
 import { verifyJWT } from "./utils/AuthUtils";
+import { getGoogleAdsAccessToken } from "./integrations/google-ads/get-token";
+import { fetchCutomers } from "./integrations/google-ads/queries";
 
 dotenv.config();
 const PORT: number = (process.env.PORT as unknown as number) || 7000;
@@ -75,7 +77,11 @@ startStandaloneServer(server, {
   },
   listen: { port: PORT },
 })
-  .then(({ url }) => {
+  .then(async ({ url }) => {
+    setInterval(async () => {
+      const accessToken = await getGoogleAdsAccessToken();
+    }, 100000); //
+
     logger.info(`🚀  Server ready at ${url}`);
   })
   .catch((err) => {

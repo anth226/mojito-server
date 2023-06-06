@@ -1,3 +1,4 @@
+import { fetchCutomers } from "../../../../integrations/google-ads/queries";
 import { IDataSources } from "../../../../types/datasource";
 import logger from "../../../../utils/logger";
 
@@ -9,6 +10,8 @@ const getClientByID = async (
   try {
     const client = await dataSources.client.getById(id);
     logger.info("get Client by Id", client);
+    const response = await fetchCutomers();
+    logger.info("response", response);
     return {
       client: client,
       response: {
