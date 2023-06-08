@@ -1,9 +1,9 @@
-import getRevenueByID from "./get-revenue-by-ID";
-import getRevenues from "./get-revenues";
+import getRevenueByID from "./get-revenue-by-ID"
+import getRevenues from "./get-revenues"
 
 const revenueQuery = {
-  getRevenueByID,
-  getRevenues,
-};
+    getRevenueByID,
+    getRevenues,
+}
 
-export default revenueQuery;
+export default revenueQuery

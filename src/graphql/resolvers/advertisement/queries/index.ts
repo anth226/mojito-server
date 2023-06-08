@@ -1,9 +1,9 @@
-import getAdvertisementByID from "./get-advertisement-by-ID";
-import getAdvertisements from "./get-advertisements";
+import getAdvertisementByID from "./get-advertisement-by-ID"
+import getAdvertisements from "./get-advertisements"
 
 const advertisementQuery = {
-  getAdvertisementByID,
-  getAdvertisements,
-};
+    getAdvertisementByID,
+    getAdvertisements,
+}
 
-export default advertisementQuery;
+export default advertisementQuery
