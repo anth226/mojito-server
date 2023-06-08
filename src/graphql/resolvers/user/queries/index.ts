@@ -1,11 +1,11 @@
-import getUserByEmail from "./getUserByEmail";
-import getUserByID from "./getUserByID";
-import getUsers from "./getUsers";
+import getUserByEmail from "./getUserByEmail"
+import getUserByID from "./getUserByID"
+import getUsers from "./getUsers"
 
 const userQuery = {
-  getUserByEmail,
-  getUserByID,
-  getUsers,
-};
+    getUserByEmail,
+    getUserByID,
+    getUsers,
+}
 
-export default userQuery;
+export default userQuery

@@ -1,9 +1,9 @@
-import getImpressionByID from "./get-impression-by-ID";
-import getImpressions from "./get-impressions";
+import getImpressionByID from "./get-impression-by-ID"
+import getImpressions from "./get-impressions"
 
 const ImpressionQuery = {
-  getImpressionByID,
-  getImpressions,
-};
+    getImpressionByID,
+    getImpressions,
+}
 
-export default ImpressionQuery;
+export default ImpressionQuery

@@ -1,9 +1,9 @@
-import getSpendingByID from "./get-spending-by-ID";
-import getSpendings from "./get-spendings";
+import getSpendingByID from "./get-spending-by-ID"
+import getSpendings from "./get-spendings"
 
 const SpendingQuery = {
-  getSpendingByID,
-  getSpendings,
-};
+    getSpendingByID,
+    getSpendings,
+}
 
-export default SpendingQuery;
+export default SpendingQuery
