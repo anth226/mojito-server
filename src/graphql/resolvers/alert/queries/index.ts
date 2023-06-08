@@ -1,9 +1,9 @@
-import getAlertByID from "./getAlertByID";
-import getAlerts from "./getAlerts";
+import getAlertByID from "./getAlertByID"
+import getAlerts from "./getAlerts"
 
 const alertQuery = {
-  getAlertByID,
-  getAlerts,
-};
+    getAlertByID,
+    getAlerts,
+}
 
-export default alertQuery;
+export default alertQuery

@@ -1,9 +1,9 @@
-import getConnectionByID from "./get-connection-by-ID";
-import getConnections from "./get-connections";
+import getConnectionByID from "./get-connection-by-ID"
+import getConnections from "./get-connections"
 
 const connectionQuery = {
-  getConnectionByID,
-  getConnections,
-};
+    getConnectionByID,
+    getConnections,
+}
 
-export default connectionQuery;
+export default connectionQuery

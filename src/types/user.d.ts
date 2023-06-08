@@ -1,27 +1,27 @@
 export interface IUser {
-  email: string;
-  name?: string;
-  password: string;
-  role: string;
+    email: string
+    name?: string
+    password: string
+    role: string
 }
 // type _d for Mongo document
 export interface IUser_d extends Document {
-  email: string;
-  password: string;
-  name: string;
-  role: string;
+    email: string
+    password: string
+    name: string
+    role: string
 }
 export interface IUserMethods {
-  isValidPassword: (password: string) => Promise<boolean>;
+    isValidPassword: (password: string) => Promise<boolean>
 }
 
-export type UserModel = Model<IUser_d, object, IUserMethods>;
+export type UserModel = Model<IUser_d, object, IUserMethods>
 
 export interface IUserDataSource {
-  getAll(): Promise<IUser[]>;
-  getById(id: string): Promise<IUser | null>;
-  getByEmail(email: string): Promise<IUser | null>;
-  create(input: IUser): Promise<IUser>;
-  updateById(id: string, input: Partial<IUser>): Promise<IUser | null>;
-  deleteById(id: string): Promise<IUser | null>;
+    getAll(): Promise<IUser[]>
+    getById(id: string): Promise<IUser | null>
+    getByEmail(email: string): Promise<IUser | null>
+    create(input: IUser): Promise<IUser>
+    updateById(id: string, input: Partial<IUser>): Promise<IUser | null>
+    deleteById(id: string): Promise<IUser | null>
 }
