@@ -1,13 +1,7 @@
-import mongoose, { Mongoose } from "mongoose"
-import { Schema, model, Model } from "mongoose"
-import bcrypt from "bcrypt"
+import mongoose from "mongoose"
+import { Schema, model } from "mongoose"
 
-import {
-    IAdvertisement,
-    AdvertisementModel,
-    IAdvertisement_d,
-} from "../types/advertisement"
-import { type } from "os"
+import { AdvertisementModel, IAdvertisement_d } from "../types/advertisement"
 
 const schema = new Schema<IAdvertisement_d, AdvertisementModel>(
     {

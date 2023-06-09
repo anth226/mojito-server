@@ -1,0 +1,137 @@
+##############
+## Types
+##############
+
+type User {
+    _id: String!
+    email: String!
+    name: String!
+    accountType: AccountType!
+    createdAt: String!
+}
+
+type Connection {
+    _id: String!
+    source: ConnectionSource!
+    client: User!
+    createdAt: String!
+}
+
+type Alert {
+    _id: String!
+    name: String!
+    operation: AlertOperation!
+    value: String!
+    connection: Connection!
+    createdAt: String
+}
+
+enum AlertOperation {
+    LESS_THAN
+    GREATER_THAN
+    EQUAL
+}
+
+enum AccountType {
+    AGENCY
+    BUSINESS
+    CLIENT
+}
+
+enum ConnectionSource {
+    FACEBOOK
+    TIKTOK
+    META
+    GOOGLE
+}
+
+##############
+## Inputs
+##############
+
+input CreateConnectionInput {
+    source: ConnectionSource!
+    clientId: String!
+}
+
+input CreateAlertInput {
+    name: String
+    message: String
+    client: String
+}
+
+input InviteClientInput {
+    name: String!
+    email: String!
+}
+
+input RegisterAgencyInput {
+    agencyName: String!
+    email: String!
+    password: String!
+
+    clients: [InviteClientInput!]
+    connections: [CreateConnectionInput!]
+    alerts: [CreateAlertInput!]
+}
+
+input LoginInput {
+    email: String!
+    password: String!
+}
+
+##############
+## Payloads
+##############
+
+type CreateAlertPayload {
+    alert: Alert
+}
+
+type RegisterAgencyPayload {
+    clientMutationId: String
+    user: User
+}
+
+type InviteClientPayload {
+    user: User
+}
+
+type CreateConnectionPayload {
+    connection: Connection
+}
+
+type LoginPayload {
+    success: Boolean!
+    reason: String
+    accessToken: String
+}
+
+##############
+## Queries
+##############
+
+type Query {
+    user(id: String!): User
+    userByEmail(email: String): User
+
+    connection(id: String!): Connection
+
+    alert(id: String!): Alert
+}
+
+##############
+## Mutations
+##############
+
+type Mutation {
+    login(input: LoginInput!): LoginPayload
+
+    registerAgency(input: RegisterAgencyInput!): RegisterAgencyPayload
+
+    inviteClient(input: InviteClientInput!): InviteClientPayload
+
+    createConnection(input: CreateConnectionInput!): CreateConnectionPayload
+
+    createAlert(input: CreateAlertInput): CreateAlertPayload
+}
