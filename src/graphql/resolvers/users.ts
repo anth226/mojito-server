@@ -1,5 +1,6 @@
 import logger from "../../utils/logger"
 import * as gql from "../__generated__/resolvers-types"
+import * as auth from "../../auth"
 import bcrypt from "bcrypt"
 import { v4 as uuid } from "uuid"
 
@@ -51,9 +52,14 @@ export const loginUser: gql.MutationResolvers["login"] = async (
         }
     }
 
+    const accessToken = await auth.createAccessToken(
+        context.authPrivateKey,
+        user
+    )
+
     return {
         success: true,
-        accessToken: "JWT_TOKEN",
+        accessToken,
     }
 }
 

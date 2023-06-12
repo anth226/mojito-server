@@ -18,7 +18,7 @@ export class UserDatasource implements types.UserDatasource {
 
     async getClientsFrom(agencyId: string): Promise<Array<types.User>> {
         const clients = await UserModel.find({
-            agencyId,
+            clientFrom: agencyId,
         })
         return clients.map((cl) => cl.toObject())
     }

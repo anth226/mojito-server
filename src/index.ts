@@ -2,61 +2,79 @@ import dotenv from "dotenv"
 import { ApolloServer } from "@apollo/server"
 import { startStandaloneServer } from "@apollo/server/standalone"
 import { loadFiles } from "graphql-import-files"
-import { UserDatasource } from "./datasources/user-datasource"
-import { AgencyDatasource } from "./datasources/agency-datasource"
-import { connectIfNecessary } from "./datasources"
+import * as datasources from "./datasources"
+import * as auth from "./auth"
+import * as types from "./types"
 
-import { Datasources } from "./types/datasource"
 import logger from "./utils/logger"
 import { resolvers } from "./graphql/resolvers"
+import { GraphQLError } from "graphql"
 
 dotenv.config()
 
 const PORT = parseInt(process.env.PORT || "7000")
 const DATABASE_URL = process.env.DATABASE_URL as string
+const AUTH_PRIVATE_KEY = process.env.AUTH_PRIVATE_KEY as string
 
-export interface RequestContext {
-    token?: string
-    datasources: Datasources
-}
-
-const server = new ApolloServer<RequestContext>({
+const server = new ApolloServer<types.RequestContext>({
     typeDefs: loadFiles("**/graphql/schema.graphql"),
     resolvers: resolvers,
 })
 
 async function startServer(): Promise<void> {
     try {
-        await connectIfNecessary(DATABASE_URL)
+        await datasources.connectIfNecessary(DATABASE_URL)
 
         const { url } = await startStandaloneServer(server, {
             context: async ({ req }) => {
                 try {
-                    await connectIfNecessary(DATABASE_URL)
+                    await datasources.connectIfNecessary(DATABASE_URL)
                 } catch (error) {
                     logger.error(`Database connection failed: ${error}`)
                     throw new Error("An unexpected error occurred")
                 }
 
-                return {
-                    // We create new instances of our data sources with each request,
-                    // passing in our server's cache.
+                const context: types.RequestContext = {
+                    authPrivateKey: AUTH_PRIVATE_KEY,
                     datasources: {
-                        user: new UserDatasource(),
-                        agency: new AgencyDatasource(),
-                        // client: new ClientDataSource({ Client }),
-                        // alert: new AlertDataSource({ Alert }),
-                        // connections: new ConnectionDataSource({ Connection }),
-                        // campaigns: new campaignDataSource({ campaign }),
-                        // advertisement: new AdvertisementDataSource({
-                        //     Advertisement,
-                        // }),
-                        // spending: new SpendingDataSource({ Spending }),
-                        // impression: new ImpressionDataSource({ Impression }),
-                        // revenue: new RevenueDataSource({ Revenue }),
+                        user: new datasources.UserDatasource(),
+                        agency: new datasources.AgencyDatasource(),
                     },
-                    token: req.headers.authorization || "",
                 }
+
+                if (req.headers.authorization) {
+                    const accessToken = req.headers.authorization.replace(
+                        "Bearer ",
+                        ""
+                    )
+
+                    const isTokenValid = await auth.isAccessTokenValid(
+                        context.authPrivateKey,
+                        accessToken
+                    )
+                    if (!isTokenValid) {
+                        throw new GraphQLError(
+                            "Invalid access token signature",
+                            {
+                                extensions: {
+                                    http: {
+                                        status: 401,
+                                    },
+                                },
+                            }
+                        )
+                    }
+
+                    const jwtPayload = auth.decodeAccessToken(accessToken)
+                    if (jwtPayload) {
+                        context.user =
+                            (await context.datasources.user.getById(
+                                jwtPayload?.userId
+                            )) || undefined
+                    }
+                }
+
+                return context
             },
             listen: { port: PORT },
         })
