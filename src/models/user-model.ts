@@ -5,6 +5,8 @@ interface UserDocument extends mongoose.Document {
     password: string
     name: string
     accountType: string
+    agencyId: string
+    clientFrom: string
 }
 
 const userSchema = new mongoose.Schema<UserDocument>(
@@ -17,6 +19,12 @@ const userSchema = new mongoose.Schema<UserDocument>(
             type: String,
         },
         password: {
+            type: String,
+        },
+        agencyId: {
+            type: String,
+        },
+        clientFrom: {
             type: String,
         },
     },

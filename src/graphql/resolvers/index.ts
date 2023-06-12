@@ -2,17 +2,28 @@ import {
     MutationResolvers,
     QueryResolvers,
     Resolvers,
+    UserResolvers,
 } from "../__generated__/resolvers-types"
 
 import * as users from "./users"
+import * as clients from "./clients"
 
-const queries: QueryResolvers = {
+const query: QueryResolvers = {
     user: users.getUserById,
 }
 
-const mutations: MutationResolvers = {
+const mutation: MutationResolvers = {
     registerAgency: users.registerUserForAgency,
     login: users.loginUser,
+    inviteClient: clients.inviteClient,
 }
 
-export const resolvers: Resolvers = { Query: queries, Mutation: mutations }
+const user: UserResolvers = {
+    clients: clients.getClientsFromUser,
+}
+
+export const resolvers: Resolvers = {
+    Query: query,
+    Mutation: mutation,
+    User: user,
+}

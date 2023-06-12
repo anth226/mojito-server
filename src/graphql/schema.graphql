@@ -7,7 +7,17 @@ type User {
     email: String!
     name: String!
     accountType: AccountType!
+    agencyId: String
+
+    agency: Agency
+    clients: [User!]
+
     createdAt: String!
+}
+
+type Agency {
+    _id: String!
+    name: String
 }
 
 type Connection {
@@ -85,6 +95,7 @@ input LoginInput {
 ##############
 
 type CreateAlertPayload {
+    clientMutationId: String
     alert: Alert
 }
 
@@ -94,10 +105,12 @@ type RegisterAgencyPayload {
 }
 
 type InviteClientPayload {
+    clientMutationId: String
     user: User
 }
 
 type CreateConnectionPayload {
+    clientMutationId: String
     connection: Connection
 }
 

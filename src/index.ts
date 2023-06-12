@@ -2,10 +2,11 @@ import dotenv from "dotenv"
 import { ApolloServer } from "@apollo/server"
 import { startStandaloneServer } from "@apollo/server/standalone"
 import { loadFiles } from "graphql-import-files"
-import { UserDataSource } from "./datasources/user-datasource"
+import { UserDatasource } from "./datasources/user-datasource"
+import { AgencyDatasource } from "./datasources/agency-datasource"
 import { connectIfNecessary } from "./datasources"
 
-import { IDataSources } from "./types/datasource"
+import { Datasources } from "./types/datasource"
 import logger from "./utils/logger"
 import { resolvers } from "./graphql/resolvers"
 
@@ -16,7 +17,7 @@ const DATABASE_URL = process.env.DATABASE_URL as string
 
 export interface RequestContext {
     token?: string
-    dataSources: IDataSources
+    datasources: Datasources
 }
 
 const server = new ApolloServer<RequestContext>({
@@ -40,9 +41,9 @@ async function startServer(): Promise<void> {
                 return {
                     // We create new instances of our data sources with each request,
                     // passing in our server's cache.
-                    dataSources: {
-                        user: new UserDataSource(),
-                        // agency: new AgencyDataSource({ Agency }),
+                    datasources: {
+                        user: new UserDatasource(),
+                        agency: new AgencyDatasource(),
                         // client: new ClientDataSource({ Client }),
                         // alert: new AlertDataSource({ Alert }),
                         // connections: new ConnectionDataSource({ Connection }),

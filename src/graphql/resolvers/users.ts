@@ -1,6 +1,7 @@
 import logger from "../../utils/logger"
 import * as gql from "../__generated__/resolvers-types"
 import bcrypt from "bcrypt"
+import { v4 as uuid } from "uuid"
 
 const PASSWORD_DEFAULT_SALT_ROUNDS = 12
 
@@ -10,17 +11,14 @@ export const getUserById: gql.QueryResolvers["user"] = async (
     context,
     _info
 ): Promise<gql.User | null> => {
-    const user = await context.dataSources.user.getById(args.id)
+    const user = await context.datasources.user.getById(args.id)
 
     if (!user) {
         return null
     }
 
     return {
-        _id: user._id,
-        accountType: user.accountType,
-        email: user.email,
-        name: user.name,
+        ...user,
         createdAt: user.createdAt.toISOString(),
     }
 }
@@ -32,7 +30,7 @@ export const loginUser: gql.MutationResolvers["login"] = async (
     context,
     _info
 ): Promise<gql.LoginPayload | null> => {
-    const user = await context.dataSources.user.getByEmail(args.input.email)
+    const user = await context.datasources.user.getByEmail(args.input.email)
 
     if (!user) {
         return {
@@ -67,7 +65,7 @@ export const registerUserForAgency: gql.MutationResolvers["registerAgency"] =
         context,
         _info
     ): Promise<gql.RegisterAgencyPayload | null> => {
-        const userWithEmail = await context.dataSources.user.getByEmail(
+        const userWithEmail = await context.datasources.user.getByEmail(
             args.input.email
         )
 
@@ -80,18 +78,23 @@ export const registerUserForAgency: gql.MutationResolvers["registerAgency"] =
             PASSWORD_DEFAULT_SALT_ROUNDS
         )
 
-        const user = await context.dataSources.user.create({
+        const agency = await context.datasources.agency.create({
+            name: args.input.agencyName,
+        })
+
+        const user = await context.datasources.user.create({
             name: args.input.agencyName,
             email: args.input.email,
             accountType: gql.AccountType.Agency,
             password: hashedPassword,
+            agencyId: agency._id,
         })
 
         // Invite clients to this agency if there is any
         if (args.input.clients) {
             for (const client of args.input.clients) {
                 const clientWithEmail =
-                    await context.dataSources.user.getByEmail(args.input.email)
+                    await context.datasources.user.getByEmail(args.input.email)
 
                 if (clientWithEmail) {
                     logger.info(
@@ -100,7 +103,7 @@ export const registerUserForAgency: gql.MutationResolvers["registerAgency"] =
                     continue
                 }
 
-                await context.dataSources.user.create({
+                await context.datasources.user.create({
                     name: client.name,
                     email: client.email,
                 })
@@ -108,7 +111,7 @@ export const registerUserForAgency: gql.MutationResolvers["registerAgency"] =
         }
 
         return {
-            clientMutationId: "",
+            clientMutationId: uuid(),
             user: { ...user, createdAt: user.createdAt.toISOString() },
         }
     }
