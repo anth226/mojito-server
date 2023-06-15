@@ -16,4 +16,5 @@ export type User = {
     agencyId: string
     clientFrom: string
     createdAt: Date
+    updatedAt: Date
 }

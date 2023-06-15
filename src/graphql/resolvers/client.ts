@@ -7,6 +7,10 @@ export const inviteClient: gql.MutationResolvers["inviteClient"] = async (
     context,
     _info
 ): Promise<gql.InviteClientPayload | null> => {
+    if (!context.user) {
+        return null
+    }
+
     const clientWithEmail = await context.datasources.user.getByEmail(
         args.input.email
     )
@@ -20,6 +24,7 @@ export const inviteClient: gql.MutationResolvers["inviteClient"] = async (
         email: args.input.email,
         password: "temp_password",
         accountType: gql.AccountType.Client,
+        clientFrom: context.user.agencyId,
     })
 
     return {
@@ -27,6 +32,7 @@ export const inviteClient: gql.MutationResolvers["inviteClient"] = async (
         user: {
             ...client,
             createdAt: client.createdAt.toISOString(),
+            updatedAt: client.updatedAt.toISOString(),
         },
     }
 }
@@ -48,5 +54,21 @@ export const getClientsFromUser: gql.UserResolvers["clients"] = async (
     return clients.map((cl) => ({
         ...cl,
         createdAt: cl.createdAt.toISOString(),
+        updatedAt: cl.updatedAt.toISOString(),
+    }))
+}
+
+export const getClientsFromAgency: gql.AgencyResolvers["clients"] = async (
+    parent,
+    _args,
+    context,
+    _info
+): Promise<Array<gql.User> | null> => {
+    const clients = await context.datasources.user.getClientsFrom(parent._id)
+
+    return clients.map((cl) => ({
+        ...cl,
+        createdAt: cl.createdAt.toISOString(),
+        updatedAt: cl.updatedAt.toISOString(),
     }))
 }

@@ -6,6 +6,24 @@ import { v4 as uuid } from "uuid"
 
 const PASSWORD_DEFAULT_SALT_ROUNDS = 12
 
+export const getCurrentUser: gql.QueryResolvers["me"] = async (_parent, _args, context, _info): Promise<gql.User | null> => {
+    if (!context.user) {
+        return null
+    }
+
+    const user = await context.datasources.user.getById(context.user._id)
+
+    if (!user) {
+        return null
+    }
+
+    return {
+        ...user,
+        createdAt: user.createdAt.toISOString(),
+        updatedAt: user.updatedAt.toISOString(),
+    }
+}
+
 export const getUserById: gql.QueryResolvers["user"] = async (
     _parent,
     args,
@@ -21,6 +39,7 @@ export const getUserById: gql.QueryResolvers["user"] = async (
     return {
         ...user,
         createdAt: user.createdAt.toISOString(),
+        updatedAt: user.updatedAt.toISOString(),
     }
 }
 
@@ -118,6 +137,10 @@ export const registerUserForAgency: gql.MutationResolvers["registerAgency"] =
 
         return {
             clientMutationId: uuid(),
-            user: { ...user, createdAt: user.createdAt.toISOString() },
+            user: {
+                ...user,
+                createdAt: user.createdAt.toISOString(),
+                updatedAt: user.updatedAt.toISOString(),
+            },
         }
     }
