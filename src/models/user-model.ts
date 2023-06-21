@@ -1,16 +1,29 @@
 import mongoose from "mongoose"
+import { v4 as uuid } from "uuid"
+import {
+    AccountType,
+    UserStatus,
+} from "../graphql/__generated__/resolvers-types"
 
-interface UserDocument extends mongoose.Document {
+export interface UserDocument extends mongoose.Document {
+    _id: string
     email: string
     password: string
     name: string
-    accountType: string
+    accountType: AccountType
     agencyId: string
     clientFrom: string
+    status: UserStatus
+    createdAt: Date
+    updatedAt: Date
 }
 
 const userSchema = new mongoose.Schema<UserDocument>(
     {
+        _id: {
+            type: String,
+            default: uuid,
+        },
         email: {
             type: String,
             unique: true,
@@ -25,6 +38,9 @@ const userSchema = new mongoose.Schema<UserDocument>(
             type: String,
         },
         clientFrom: {
+            type: String,
+        },
+        status: {
             type: String,
         },
     },

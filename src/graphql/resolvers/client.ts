@@ -25,6 +25,7 @@ export const inviteClient: gql.MutationResolvers["inviteClient"] = async (
         password: "temp_password",
         accountType: gql.AccountType.Client,
         clientFrom: context.user.agencyId,
+        status: gql.UserStatus.Invited,
     })
 
     return {
@@ -37,38 +38,29 @@ export const inviteClient: gql.MutationResolvers["inviteClient"] = async (
     }
 }
 
-export const getClientsFromUser: gql.UserResolvers["clients"] = async (
-    parent,
-    _args,
-    context,
-    _info
-): Promise<Array<gql.User> | null> => {
-    if (!parent.agencyId) {
-        return null
-    }
-
-    const clients = await context.datasources.user.getClientsFrom(
-        parent.agencyId
-    )
-
-    return clients.map((cl) => ({
-        ...cl,
-        createdAt: cl.createdAt.toISOString(),
-        updatedAt: cl.updatedAt.toISOString(),
-    }))
-}
-
 export const getClientsFromAgency: gql.AgencyResolvers["clients"] = async (
     parent,
-    _args,
+    args,
     context,
     _info
-): Promise<Array<gql.User> | null> => {
-    const clients = await context.datasources.user.getClientsFrom(parent._id)
+): Promise<gql.UserConnection> => {
+    const [clients, count] = await context.datasources.user.search({
+        nameOrEmail: args.nameOrEmail!!,
+        agencyId: parent._id,
+        take: args.take!!,
+        skip: args.skip!!,
+        orderBy: args.orderBy!!,
+    })
 
-    return clients.map((cl) => ({
-        ...cl,
-        createdAt: cl.createdAt.toISOString(),
-        updatedAt: cl.updatedAt.toISOString(),
-    }))
+    const skip = args.skip || 0
+
+    return {
+        nodes: clients.map((c) => ({
+            ...c,
+            createdAt: c.createdAt.toISOString(),
+            updatedAt: c.updatedAt.toISOString(),
+        })),
+        hasMore: args.take ? args.take + skip < count : false,
+        totalCount: count,
+    }
 }

@@ -6,7 +6,12 @@ import { v4 as uuid } from "uuid"
 
 const PASSWORD_DEFAULT_SALT_ROUNDS = 12
 
-export const getCurrentUser: gql.QueryResolvers["me"] = async (_parent, _args, context, _info): Promise<gql.User | null> => {
+export const getCurrentUser: gql.QueryResolvers["me"] = async (
+    _parent,
+    _args,
+    context,
+    _info
+): Promise<gql.User | null> => {
     if (!context.user) {
         return null
     }
@@ -16,6 +21,7 @@ export const getCurrentUser: gql.QueryResolvers["me"] = async (_parent, _args, c
     if (!user) {
         return null
     }
+    user.status
 
     return {
         ...user,
@@ -112,6 +118,7 @@ export const registerUserForAgency: gql.MutationResolvers["registerAgency"] =
             email: args.input.email,
             accountType: gql.AccountType.Agency,
             password: hashedPassword,
+            status: gql.UserStatus.Active,
             agencyId: agency._id,
         })
 
@@ -131,6 +138,7 @@ export const registerUserForAgency: gql.MutationResolvers["registerAgency"] =
                 await context.datasources.user.create({
                     name: client.name,
                     email: client.email,
+                    status: gql.UserStatus.Invited,
                 })
             }
         }

@@ -13,6 +13,7 @@ import * as agencies from "./agency"
 const query: QueryResolvers = {
     user: users.getUserById,
     me: users.getCurrentUser,
+    agency: agencies.getAgencyFromOwner,
 }
 
 const mutation: MutationResolvers = {
@@ -22,7 +23,6 @@ const mutation: MutationResolvers = {
 }
 
 const user: UserResolvers = {
-    clients: clients.getClientsFromUser,
     agency: agencies.getAgencyFromUser,
 }
 

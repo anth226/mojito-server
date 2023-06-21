@@ -7,20 +7,58 @@ type User {
     email: String!
     name: String!
     accountType: AccountType!
-    agencyId: String
+    status: UserStatus!
 
+    agencyId: String
     agency: Agency
-    clients: [User!]
 
     createdAt: String!
     updatedAt: String!
+}
+
+enum UserStatus {
+    INVITED
+    ACTIVE
+}
+
+input UserOrder {
+    field: UserOrderField!
+    direction: UserOrderDirection!
+}
+
+enum UserOrderField {
+    CREATED_AT
+    NAME
+}
+
+enum UserOrderDirection {
+    ASC
+    DESC
+}
+
+type UserConnection {
+    nodes: [User]
+    totalCount: Int!
+    hasMore: Boolean!
 }
 
 type Agency {
     _id: String!
     name: String
 
-    clients: [User!]
+    clients(
+        nameOrEmail: String
+        take: Int
+        skip: Int
+        orderBy: UserOrder
+    ): UserConnection
+
+    members(
+        nameOrEmail: String
+        take: Int
+        skip: Int
+        orderBy: UserOrder
+    ): UserConnection
 
     createdAt: String!
     updatedAt: String!
@@ -134,9 +172,10 @@ type LoginPayload {
 
 type Query {
     user(id: String!): User
-    userByEmail(email: String): User
-
+    userByEmail(email: String!): User
     me: User
+
+    agency(owner: String!): Agency
 
     connection(id: String!): Connection
 
@@ -156,5 +195,5 @@ type Mutation {
 
     createConnection(input: CreateConnectionInput!): CreateConnectionPayload
 
-    createAlert(input: CreateAlertInput): CreateAlertPayload
+    createAlert(input: CreateAlertInput!): CreateAlertPayload
 }

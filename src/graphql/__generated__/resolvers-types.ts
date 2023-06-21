@@ -26,10 +26,27 @@ export enum AccountType {
 export type Agency = {
   __typename?: 'Agency';
   _id: Scalars['String']['output'];
-  clients?: Maybe<Array<User>>;
+  clients?: Maybe<UserConnection>;
   createdAt: Scalars['String']['output'];
+  members?: Maybe<UserConnection>;
   name?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['String']['output'];
+};
+
+
+export type AgencyClientsArgs = {
+  nameOrEmail?: InputMaybe<Scalars['String']['input']>;
+  orderBy?: InputMaybe<UserOrder>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  take?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type AgencyMembersArgs = {
+  nameOrEmail?: InputMaybe<Scalars['String']['input']>;
+  orderBy?: InputMaybe<UserOrder>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  take?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type Alert = {
@@ -122,7 +139,7 @@ export type Mutation = {
 
 
 export type MutationCreateAlertArgs = {
-  input?: InputMaybe<CreateAlertInput>;
+  input: CreateAlertInput;
 };
 
 
@@ -147,11 +164,17 @@ export type MutationRegisterAgencyArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  agency?: Maybe<Agency>;
   alert?: Maybe<Alert>;
   connection?: Maybe<Connection>;
   me?: Maybe<User>;
   user?: Maybe<User>;
   userByEmail?: Maybe<User>;
+};
+
+
+export type QueryAgencyArgs = {
+  owner: Scalars['String']['input'];
 };
 
 
@@ -171,7 +194,7 @@ export type QueryUserArgs = {
 
 
 export type QueryUserByEmailArgs = {
-  email?: InputMaybe<Scalars['String']['input']>;
+  email: Scalars['String']['input'];
 };
 
 export type RegisterAgencyInput = {
@@ -195,12 +218,39 @@ export type User = {
   accountType: AccountType;
   agency?: Maybe<Agency>;
   agencyId?: Maybe<Scalars['String']['output']>;
-  clients?: Maybe<Array<User>>;
   createdAt: Scalars['String']['output'];
   email: Scalars['String']['output'];
   name: Scalars['String']['output'];
+  status: UserStatus;
   updatedAt: Scalars['String']['output'];
 };
+
+export type UserConnection = {
+  __typename?: 'UserConnection';
+  hasMore: Scalars['Boolean']['output'];
+  nodes?: Maybe<Array<Maybe<User>>>;
+  totalCount: Scalars['Int']['output'];
+};
+
+export type UserOrder = {
+  direction: UserOrderDirection;
+  field: UserOrderField;
+};
+
+export enum UserOrderDirection {
+  Asc = 'ASC',
+  Desc = 'DESC'
+}
+
+export enum UserOrderField {
+  CreatedAt = 'CREATED_AT',
+  Name = 'NAME'
+}
+
+export enum UserStatus {
+  Active = 'ACTIVE',
+  Invited = 'INVITED'
+}
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
 export type ResolversObject<TObject> = WithIndex<TObject>;
@@ -285,6 +335,7 @@ export type ResolversTypes = ResolversObject<{
   CreateAlertPayload: ResolverTypeWrapper<CreateAlertPayload>;
   CreateConnectionInput: CreateConnectionInput;
   CreateConnectionPayload: ResolverTypeWrapper<CreateConnectionPayload>;
+  Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   InviteClientInput: InviteClientInput;
   InviteClientPayload: ResolverTypeWrapper<InviteClientPayload>;
   LoginInput: LoginInput;
@@ -295,6 +346,11 @@ export type ResolversTypes = ResolversObject<{
   RegisterAgencyPayload: ResolverTypeWrapper<RegisterAgencyPayload>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   User: ResolverTypeWrapper<User>;
+  UserConnection: ResolverTypeWrapper<UserConnection>;
+  UserOrder: UserOrder;
+  UserOrderDirection: UserOrderDirection;
+  UserOrderField: UserOrderField;
+  UserStatus: UserStatus;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -307,6 +363,7 @@ export type ResolversParentTypes = ResolversObject<{
   CreateAlertPayload: CreateAlertPayload;
   CreateConnectionInput: CreateConnectionInput;
   CreateConnectionPayload: CreateConnectionPayload;
+  Int: Scalars['Int']['output'];
   InviteClientInput: InviteClientInput;
   InviteClientPayload: InviteClientPayload;
   LoginInput: LoginInput;
@@ -317,12 +374,15 @@ export type ResolversParentTypes = ResolversObject<{
   RegisterAgencyPayload: RegisterAgencyPayload;
   String: Scalars['String']['output'];
   User: User;
+  UserConnection: UserConnection;
+  UserOrder: UserOrder;
 }>;
 
 export type AgencyResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['Agency'] = ResolversParentTypes['Agency']> = ResolversObject<{
   _id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  clients?: Resolver<Maybe<Array<ResolversTypes['User']>>, ParentType, ContextType>;
+  clients?: Resolver<Maybe<ResolversTypes['UserConnection']>, ParentType, ContextType, Partial<AgencyClientsArgs>>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  members?: Resolver<Maybe<ResolversTypes['UserConnection']>, ParentType, ContextType, Partial<AgencyMembersArgs>>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -374,7 +434,7 @@ export type LoginPayloadResolvers<ContextType = RequestContext, ParentType exten
 }>;
 
 export type MutationResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
-  createAlert?: Resolver<Maybe<ResolversTypes['CreateAlertPayload']>, ParentType, ContextType, Partial<MutationCreateAlertArgs>>;
+  createAlert?: Resolver<Maybe<ResolversTypes['CreateAlertPayload']>, ParentType, ContextType, RequireFields<MutationCreateAlertArgs, 'input'>>;
   createConnection?: Resolver<Maybe<ResolversTypes['CreateConnectionPayload']>, ParentType, ContextType, RequireFields<MutationCreateConnectionArgs, 'input'>>;
   inviteClient?: Resolver<Maybe<ResolversTypes['InviteClientPayload']>, ParentType, ContextType, RequireFields<MutationInviteClientArgs, 'input'>>;
   login?: Resolver<Maybe<ResolversTypes['LoginPayload']>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'input'>>;
@@ -382,11 +442,12 @@ export type MutationResolvers<ContextType = RequestContext, ParentType extends R
 }>;
 
 export type QueryResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  agency?: Resolver<Maybe<ResolversTypes['Agency']>, ParentType, ContextType, RequireFields<QueryAgencyArgs, 'owner'>>;
   alert?: Resolver<Maybe<ResolversTypes['Alert']>, ParentType, ContextType, RequireFields<QueryAlertArgs, 'id'>>;
   connection?: Resolver<Maybe<ResolversTypes['Connection']>, ParentType, ContextType, RequireFields<QueryConnectionArgs, 'id'>>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
-  userByEmail?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<QueryUserByEmailArgs>>;
+  userByEmail?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserByEmailArgs, 'email'>>;
 }>;
 
 export type RegisterAgencyPayloadResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['RegisterAgencyPayload'] = ResolversParentTypes['RegisterAgencyPayload']> = ResolversObject<{
@@ -400,11 +461,18 @@ export type UserResolvers<ContextType = RequestContext, ParentType extends Resol
   accountType?: Resolver<ResolversTypes['AccountType'], ParentType, ContextType>;
   agency?: Resolver<Maybe<ResolversTypes['Agency']>, ParentType, ContextType>;
   agencyId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  clients?: Resolver<Maybe<Array<ResolversTypes['User']>>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['UserStatus'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type UserConnectionResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['UserConnection'] = ResolversParentTypes['UserConnection']> = ResolversObject<{
+  hasMore?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  nodes?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -420,5 +488,6 @@ export type Resolvers<ContextType = RequestContext> = ResolversObject<{
   Query?: QueryResolvers<ContextType>;
   RegisterAgencyPayload?: RegisterAgencyPayloadResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
+  UserConnection?: UserConnectionResolvers<ContextType>;
 }>;
 
