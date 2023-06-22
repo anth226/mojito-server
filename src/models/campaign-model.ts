@@ -1,9 +1,7 @@
 import mongoose from "mongoose"
-import { Schema, model, Model } from "mongoose"
-import bcrypt from "bcrypt"
+import { Schema, model } from "mongoose"
 
 import { ICampaign_d, campaignModel } from "../types/campaign"
-import { getNumericNanoId } from "../utils/Commonfunctions"
 
 const schema = new Schema<ICampaign_d, campaignModel>(
     {
