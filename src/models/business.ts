@@ -1,12 +1,14 @@
 import mongoose from "mongoose"
 import { v4 as uuid } from "uuid"
 
-interface AgencyDocument extends mongoose.Document {
+interface BusinessDocument extends mongoose.Document {
     _id: string
     name: string
+    createdAt: Date
+    updatedAt: Date
 }
 
-const userSchema = new mongoose.Schema<AgencyDocument>(
+const userSchema = new mongoose.Schema<BusinessDocument>(
     {
         _id: {
             type: String,
@@ -21,4 +23,7 @@ const userSchema = new mongoose.Schema<AgencyDocument>(
     }
 )
 
-export const AgencyModel = mongoose.model<AgencyDocument>("Agency", userSchema)
+export const BusinessModel = mongoose.model<BusinessDocument>(
+    "Business",
+    userSchema
+)

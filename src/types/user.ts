@@ -19,6 +19,7 @@ export type User = {
     password: string
     accountType: AccountType
     agencyId: string
+    businessId: string
     clientFrom: string
     status: UserStatus
     createdAt: Date
@@ -27,7 +28,9 @@ export type User = {
 
 export type UserQuery = {
     nameOrEmail?: string
+    clientFrom?: string
     agencyId?: string
+    businessId?: string
     take?: number
     skip?: number
     orderBy?: UserOrder

@@ -1,5 +1,4 @@
 export * from "./user"
 export * from "./agency"
-export * from "./request"
 export * from "./connection"
 export * from "./business"

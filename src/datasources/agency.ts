@@ -1,4 +1,4 @@
-import { AgencyModel } from "../models/agency-model"
+import { AgencyModel } from "../models"
 import * as types from "../types"
 
 export class AgencyDatasource implements types.AgencyDatasource {

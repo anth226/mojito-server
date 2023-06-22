@@ -12,6 +12,7 @@ export interface UserDocument extends mongoose.Document {
     name: string
     accountType: AccountType
     agencyId: string
+    businessId: string
     clientFrom: string
     status: UserStatus
     createdAt: Date
@@ -31,10 +32,16 @@ const userSchema = new mongoose.Schema<UserDocument>(
         name: {
             type: String,
         },
+        accountType: {
+            type: String,
+        },
         password: {
             type: String,
         },
         agencyId: {
+            type: String,
+        },
+        businessId: {
             type: String,
         },
         clientFrom: {

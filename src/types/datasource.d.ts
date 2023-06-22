@@ -5,11 +5,14 @@ import { IRevenue, IRevenueDataSource } from "./revenue"
 import { ISpending } from "./spending"
 import { UserDatasource } from "./user"
 import { AgencyDatasource } from "./agency"
+import { ConnectionDatasource } from "./connection"
+import { BusinessDatasource } from "../datasources"
 
 export interface Datasources {
     user: UserDatasource
     agency: AgencyDatasource
-    // client: IClientDataSource
+    connection: ConnectionDatasource
+    business: BusinessDatasource
     // alert: IAlertDataSource
     // connections: IConnectionDataSource
     // campaigns: ICampaignDataSource

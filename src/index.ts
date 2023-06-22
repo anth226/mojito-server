@@ -39,6 +39,8 @@ async function startServer(): Promise<void> {
                     datasources: {
                         user: new datasources.UserDatasource(),
                         agency: new datasources.AgencyDatasource(),
+                        connection: new datasources.ConnectionDatasource(),
+                        business: new datasources.BusinessDatasource(),
                     },
                 }
 

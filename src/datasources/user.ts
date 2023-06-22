@@ -1,5 +1,5 @@
 import { FilterQuery, QueryOptions } from "mongoose"
-import { UserModel, UserDocument } from "../models/user-model"
+import { UserModel, UserDocument } from "../models"
 import * as types from "../types/user"
 import { UserOrderField } from "../graphql/__generated__/resolvers-types"
 
@@ -37,7 +37,15 @@ export class UserDatasource implements types.UserDatasource {
         }
 
         if (query.agencyId) {
-            filter.clientFrom = query.agencyId
+            filter.agencyId = query.agencyId
+        }
+
+        if (query.businessId) {
+            filter.businessId = query.businessId
+        }
+
+        if (query.clientFrom) {
+            filter.clientFrom = query.clientFrom
         }
 
         if (query.take || query.skip) {
