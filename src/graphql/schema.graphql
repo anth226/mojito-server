@@ -1,0 +1,246 @@
+type Query {
+    user(id: String!): User
+
+    viewer: User
+
+    connection(id: String!): Connection
+    alert(id: String!): Alert
+}
+
+type Mutation {
+    login(input: LoginInput!): LoginPayload
+
+    registerAgency(input: RegisterAgencyInput!): RegisterAgencyPayload
+    registerBusiness(input: RegisterBusinessInput!): RegisterBusinessPayload
+
+    inviteClient(input: InviteClientInput!): InviteClientPayload
+    inviteMember(input: InviteMemberInput!): InviteMemberPayload
+
+    createConnection(input: CreateConnectionInput!): CreateConnectionPayload
+    createAlert(input: CreateAlertInput!): CreateAlertPayload
+}
+
+type User {
+    _id: String!
+    email: String!
+    name: String!
+    accountType: AccountType!
+    status: UserStatus!
+
+    agency: Agency
+    business: Business
+
+    createdAt: String!
+    updatedAt: String!
+}
+
+enum AccountType {
+    AGENCY
+    BUSINESS
+    CLIENT
+}
+
+enum UserStatus {
+    INVITED
+    ACTIVE
+}
+
+enum OrderDirection {
+    ASC
+    DESC
+}
+
+enum UserOrderField {
+    CREATED_AT
+    NAME
+}
+
+input UserOrder {
+    direction: OrderDirection!
+    field: UserOrderField!
+}
+
+type UserConnection {
+    nodes: [User]
+    totalCount: Int!
+    hasMore: Boolean!
+}
+
+type Business {
+    _id: String!
+    name: String
+
+    members(
+        nameOrEmail: String
+        take: Int
+        skip: Int
+        orderBy: UserOrder
+    ): UserConnection
+
+    connections(
+        take: Int
+        skip: Int
+        orderBy: ConnectionOrder
+    ): ConnectionConnection
+
+    createdAt: String!
+    updatedAt: String!
+}
+
+type Agency {
+    _id: String!
+    name: String
+
+    clients(
+        nameOrEmail: String
+        take: Int
+        skip: Int
+        orderBy: UserOrder
+    ): UserConnection
+
+    members(
+        nameOrEmail: String
+        take: Int
+        skip: Int
+        orderBy: UserOrder
+    ): UserConnection
+
+    connections(
+        take: Int
+        skip: Int
+        orderBy: ConnectionOrder
+    ): ConnectionConnection
+
+    createdAt: String!
+    updatedAt: String!
+}
+
+type Connection {
+    _id: String!
+    source: ConnectionSource!
+    client: User
+    createdAt: String!
+    updatedAt: String!
+}
+
+enum ConnectionSource {
+    FACEBOOK
+    TIKTOK
+    META
+    GOOGLE
+}
+
+enum ConnectionOrderField {
+    CREATED_AT
+}
+
+input ConnectionOrder {
+    direction: OrderDirection!
+    field: ConnectionOrderField!
+}
+
+type ConnectionConnection {
+    nodes: [Connection]
+    totalCount: Int!
+    hasMore: Boolean!
+}
+
+type Alert {
+    _id: String!
+    name: String!
+    operation: AlertOperation!
+    parameter: String!
+    value: String!
+    connection: Connection!
+    createdAt: String!
+    updatedAt: String!
+}
+
+enum AlertOperation {
+    LESS_THAN
+    GREATER_THAN
+    EQUAL
+}
+
+enum BillingPlan {
+    STARTER
+    PROFESSIONAL
+    SCALE
+}
+
+input CreateConnectionInput {
+    source: ConnectionSource!
+    secretKey: String!
+    clientId: String
+}
+
+type CreateConnectionPayload {
+    clientMutationId: String
+    connection: Connection
+}
+
+input CreateAlertInput {
+    name: String!
+    connectionId: String!
+    operation: AlertOperation!
+    parameter: String!
+    value: String!
+}
+
+type CreateAlertPayload {
+    clientMutationId: String
+    alert: Alert
+}
+
+input InviteClientInput {
+    name: String!
+    email: String!
+}
+
+type InviteClientPayload {
+    clientMutationId: String
+    client: User
+}
+
+input InviteMemberInput {
+    name: String!
+    email: String!
+}
+
+type InviteMemberPayload {
+    clientMutationId: String
+    member: User
+}
+
+input RegisterAgencyInput {
+    agencyName: String!
+    email: String!
+    password: String!
+}
+
+type RegisterAgencyPayload {
+    clientMutationId: String
+    user: User
+}
+
+input RegisterBusinessInput {
+    businessName: String!
+    email: String!
+    password: String!
+}
+
+type RegisterBusinessPayload {
+    clientMutationId: String
+    user: User
+}
+
+input LoginInput {
+    email: String!
+    password: String!
+}
+
+type LoginPayload {
+    success: Boolean!
+    reason: String
+    accessToken: String
+}

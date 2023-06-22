@@ -1,8 +1,3 @@
-// id (unique identifier)
-// name (string)
-// type (string)
-// cost_per_impression (float)
-// campaign_id (foreign key: campaign.id)
 import { IAdvertisementDataSource } from "./datasource"
 export interface IAdvertisement {
     name: string
@@ -10,7 +5,7 @@ export interface IAdvertisement {
     costPerImpression: number
     campaign: string
 }
-// type _d for Mongo document
+
 export interface IAdvertisement_d extends Document {
     name: string
     type: string
@@ -19,6 +14,7 @@ export interface IAdvertisement_d extends Document {
 }
 
 export type AdvertisementModel = Model<IAdvertisement_d, object>
+
 export interface IAdvertisementDataSource {
     getAll(): Promise<IAdvertisement[]>
     getById(id: string): Promise<IAdvertisement | null>

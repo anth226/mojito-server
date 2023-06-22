@@ -1,49 +1,57 @@
-import advertisementMutation from "./advertisement/mutation"
-import advertisementQuery from "./advertisement/queries"
-import agencyMutation from "./agency/mutation"
-import agencyQuery from "./agency/queries"
-import alertMutation from "./alert/mutation"
-import alertQuery from "./alert/queries"
-import clientMutation from "./client/mutation"
-import clientQuery from "./client/queries"
-import campaignMutation from "./campaign/mutation"
-import campaignQuery from "./campaign/queries"
-import connectionMutation from "./connection/mutation"
-import connectionQuery from "./connection/queries"
-import userMutation from "./user/mutation"
-import userQuery from "./user/queries"
-import SpendingQuery from "./spending/queries"
-import spendingMutation from "./spending/mutation"
-import impressionMutation from "./impression/mutation"
-import ImpressionQuery from "./impression/queries"
-import revenueMutation from "./revenue/mutation"
-import revenueQuery from "./revenue/queries"
+import {
+    AgencyResolvers,
+    BusinessResolvers,
+    ConnectionResolvers,
+    MutationResolvers,
+    QueryResolvers,
+    Resolvers,
+    UserResolvers,
+} from "../__generated__/resolvers-types"
 
-const resolvers = {
-    Mutation: {
-        ...userMutation,
-        ...agencyMutation,
-        ...clientMutation,
-        ...alertMutation,
-        ...connectionMutation,
-        ...campaignMutation,
-        ...advertisementMutation,
-        ...spendingMutation,
-        ...impressionMutation,
-        ...revenueMutation,
-    },
-    Query: {
-        ...userQuery,
-        ...agencyQuery,
-        ...agencyQuery,
-        ...alertQuery,
-        ...clientQuery,
-        ...connectionQuery,
-        ...campaignQuery,
-        ...advertisementQuery,
-        ...SpendingQuery,
-        ...ImpressionQuery,
-        ...revenueQuery,
-    },
+import * as users from "./user"
+import * as agencies from "./agency"
+import * as businesses from "./business"
+import * as connections from "./connection"
+
+const query: QueryResolvers = {
+    user: users.getUserById,
+    viewer: users.getCurrentUser,
 }
-export default resolvers
+
+const mutation: MutationResolvers = {
+    registerAgency: users.registerUserForAgency,
+    registerBusiness: users.registerUserForBusiness,
+    login: users.loginUser,
+    inviteClient: users.inviteClient,
+    inviteMember: users.inviteMember,
+    createConnection: connections.createConnection,
+}
+
+const user: UserResolvers = {
+    agency: agencies.getAgencyFromUser,
+    business: businesses.getBusinessFromUser,
+}
+
+const agency: AgencyResolvers = {
+    clients: users.getClientsFromAgency,
+    members: users.getMembersFromAgency,
+    connections: connections.getConnectionsFromAgency,
+}
+
+const business: BusinessResolvers = {
+    members: users.getMembersFromBusiness,
+    connections: connections.getConnectionsFromBusiness,
+}
+
+const connection: ConnectionResolvers = {
+    client: users.getClientFromConnection,
+}
+
+export const resolvers: Resolvers = {
+    Query: query,
+    Mutation: mutation,
+    User: user,
+    Agency: agency,
+    Business: business,
+    Connection: connection,
+}
