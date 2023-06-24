@@ -2,6 +2,38 @@ import { GraphQLError } from "graphql"
 import * as gql from "../__generated__/resolvers-types"
 import { v4 as uuid } from "uuid"
 
+const GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
+const TIKTOK_AUTH_URL = "https://ads.tiktok.com/marketing_api/auth"
+
+export const getConnectionAuthUrl: gql.QueryResolvers["connectionAuthUrl"] =
+    async (_parent, args, context, _info): Promise<string | null> => {
+        if (!context.user) {
+            throw new GraphQLError("Unauthorized", {
+                extensions: {
+                    http: {
+                        status: 401,
+                    },
+                },
+            })
+        }
+
+        let authUrl: string
+        if (args.source == gql.ConnectionSource.Google) {
+            authUrl = GOOGLE_AUTH_URL
+        } else if (args.source == gql.ConnectionSource.Tiktok) {
+            authUrl = TIKTOK_AUTH_URL
+        } else {
+            return null
+        }
+
+        const state = uuid()
+        await context.datasources.user.update(context.user._id, {
+            oauth2State: state,
+        })
+
+        return authUrl
+    }
+
 export const createConnection: gql.MutationResolvers["createConnection"] =
     async (
         _parent,
