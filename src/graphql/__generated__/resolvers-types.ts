@@ -253,6 +253,7 @@ export type Query = {
   __typename?: 'Query';
   alert?: Maybe<Alert>;
   connection?: Maybe<Connection>;
+  connectionAuthUrl?: Maybe<Scalars['String']['output']>;
   user?: Maybe<User>;
   viewer?: Maybe<User>;
 };
@@ -265,6 +266,11 @@ export type QueryAlertArgs = {
 
 export type QueryConnectionArgs = {
   id: Scalars['String']['input'];
+};
+
+
+export type QueryConnectionAuthUrlArgs = {
+  source: ConnectionSource;
 };
 
 
@@ -566,6 +572,7 @@ export type MutationResolvers<ContextType = RequestContext, ParentType extends R
 export type QueryResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   alert?: Resolver<Maybe<ResolversTypes['Alert']>, ParentType, ContextType, RequireFields<QueryAlertArgs, 'id'>>;
   connection?: Resolver<Maybe<ResolversTypes['Connection']>, ParentType, ContextType, RequireFields<QueryConnectionArgs, 'id'>>;
+  connectionAuthUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryConnectionAuthUrlArgs, 'source'>>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
   viewer?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
 }>;

@@ -9,6 +9,14 @@ export class UserDatasource implements types.UserDatasource {
         return user ? user.toObject() : null
     }
 
+    async update(
+        id: string,
+        changes: Partial<types.User>
+    ): Promise<types.User | null> {
+        const user = await UserModel.findByIdAndUpdate(id, changes)
+        return user ? user.toObject() : null
+    }
+
     async getByEmail(email: string): Promise<types.User | null> {
         const user = await UserModel.findOne({ email })
         return user ? user.toObject() : null
