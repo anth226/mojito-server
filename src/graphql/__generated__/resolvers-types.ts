@@ -196,6 +196,7 @@ export type LoginPayload = {
   accessToken?: Maybe<Scalars['String']['output']>;
   reason?: Maybe<Scalars['String']['output']>;
   success: Scalars['Boolean']['output'];
+  user?: Maybe<User>;
 };
 
 export type Mutation = {
@@ -556,6 +557,7 @@ export type LoginPayloadResolvers<ContextType = RequestContext, ParentType exten
   accessToken?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   reason?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

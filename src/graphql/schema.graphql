@@ -245,4 +245,5 @@ type LoginPayload {
     success: Boolean!
     reason: String
     accessToken: String
+    user: User
 }

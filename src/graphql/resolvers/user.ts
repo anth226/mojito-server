@@ -84,6 +84,11 @@ export const loginUser: gql.MutationResolvers["login"] = async (
     return {
         success: true,
         accessToken,
+        user: {
+            ...user,
+            createdAt: user.createdAt.toISOString(),
+            updatedAt: user.updatedAt.toISOString(),
+        },
     }
 }
 
