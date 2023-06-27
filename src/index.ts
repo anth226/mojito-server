@@ -1,24 +1,28 @@
 import dotenv from "dotenv"
-import { ApolloServer, BaseContext } from "@apollo/server"
+import { ApolloServer } from "@apollo/server"
 import { expressMiddleware } from "@apollo/server/express4"
 import { json } from "body-parser"
-import express from "express"
-import { startStandaloneServer } from "@apollo/server/standalone"
+import express, { Request, Response, NextFunction } from "express"
 import { loadFiles } from "graphql-import-files"
 import * as datasources from "./datasources"
 import * as auth from "./auth"
 import * as types from "./types"
 import cors from "cors"
-
 import logger from "./utils/logger"
 import { resolvers } from "./graphql/resolvers"
 import { GraphQLError } from "graphql"
+import * as handlers from "./rest"
+import { Google } from "./core/google"
 
 dotenv.config()
 
-const PORT = parseInt(process.env.PORT || "7000")
-const DATABASE_URL = process.env.DATABASE_URL as string
-const AUTH_PRIVATE_KEY = process.env.AUTH_PRIVATE_KEY as string
+const config = {
+    port: parseInt(process.env.PORT || "7000"),
+    databaseUrl: process.env.DATABASE_URL as string,
+    authPrivateKey: process.env.AUTH_PRIVATE_KEY as string,
+    googleClientId: process.env.GOOGLE_CLIENT_ID as string,
+    googleClientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+}
 
 const restServer = express()
 
@@ -29,7 +33,7 @@ const gqlServer = new ApolloServer<types.RequestContext>({
 
 async function startServers(): Promise<void> {
     try {
-        await datasources.connectIfNecessary(DATABASE_URL)
+        await datasources.connectIfNecessary(config.databaseUrl)
         await gqlServer.start()
 
         restServer.use(
@@ -39,14 +43,20 @@ async function startServers(): Promise<void> {
             expressMiddleware(gqlServer as any, {
                 context: async ({ req }) => {
                     try {
-                        await datasources.connectIfNecessary(DATABASE_URL)
+                        await datasources.connectIfNecessary(config.databaseUrl)
                     } catch (error) {
                         logger.error(`Database connection failed: ${error}`)
                         throw new Error("An unexpected error occurred")
                     }
 
                     const context: types.RequestContext = {
-                        authPrivateKey: AUTH_PRIVATE_KEY,
+                        core: {
+                            google: new Google(
+                                config.googleClientId,
+                                config.googleClientSecret
+                            ),
+                        },
+                        authPrivateKey: config.authPrivateKey,
                         datasources: {
                             user: new datasources.UserDatasource(),
                             agency: new datasources.AgencyDatasource(),
@@ -92,12 +102,38 @@ async function startServers(): Promise<void> {
             })
         )
 
-        restServer.get("/", (req, res) => {
-            res.send("OK")
-        })
+        restServer.use(
+            "/",
+            async (req: Request, _res: Response, next: NextFunction) => {
+                try {
+                    await datasources.connectIfNecessary(config.databaseUrl)
+                } catch (error) {
+                    logger.error(`Database connection failed: ${error}`)
+                    throw new Error("An unexpected error occurred")
+                }
 
-        restServer.listen(PORT, "0.0.0.0", () => {
-            logger.info(`🚀  Server ready at port ${PORT}`)
+                req.core = {
+                    google: new Google(
+                        config.googleClientId,
+                        config.googleClientSecret
+                    ),
+                }
+                req.datasources = {
+                    user: new datasources.UserDatasource(),
+                    agency: new datasources.AgencyDatasource(),
+                    connection: new datasources.ConnectionDatasource(),
+                    business: new datasources.BusinessDatasource(),
+                }
+
+                next()
+            }
+        )
+
+        restServer.get("/health", handlers.health)
+        restServer.get("/auth/google", handlers.googleCallback)
+
+        restServer.listen(config.port, "0.0.0.0", () => {
+            logger.info(`🚀  Server ready at port ${config.port}`)
         })
     } catch (error) {
         logger.info(error)
