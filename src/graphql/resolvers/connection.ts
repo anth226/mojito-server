@@ -18,8 +18,15 @@ export const getConnectionAuthUrl: gql.QueryResolvers["connectionAuthUrl"] =
         }
 
         let authUrl: string
+        let scopes = new Array<string>()
         if (args.source == gql.ConnectionSource.Google) {
             authUrl = GOOGLE_AUTH_URL
+            scopes.push(
+                "openid",
+                "profile",
+                "email",
+                "https://www.googleapis.com/auth/adwords"
+            )
         } else if (args.source == gql.ConnectionSource.Tiktok) {
             authUrl = TIKTOK_AUTH_URL
         } else {
@@ -31,7 +38,7 @@ export const getConnectionAuthUrl: gql.QueryResolvers["connectionAuthUrl"] =
             oauth2State: state,
         })
 
-        return authUrl
+        return `${authUrl}?scope=${scopes.join(" ")}&state=${state}`
     }
 
 export const createConnection: gql.MutationResolvers["createConnection"] =
