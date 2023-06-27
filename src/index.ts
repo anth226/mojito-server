@@ -8,6 +8,7 @@ import { loadFiles } from "graphql-import-files"
 import * as datasources from "./datasources"
 import * as auth from "./auth"
 import * as types from "./types"
+import cors from "cors"
 
 import logger from "./utils/logger"
 import { resolvers } from "./graphql/resolvers"
@@ -33,6 +34,7 @@ async function startServers(): Promise<void> {
 
         restServer.use(
             "/gql",
+            cors({ origin: "*" }),
             json(),
             expressMiddleware(gqlServer as any, {
                 context: async ({ req }) => {
