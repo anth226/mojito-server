@@ -13,7 +13,6 @@ export interface UserDocument extends mongoose.Document {
     accountType: AccountType
     agencyId: string
     businessId: string
-    clientFrom: string
     status: UserStatus
     oauth2State: string
     createdAt: Date
@@ -43,9 +42,6 @@ const userSchema = new mongoose.Schema<UserDocument>(
             type: String,
         },
         businessId: {
-            type: String,
-        },
-        clientFrom: {
             type: String,
         },
         status: {

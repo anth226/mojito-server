@@ -16,7 +16,6 @@ import * as connections from "./connection"
 const query: QueryResolvers = {
     user: users.getUserById,
     viewer: users.getCurrentUser,
-    connectionAuthUrl: connections.getConnectionAuthUrl
 }
 
 const mutation: MutationResolvers = {

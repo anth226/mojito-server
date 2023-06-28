@@ -1,5 +1,5 @@
-import { Google } from "./google"
+import { GoogleAuth } from "./google"
 
 export type Core = {
-    google: Google
+    google: GoogleAuth
 }

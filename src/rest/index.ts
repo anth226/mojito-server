@@ -5,7 +5,32 @@ export async function health(req: Request, res: Response) {
 }
 
 export async function googleCallback(req: Request, res: Response) {
-    console.log(req.body)
+    const code = req.query["code"] as string
+    const state = req.query["state"] as string
+
+    console.log(code)
+    console.log(state)
+
+    const conn = await req.datasources.connection.getById(state)
+
+    if (!conn) {
+        return res.status(401).send("Invalid state token")
+    }
+
+    const authClient = await req.core.google.exchangeForClient(code)
+    const token = authClient.getToken()
+
+    if (!token) {
+        return res.status(500).send("Something went wrong")
+    }
+
+    await req.datasources.connection.update(conn._id, {
+        accessToken: token.accessToken,
+        refreshToken: token.refreshToken,
+        tokenExpiration: token.expiration,
+    })
+
+    await req.datasources.user.update(conn._id, {})
 
     res.redirect("https://mojito.online")
 }

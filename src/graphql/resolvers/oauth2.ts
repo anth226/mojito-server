@@ -202,7 +202,7 @@ export const inviteClient: gql.MutationResolvers["inviteClient"] = async (
         email: args.input.email,
         password: "temp_password",
         accountType: gql.AccountType.Client,
-        clientFrom: context.user.agencyId,
+        agencyId: context.user.agencyId,
         status: gql.UserStatus.Invited,
     })
 

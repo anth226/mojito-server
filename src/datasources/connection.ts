@@ -18,6 +18,14 @@ export class ConnectionDatasource implements types.ConnectionDatasource {
         return (await ConnectionModel.create(conn)).toObject()
     }
 
+    async update(
+        id: string,
+        changes: Partial<types.Connection>
+    ): Promise<types.Connection | null> {
+        const conn = await ConnectionModel.findByIdAndUpdate(id, changes)
+        return conn ? conn.toObject() : null
+    }
+
     async search(
         query: types.ConnectionQuery
     ): Promise<[types.Connection[], number]> {

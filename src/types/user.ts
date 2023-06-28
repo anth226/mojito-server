@@ -9,6 +9,7 @@ export interface UserDatasource {
     update(id: string, changes: Partial<User>): Promise<User | null>
     getById(id: string): Promise<User | null>
     getByEmail(email: string): Promise<User | null>
+    getByAuthState(state: string): Promise<User | null>
     getClientsFrom(agencyId: string): Promise<Array<User>>
     search(query: UserQuery): Promise<[Array<User>, number]>
 }
@@ -19,11 +20,16 @@ export type User = {
     email: string
     password: string
     accountType: AccountType
+
+    // Entity owner of the user
     agencyId: string
     businessId: string
-    clientFrom: string
-    status: UserStatus
+
+    // Auth state token used for the oauth2 flow
     oauth2State: string
+
+    status: UserStatus
+
     createdAt: Date
     updatedAt: Date
 }

@@ -5,7 +5,9 @@ import { ConnectionSource } from "../graphql/__generated__/resolvers-types"
 export interface ConnectionDocument extends mongoose.Document {
     _id: string
     source: ConnectionSource
-    secretKey: string
+    accessToken: string
+    refreshToken: string
+    tokenExpiration: Date
     agencyId: string
     businessId: string
     clientId: string
@@ -22,8 +24,14 @@ const connectionSchema = new mongoose.Schema<ConnectionDocument>(
         source: {
             type: String,
         },
-        secretKey: {
+        accessToken: {
             type: String,
+        },
+        refreshToken: {
+            type: String,
+        },
+        tokenExpiration: {
+            type: Date,
         },
         agencyId: {
             type: String,
