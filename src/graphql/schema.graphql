@@ -13,8 +13,8 @@ type Mutation {
     registerAgency(input: RegisterAgencyInput!): RegisterAgencyPayload
     registerBusiness(input: RegisterBusinessInput!): RegisterBusinessPayload
 
-    inviteClient(input: InviteClientInput!): InviteClientPayload
-    inviteMember(input: InviteMemberInput!): InviteMemberPayload
+    inviteClients(input: InviteClientsInput!): InviteClientsPayload
+    inviteMembers(input: InviteMembersInput!): InviteMembersPayload
 
     createConnection(input: CreateConnectionInput!): CreateConnectionPayload
     createAlert(input: CreateAlertInput!): CreateAlertPayload
@@ -193,14 +193,22 @@ type CreateAlertPayload {
     alert: Alert
 }
 
+input InviteClientsInput {
+    clients: [InviteClientInput]!
+}
+
 input InviteClientInput {
     name: String!
     email: String!
 }
 
-type InviteClientPayload {
+type InviteClientsPayload {
     clientMutationId: String
-    client: User
+    clients: [User]
+}
+
+input InviteMembersInput {
+    members: [InviteMemberInput]!
 }
 
 input InviteMemberInput {
@@ -208,9 +216,9 @@ input InviteMemberInput {
     email: String!
 }
 
-type InviteMemberPayload {
+type InviteMembersPayload {
     clientMutationId: String
-    member: User
+    members: [User]
 }
 
 input RegisterAgencyInput {
