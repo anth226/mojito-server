@@ -170,10 +170,14 @@ export type InviteClientInput = {
   name: Scalars['String']['input'];
 };
 
-export type InviteClientPayload = {
-  __typename?: 'InviteClientPayload';
-  client?: Maybe<User>;
+export type InviteClientsInput = {
+  clients: Array<InputMaybe<InviteClientInput>>;
+};
+
+export type InviteClientsPayload = {
+  __typename?: 'InviteClientsPayload';
   clientMutationId?: Maybe<Scalars['String']['output']>;
+  clients?: Maybe<Array<Maybe<User>>>;
 };
 
 export type InviteMemberInput = {
@@ -181,10 +185,14 @@ export type InviteMemberInput = {
   name: Scalars['String']['input'];
 };
 
-export type InviteMemberPayload = {
-  __typename?: 'InviteMemberPayload';
+export type InviteMembersInput = {
+  members: Array<InputMaybe<InviteMemberInput>>;
+};
+
+export type InviteMembersPayload = {
+  __typename?: 'InviteMembersPayload';
   clientMutationId?: Maybe<Scalars['String']['output']>;
-  member?: Maybe<User>;
+  members?: Maybe<Array<Maybe<User>>>;
 };
 
 export type LoginInput = {
@@ -204,8 +212,8 @@ export type Mutation = {
   __typename?: 'Mutation';
   createAlert?: Maybe<CreateAlertPayload>;
   createConnection?: Maybe<CreateConnectionPayload>;
-  inviteClient?: Maybe<InviteClientPayload>;
-  inviteMember?: Maybe<InviteMemberPayload>;
+  inviteClients?: Maybe<InviteClientsPayload>;
+  inviteMembers?: Maybe<InviteMembersPayload>;
   login?: Maybe<LoginPayload>;
   registerAgency?: Maybe<RegisterAgencyPayload>;
   registerBusiness?: Maybe<RegisterBusinessPayload>;
@@ -222,13 +230,13 @@ export type MutationCreateConnectionArgs = {
 };
 
 
-export type MutationInviteClientArgs = {
-  input: InviteClientInput;
+export type MutationInviteClientsArgs = {
+  input: InviteClientsInput;
 };
 
 
-export type MutationInviteMemberArgs = {
-  input: InviteMemberInput;
+export type MutationInviteMembersArgs = {
+  input: InviteMembersInput;
 };
 
 
@@ -423,9 +431,11 @@ export type ResolversTypes = ResolversObject<{
   CreateConnectionPayload: ResolverTypeWrapper<CreateConnectionPayload>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   InviteClientInput: InviteClientInput;
-  InviteClientPayload: ResolverTypeWrapper<InviteClientPayload>;
+  InviteClientsInput: InviteClientsInput;
+  InviteClientsPayload: ResolverTypeWrapper<InviteClientsPayload>;
   InviteMemberInput: InviteMemberInput;
-  InviteMemberPayload: ResolverTypeWrapper<InviteMemberPayload>;
+  InviteMembersInput: InviteMembersInput;
+  InviteMembersPayload: ResolverTypeWrapper<InviteMembersPayload>;
   LoginInput: LoginInput;
   LoginPayload: ResolverTypeWrapper<LoginPayload>;
   Mutation: ResolverTypeWrapper<{}>;
@@ -458,9 +468,11 @@ export type ResolversParentTypes = ResolversObject<{
   CreateConnectionPayload: CreateConnectionPayload;
   Int: Scalars['Int']['output'];
   InviteClientInput: InviteClientInput;
-  InviteClientPayload: InviteClientPayload;
+  InviteClientsInput: InviteClientsInput;
+  InviteClientsPayload: InviteClientsPayload;
   InviteMemberInput: InviteMemberInput;
-  InviteMemberPayload: InviteMemberPayload;
+  InviteMembersInput: InviteMembersInput;
+  InviteMembersPayload: InviteMembersPayload;
   LoginInput: LoginInput;
   LoginPayload: LoginPayload;
   Mutation: {};
@@ -537,15 +549,15 @@ export type CreateConnectionPayloadResolvers<ContextType = RequestContext, Paren
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type InviteClientPayloadResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['InviteClientPayload'] = ResolversParentTypes['InviteClientPayload']> = ResolversObject<{
-  client?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+export type InviteClientsPayloadResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['InviteClientsPayload'] = ResolversParentTypes['InviteClientsPayload']> = ResolversObject<{
   clientMutationId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  clients?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type InviteMemberPayloadResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['InviteMemberPayload'] = ResolversParentTypes['InviteMemberPayload']> = ResolversObject<{
+export type InviteMembersPayloadResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['InviteMembersPayload'] = ResolversParentTypes['InviteMembersPayload']> = ResolversObject<{
   clientMutationId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  member?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  members?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -560,8 +572,8 @@ export type LoginPayloadResolvers<ContextType = RequestContext, ParentType exten
 export type MutationResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   createAlert?: Resolver<Maybe<ResolversTypes['CreateAlertPayload']>, ParentType, ContextType, RequireFields<MutationCreateAlertArgs, 'input'>>;
   createConnection?: Resolver<Maybe<ResolversTypes['CreateConnectionPayload']>, ParentType, ContextType, RequireFields<MutationCreateConnectionArgs, 'input'>>;
-  inviteClient?: Resolver<Maybe<ResolversTypes['InviteClientPayload']>, ParentType, ContextType, RequireFields<MutationInviteClientArgs, 'input'>>;
-  inviteMember?: Resolver<Maybe<ResolversTypes['InviteMemberPayload']>, ParentType, ContextType, RequireFields<MutationInviteMemberArgs, 'input'>>;
+  inviteClients?: Resolver<Maybe<ResolversTypes['InviteClientsPayload']>, ParentType, ContextType, RequireFields<MutationInviteClientsArgs, 'input'>>;
+  inviteMembers?: Resolver<Maybe<ResolversTypes['InviteMembersPayload']>, ParentType, ContextType, RequireFields<MutationInviteMembersArgs, 'input'>>;
   login?: Resolver<Maybe<ResolversTypes['LoginPayload']>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'input'>>;
   registerAgency?: Resolver<Maybe<ResolversTypes['RegisterAgencyPayload']>, ParentType, ContextType, RequireFields<MutationRegisterAgencyArgs, 'input'>>;
   registerBusiness?: Resolver<Maybe<ResolversTypes['RegisterBusinessPayload']>, ParentType, ContextType, RequireFields<MutationRegisterBusinessArgs, 'input'>>;
@@ -614,8 +626,8 @@ export type Resolvers<ContextType = RequestContext> = ResolversObject<{
   ConnectionConnection?: ConnectionConnectionResolvers<ContextType>;
   CreateAlertPayload?: CreateAlertPayloadResolvers<ContextType>;
   CreateConnectionPayload?: CreateConnectionPayloadResolvers<ContextType>;
-  InviteClientPayload?: InviteClientPayloadResolvers<ContextType>;
-  InviteMemberPayload?: InviteMemberPayloadResolvers<ContextType>;
+  InviteClientsPayload?: InviteClientsPayloadResolvers<ContextType>;
+  InviteMembersPayload?: InviteMembersPayloadResolvers<ContextType>;
   LoginPayload?: LoginPayloadResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;

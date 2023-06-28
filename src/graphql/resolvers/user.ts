@@ -178,12 +178,12 @@ export const registerUserForBusiness: gql.MutationResolvers["registerBusiness"] 
         }
     }
 
-export const inviteClient: gql.MutationResolvers["inviteClient"] = async (
+export const inviteClients: gql.MutationResolvers["inviteClients"] = async (
     _parent,
     args,
     context,
     _info
-): Promise<gql.InviteClientPayload | null> => {
+): Promise<gql.InviteClientsPayload | null> => {
     if (!context.user || context.user.accountType != gql.AccountType.Agency) {
         throw new GraphQLError("Unauthorized", {
             extensions: {
@@ -194,39 +194,47 @@ export const inviteClient: gql.MutationResolvers["inviteClient"] = async (
         })
     }
 
-    const clientWithEmail = await context.datasources.user.getByEmail(
-        args.input.email
-    )
+    const clients = new Array<gql.User>()
 
-    if (clientWithEmail) {
-        throw new Error("Email already used")
-    }
+    for (const input of args.input.clients) {
+        if (!input) continue
 
-    const client = await context.datasources.user.create({
-        name: args.input.name,
-        email: args.input.email,
-        password: "temp_password",
-        accountType: gql.AccountType.Client,
-        agencyId: context.user.agencyId,
-        status: gql.UserStatus.Invited,
-    })
+        const clientWithEmail = await context.datasources.user.getByEmail(
+            input.email
+        )
 
-    return {
-        clientMutationId: uuid(),
-        client: {
+        if (clientWithEmail) {
+            throw new Error("Email already used")
+        }
+
+        const client = await context.datasources.user.create({
+            name: input.name,
+            email: input.email,
+            password: "temp_password",
+            accountType: gql.AccountType.Client,
+            agencyId: context.user.agencyId,
+            status: gql.UserStatus.Invited,
+        })
+
+        clients.push({
             ...client,
             createdAt: client.createdAt.toISOString(),
             updatedAt: client.updatedAt.toISOString(),
-        },
+        })
+    }
+
+    return {
+        clientMutationId: uuid(),
+        clients,
     }
 }
 
-export const inviteMember: gql.MutationResolvers["inviteMember"] = async (
+export const inviteMembers: gql.MutationResolvers["inviteMembers"] = async (
     _parent,
     args,
     context,
     _info
-): Promise<gql.InviteMemberPayload | null> => {
+): Promise<gql.InviteMembersPayload | null> => {
     if (!context.user) {
         throw new GraphQLError("Unauthorized", {
             extensions: {
@@ -237,31 +245,38 @@ export const inviteMember: gql.MutationResolvers["inviteMember"] = async (
         })
     }
 
-    const memberWithEmail = await context.datasources.user.getByEmail(
-        args.input.email
-    )
+    const members = new Array<gql.User>()
+    for (const input of args.input.members) {
+        if (!input) continue
 
-    if (memberWithEmail) {
-        throw new Error("Email already used")
-    }
+        const memberWithEmail = await context.datasources.user.getByEmail(
+            input.email
+        )
 
-    const member = await context.datasources.user.create({
-        name: args.input.name,
-        email: args.input.email,
-        password: "temp_password",
-        accountType: context.user.accountType,
-        agencyId: context.user.agencyId,
-        businessId: context.user.businessId,
-        status: gql.UserStatus.Invited,
-    })
+        if (memberWithEmail) {
+            throw new Error("Email already used")
+        }
 
-    return {
-        clientMutationId: uuid(),
-        member: {
+        const member = await context.datasources.user.create({
+            name: input.name,
+            email: input.email,
+            password: "temp_password",
+            accountType: context.user.accountType,
+            agencyId: context.user.agencyId,
+            businessId: context.user.businessId,
+            status: gql.UserStatus.Invited,
+        })
+
+        members.push({
             ...member,
             createdAt: member.createdAt.toISOString(),
             updatedAt: member.updatedAt.toISOString(),
-        },
+        })
+    }
+
+    return {
+        clientMutationId: uuid(),
+        members,
     }
 }
 

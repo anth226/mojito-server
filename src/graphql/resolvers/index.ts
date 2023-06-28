@@ -22,8 +22,8 @@ const mutation: MutationResolvers = {
     registerAgency: users.registerUserForAgency,
     registerBusiness: users.registerUserForBusiness,
     login: users.loginUser,
-    inviteClient: users.inviteClient,
-    inviteMember: users.inviteMember,
+    inviteClients: users.inviteClients,
+    inviteMembers: users.inviteMembers,
     createConnection: connections.createConnection,
 }
 
