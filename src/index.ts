@@ -12,7 +12,7 @@ import logger from "./utils/logger"
 import { resolvers } from "./graphql/resolvers"
 import { GraphQLError } from "graphql"
 import * as handlers from "./rest"
-import { Google } from "./core/google"
+import { GoogleAuth } from "./core/google"
 
 dotenv.config()
 
@@ -51,7 +51,7 @@ async function startServers(): Promise<void> {
 
                     const context: types.RequestContext = {
                         core: {
-                            google: new Google(
+                            google: new GoogleAuth(
                                 config.googleClientId,
                                 config.googleClientSecret
                             ),
@@ -113,7 +113,7 @@ async function startServers(): Promise<void> {
                 }
 
                 req.core = {
-                    google: new Google(
+                    google: new GoogleAuth(
                         config.googleClientId,
                         config.googleClientSecret
                     ),

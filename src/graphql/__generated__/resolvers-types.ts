@@ -109,6 +109,7 @@ export type BusinessMembersArgs = {
 export type Connection = {
   __typename?: 'Connection';
   _id: Scalars['String']['output'];
+  authUrl?: Maybe<Scalars['String']['output']>;
   client?: Maybe<User>;
   createdAt: Scalars['String']['output'];
   source: ConnectionSource;
@@ -254,7 +255,6 @@ export type Query = {
   __typename?: 'Query';
   alert?: Maybe<Alert>;
   connection?: Maybe<Connection>;
-  connectionAuthUrl?: Maybe<Scalars['String']['output']>;
   user?: Maybe<User>;
   viewer?: Maybe<User>;
 };
@@ -267,11 +267,6 @@ export type QueryAlertArgs = {
 
 export type QueryConnectionArgs = {
   id: Scalars['String']['input'];
-};
-
-
-export type QueryConnectionAuthUrlArgs = {
-  source: ConnectionSource;
 };
 
 
@@ -515,6 +510,7 @@ export type BusinessResolvers<ContextType = RequestContext, ParentType extends R
 
 export type ConnectionResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['Connection'] = ResolversParentTypes['Connection']> = ResolversObject<{
   _id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  authUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   client?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   source?: Resolver<ResolversTypes['ConnectionSource'], ParentType, ContextType>;
@@ -574,7 +570,6 @@ export type MutationResolvers<ContextType = RequestContext, ParentType extends R
 export type QueryResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   alert?: Resolver<Maybe<ResolversTypes['Alert']>, ParentType, ContextType, RequireFields<QueryAlertArgs, 'id'>>;
   connection?: Resolver<Maybe<ResolversTypes['Connection']>, ParentType, ContextType, RequireFields<QueryConnectionArgs, 'id'>>;
-  connectionAuthUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryConnectionAuthUrlArgs, 'source'>>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
   viewer?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
 }>;

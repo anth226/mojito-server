@@ -5,8 +5,6 @@ type Query {
 
     connection(id: String!): Connection
     alert(id: String!): Alert
-
-    connectionAuthUrl(source: ConnectionSource!): String
 }
 
 type Mutation {
@@ -121,6 +119,7 @@ type Connection {
     _id: String!
     source: ConnectionSource!
     client: User
+    authUrl: String
     createdAt: String!
     updatedAt: String!
 }

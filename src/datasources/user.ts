@@ -1,7 +1,10 @@
 import { FilterQuery, QueryOptions } from "mongoose"
 import { UserModel, UserDocument } from "../models"
 import * as types from "../types/user"
-import { UserOrderField } from "../graphql/__generated__/resolvers-types"
+import {
+    UserOrderField,
+    AccountType,
+} from "../graphql/__generated__/resolvers-types"
 
 export class UserDatasource implements types.UserDatasource {
     async getById(id: string): Promise<types.User | null> {
@@ -22,13 +25,19 @@ export class UserDatasource implements types.UserDatasource {
         return user ? user.toObject() : null
     }
 
+    async getByAuthState(state: string): Promise<types.User | null> {
+        const user = await UserModel.findOne({ oauth2State: state })
+        return user ? user.toObject() : null
+    }
+
     async create(user: Partial<types.User>): Promise<types.User> {
         return (await UserModel.create(user)).toObject()
     }
 
     async getClientsFrom(agencyId: string): Promise<Array<types.User>> {
         const clients = await UserModel.find({
-            clientFrom: agencyId,
+            agencyId: agencyId,
+            accountType: AccountType.Client,
         })
         return clients.map((cl) => cl.toObject())
     }
@@ -53,7 +62,8 @@ export class UserDatasource implements types.UserDatasource {
         }
 
         if (query.clientFrom) {
-            filter.clientFrom = query.clientFrom
+            filter.agencyId = query.clientFrom
+            filter.accountType = AccountType.Client
         }
 
         if (query.take || query.skip) {
