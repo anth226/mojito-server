@@ -171,7 +171,6 @@ enum BillingPlan {
 
 input CreateConnectionInput {
     source: ConnectionSource!
-    secretKey: String!
     clientId: String
 }
 
