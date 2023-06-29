@@ -12,7 +12,7 @@ import logger from "./utils/logger"
 import { resolvers } from "./graphql/resolvers"
 import { GraphQLError } from "graphql"
 import * as handlers from "./rest"
-import { GoogleAuth } from "./core/google"
+import { OAuth2Factory } from "./core/oauth2"
 
 dotenv.config()
 
@@ -22,6 +22,10 @@ const config = {
     authPrivateKey: process.env.AUTH_PRIVATE_KEY as string,
     googleClientId: process.env.GOOGLE_CLIENT_ID as string,
     googleClientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    metaClientId: process.env.META_CLIENT_ID as string,
+    metaClientSecret: process.env.META_CLIENT_SECRET as string,
+    tiktokClientId: process.env.TIKTOK_CLIENT_ID as string,
+    tiktokClientSecret: process.env.TIKTOK_CLIENT_SECRET as string,
 }
 
 const restServer = express()
@@ -51,10 +55,20 @@ async function startServers(): Promise<void> {
 
                     const context: types.RequestContext = {
                         core: {
-                            google: new GoogleAuth(
-                                config.googleClientId,
-                                config.googleClientSecret
-                            ),
+                            authFactory: new OAuth2Factory({
+                                GOOGLE: {
+                                    clientId: config.googleClientId,
+                                    clientSecret: config.googleClientSecret,
+                                },
+                                META: {
+                                    clientId: config.metaClientId,
+                                    clientSecret: config.metaClientSecret,
+                                },
+                                TIKTOK: {
+                                    clientId: config.tiktokClientId,
+                                    clientSecret: config.tiktokClientId,
+                                },
+                            }),
                         },
                         authPrivateKey: config.authPrivateKey,
                         datasources: {
@@ -113,10 +127,20 @@ async function startServers(): Promise<void> {
                 }
 
                 req.core = {
-                    google: new GoogleAuth(
-                        config.googleClientId,
-                        config.googleClientSecret
-                    ),
+                    authFactory: new OAuth2Factory({
+                        GOOGLE: {
+                            clientId: config.googleClientId,
+                            clientSecret: config.googleClientSecret,
+                        },
+                        META: {
+                            clientId: config.metaClientId,
+                            clientSecret: config.metaClientSecret,
+                        },
+                        TIKTOK: {
+                            clientId: config.tiktokClientId,
+                            clientSecret: config.tiktokClientId,
+                        },
+                    }),
                 }
                 req.datasources = {
                     user: new datasources.UserDatasource(),

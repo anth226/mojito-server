@@ -7,11 +7,7 @@ function authUrl(
     context: types.RequestContext,
     conn: types.Connection
 ): string {
-    if (conn.source == gql.ConnectionSource.Google) {
-        return context.core.google.authUrl(conn._id)
-    }
-
-    return ""
+    return context.core.authFactory.create(conn.source).authUrl(conn._id)
 }
 
 export const createConnection: gql.MutationResolvers["createConnection"] =

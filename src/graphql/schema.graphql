@@ -125,7 +125,6 @@ type Connection {
 }
 
 enum ConnectionSource {
-    FACEBOOK
     TIKTOK
     META
     GOOGLE

@@ -1,6 +1,51 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios"
 import dayjs from "dayjs"
 import { URL } from "url"
+import * as gql from "../graphql/__generated__/resolvers-types"
+
+const authUrl: Record<gql.ConnectionSource, string> = {
+    GOOGLE: "https://accounts.google.com/o/oauth2/v2/auth",
+    META: "https://accounts.google.com/o/oauth2/v2/auth",
+    TIKTOK: "https://accounts.google.com/o/oauth2/v2/auth",
+}
+
+const tokenUrl: Record<gql.ConnectionSource, string> = {
+    GOOGLE: "https://oauth2.googleapis.com/token",
+    META: "https://oauth2.googleapis.com/token",
+    TIKTOK: "https://oauth2.googleapis.com/token",
+}
+
+const scopes: Record<gql.ConnectionSource, Array<string>> = {
+    GOOGLE: [
+        "openid",
+        "profile",
+        "email",
+        "https://www.googleapis.com/auth/adwords",
+    ],
+    META: [
+        "openid",
+        "profile",
+        "email",
+        "https://www.googleapis.com/auth/adwords",
+    ],
+    TIKTOK: [
+        "openid",
+        "profile",
+        "email",
+        "https://www.googleapis.com/auth/adwords",
+    ],
+}
+
+const redirectUrl: Record<gql.ConnectionSource, string> = {
+    GOOGLE: "https://mojito-server-production.up.railway.app/auth/google",
+    META: "https://mojito-server-production.up.railway.app/auth/meta",
+    TIKTOK: "https://mojito-server-production.up.railway.app/auth/tiktok",
+}
+
+export type OAuth2FactoryConfig = Record<
+    gql.ConnectionSource,
+    Pick<OAuth2Config, "clientId" | "clientSecret">
+>
 
 export type OAuth2Config = {
     clientId: string
@@ -15,6 +60,30 @@ type Token = {
     accessToken: string
     refreshToken: string
     expiration: Date
+}
+
+export class OAuth2Factory {
+    constructor(private cfg: OAuth2FactoryConfig) {}
+
+    create(source: gql.ConnectionSource): OAuth2Client {
+        return new OAuth2Client({
+            clientId: this.cfg[source].clientId,
+            clientSecret: this.cfg[source].clientSecret,
+            redirectUrl: redirectUrl[source],
+            authUrl: authUrl[source],
+            tokenUrl: tokenUrl[source],
+            scopes: scopes[source],
+        })
+    }
+
+    async createAndInit(
+        source: gql.ConnectionSource,
+        code: string
+    ): Promise<OAuth2Client> {
+        const client = this.create(source)
+        await client.initialize(code)
+        return client
+    }
 }
 
 export class OAuth2Client {
