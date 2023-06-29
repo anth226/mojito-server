@@ -155,7 +155,6 @@ export type CreateAlertPayload = {
 
 export type CreateConnectionInput = {
   clientId?: InputMaybe<Scalars['String']['input']>;
-  secretKey: Scalars['String']['input'];
   source: ConnectionSource;
 };
 
