@@ -133,7 +133,6 @@ export enum ConnectionOrderField {
 }
 
 export enum ConnectionSource {
-  Facebook = 'FACEBOOK',
   Google = 'GOOGLE',
   Meta = 'META',
   Tiktok = 'TIKTOK'

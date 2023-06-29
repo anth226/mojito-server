@@ -1,5 +1,5 @@
-import { GoogleAuth } from "./google"
+import { OAuth2Factory } from "./oauth2"
 
 export type Core = {
-    google: GoogleAuth
+    authFactory: OAuth2Factory
 }

@@ -1,6 +1,6 @@
 import { Request, Response } from "express"
 
-export async function health(req: Request, res: Response) {
+export async function health(_req: Request, res: Response) {
     res.send("OK")
 }
 
@@ -17,7 +17,7 @@ export async function googleCallback(req: Request, res: Response) {
         return res.status(401).send("Invalid state token")
     }
 
-    const authClient = await req.core.google.exchangeForClient(code)
+    const authClient = await req.core.authFactory.createAndInit(conn.source, code)
     const token = authClient.getToken()
 
     if (!token) {
