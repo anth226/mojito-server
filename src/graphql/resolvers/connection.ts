@@ -1,6 +1,5 @@
 import { GraphQLError } from "graphql"
 import * as gql from "../__generated__/resolvers-types"
-import { v4 as uuid } from "uuid"
 import * as types from "../../types"
 
 function authUrl(
@@ -35,7 +34,7 @@ export const createConnection: gql.MutationResolvers["createConnection"] =
         })
 
         return {
-            clientMutationId: uuid(),
+            clientMutationId: args.input.clientMutationId,
             connection: {
                 ...conn,
                 authUrl: authUrl(context, conn),
@@ -43,6 +42,28 @@ export const createConnection: gql.MutationResolvers["createConnection"] =
                 updatedAt: conn.updatedAt.toISOString(),
             },
         }
+    }
+
+export const deleteConnection: gql.MutationResolvers["deleteConnection"] =
+    async (
+        _parent,
+        args,
+        context,
+        _info
+    ): Promise<gql.DeleteConnectionPayload | null> => {
+        if (!context.user) {
+            throw new GraphQLError("Unauthorized", {
+                extensions: {
+                    http: {
+                        status: 401,
+                    },
+                },
+            })
+        }
+
+        await context.datasources.connection.delete(args.input.id)
+
+        return { clientMutationId: args.input.clientMutationId }
     }
 
 export const getConnectionsFromAgency: gql.AgencyResolvers["connections"] =

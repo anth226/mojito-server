@@ -1,7 +1,6 @@
 import * as gql from "../__generated__/resolvers-types"
 import * as auth from "../../auth"
 import bcrypt from "bcrypt"
-import { v4 as uuid } from "uuid"
 import { GraphQLError } from "graphql"
 
 const PASSWORD_DEFAULT_SALT_ROUNDS = 12
@@ -126,7 +125,7 @@ export const registerUserForAgency: gql.MutationResolvers["registerAgency"] =
         })
 
         return {
-            clientMutationId: uuid(),
+            clientMutationId: args.input.clientMutationId,
             user: {
                 ...user,
                 createdAt: user.createdAt.toISOString(),
@@ -169,7 +168,7 @@ export const registerUserForBusiness: gql.MutationResolvers["registerBusiness"] 
         })
 
         return {
-            clientMutationId: uuid(),
+            clientMutationId: args.input.clientMutationId,
             user: {
                 ...user,
                 createdAt: user.createdAt.toISOString(),
@@ -224,7 +223,7 @@ export const inviteClients: gql.MutationResolvers["inviteClients"] = async (
     }
 
     return {
-        clientMutationId: uuid(),
+        clientMutationId: args.input.clientMutationId,
         clients,
     }
 }
@@ -275,7 +274,7 @@ export const inviteMembers: gql.MutationResolvers["inviteMembers"] = async (
     }
 
     return {
-        clientMutationId: uuid(),
+        clientMutationId: args.input.clientMutationId,
         members,
     }
 }

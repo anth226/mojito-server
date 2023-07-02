@@ -6,6 +6,7 @@ import {
 export interface ConnectionDatasource {
     create(conn: Partial<Connection>): Promise<Connection>
     update(id: string, changes: Partial<Connection>): Promise<Connection | null>
+    delete(id: string): Promise<void>
     getById(id: string): Promise<Connection | null>
     search(query: ConnectionQuery): Promise<[Array<Connection>, number]>
 }
