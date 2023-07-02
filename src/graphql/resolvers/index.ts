@@ -25,6 +25,7 @@ const mutation: MutationResolvers = {
     inviteClients: users.inviteClients,
     inviteMembers: users.inviteMembers,
     createConnection: connections.createConnection,
+    deleteConnection: connections.deleteConnection
 }
 
 const user: UserResolvers = {

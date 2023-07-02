@@ -17,6 +17,7 @@ type Mutation {
     inviteMembers(input: InviteMembersInput!): InviteMembersPayload
 
     createConnection(input: CreateConnectionInput!): CreateConnectionPayload
+    deleteConnection(input: DeleteConnectionInput!): DeleteConnectionPayload
     createAlert(input: CreateAlertInput!): CreateAlertPayload
 }
 
@@ -169,6 +170,7 @@ enum BillingPlan {
 }
 
 input CreateConnectionInput {
+    clientMutationId: String
     source: ConnectionSource!
     clientId: String
 }
@@ -178,7 +180,17 @@ type CreateConnectionPayload {
     connection: Connection
 }
 
+input DeleteConnectionInput {
+    clientMutationId: String
+    id: String!
+}
+
+type DeleteConnectionPayload {
+    clientMutationId: String
+}
+
 input CreateAlertInput {
+    clientMutationId: String
     name: String!
     connectionId: String!
     operation: AlertOperation!
@@ -192,10 +204,12 @@ type CreateAlertPayload {
 }
 
 input InviteClientsInput {
+    clientMutationId: String
     clients: [InviteClientInput]!
 }
 
 input InviteClientInput {
+    clientMutationId: String
     name: String!
     email: String!
 }
@@ -206,10 +220,12 @@ type InviteClientsPayload {
 }
 
 input InviteMembersInput {
+    clientMutationId: String
     members: [InviteMemberInput]!
 }
 
 input InviteMemberInput {
+    clientMutationId: String
     name: String!
     email: String!
 }
@@ -220,6 +236,7 @@ type InviteMembersPayload {
 }
 
 input RegisterAgencyInput {
+    clientMutationId: String
     agencyName: String!
     email: String!
     password: String!
@@ -231,6 +248,7 @@ type RegisterAgencyPayload {
 }
 
 input RegisterBusinessInput {
+    clientMutationId: String
     businessName: String!
     email: String!
     password: String!
@@ -242,11 +260,13 @@ type RegisterBusinessPayload {
 }
 
 input LoginInput {
+    clientMutationId: String
     email: String!
     password: String!
 }
 
 type LoginPayload {
+    clientMutationId: String
     success: Boolean!
     reason: String
     accessToken: String

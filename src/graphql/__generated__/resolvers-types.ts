@@ -139,6 +139,7 @@ export enum ConnectionSource {
 }
 
 export type CreateAlertInput = {
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
   connectionId: Scalars['String']['input'];
   name: Scalars['String']['input'];
   operation: AlertOperation;
@@ -154,6 +155,7 @@ export type CreateAlertPayload = {
 
 export type CreateConnectionInput = {
   clientId?: InputMaybe<Scalars['String']['input']>;
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
   source: ConnectionSource;
 };
 
@@ -163,12 +165,24 @@ export type CreateConnectionPayload = {
   connection?: Maybe<Connection>;
 };
 
+export type DeleteConnectionInput = {
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+};
+
+export type DeleteConnectionPayload = {
+  __typename?: 'DeleteConnectionPayload';
+  clientMutationId?: Maybe<Scalars['String']['output']>;
+};
+
 export type InviteClientInput = {
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   name: Scalars['String']['input'];
 };
 
 export type InviteClientsInput = {
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
   clients: Array<InputMaybe<InviteClientInput>>;
 };
 
@@ -179,11 +193,13 @@ export type InviteClientsPayload = {
 };
 
 export type InviteMemberInput = {
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   name: Scalars['String']['input'];
 };
 
 export type InviteMembersInput = {
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
   members: Array<InputMaybe<InviteMemberInput>>;
 };
 
@@ -194,6 +210,7 @@ export type InviteMembersPayload = {
 };
 
 export type LoginInput = {
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
 };
@@ -201,6 +218,7 @@ export type LoginInput = {
 export type LoginPayload = {
   __typename?: 'LoginPayload';
   accessToken?: Maybe<Scalars['String']['output']>;
+  clientMutationId?: Maybe<Scalars['String']['output']>;
   reason?: Maybe<Scalars['String']['output']>;
   success: Scalars['Boolean']['output'];
   user?: Maybe<User>;
@@ -210,6 +228,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   createAlert?: Maybe<CreateAlertPayload>;
   createConnection?: Maybe<CreateConnectionPayload>;
+  deleteConnection?: Maybe<DeleteConnectionPayload>;
   inviteClients?: Maybe<InviteClientsPayload>;
   inviteMembers?: Maybe<InviteMembersPayload>;
   login?: Maybe<LoginPayload>;
@@ -225,6 +244,11 @@ export type MutationCreateAlertArgs = {
 
 export type MutationCreateConnectionArgs = {
   input: CreateConnectionInput;
+};
+
+
+export type MutationDeleteConnectionArgs = {
+  input: DeleteConnectionInput;
 };
 
 
@@ -282,6 +306,7 @@ export type QueryUserArgs = {
 
 export type RegisterAgencyInput = {
   agencyName: Scalars['String']['input'];
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
 };
@@ -294,6 +319,7 @@ export type RegisterAgencyPayload = {
 
 export type RegisterBusinessInput = {
   businessName: Scalars['String']['input'];
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
 };
@@ -427,6 +453,8 @@ export type ResolversTypes = ResolversObject<{
   CreateAlertPayload: ResolverTypeWrapper<CreateAlertPayload>;
   CreateConnectionInput: CreateConnectionInput;
   CreateConnectionPayload: ResolverTypeWrapper<CreateConnectionPayload>;
+  DeleteConnectionInput: DeleteConnectionInput;
+  DeleteConnectionPayload: ResolverTypeWrapper<DeleteConnectionPayload>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   InviteClientInput: InviteClientInput;
   InviteClientsInput: InviteClientsInput;
@@ -464,6 +492,8 @@ export type ResolversParentTypes = ResolversObject<{
   CreateAlertPayload: CreateAlertPayload;
   CreateConnectionInput: CreateConnectionInput;
   CreateConnectionPayload: CreateConnectionPayload;
+  DeleteConnectionInput: DeleteConnectionInput;
+  DeleteConnectionPayload: DeleteConnectionPayload;
   Int: Scalars['Int']['output'];
   InviteClientInput: InviteClientInput;
   InviteClientsInput: InviteClientsInput;
@@ -547,6 +577,11 @@ export type CreateConnectionPayloadResolvers<ContextType = RequestContext, Paren
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type DeleteConnectionPayloadResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['DeleteConnectionPayload'] = ResolversParentTypes['DeleteConnectionPayload']> = ResolversObject<{
+  clientMutationId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type InviteClientsPayloadResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['InviteClientsPayload'] = ResolversParentTypes['InviteClientsPayload']> = ResolversObject<{
   clientMutationId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   clients?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
@@ -561,6 +596,7 @@ export type InviteMembersPayloadResolvers<ContextType = RequestContext, ParentTy
 
 export type LoginPayloadResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['LoginPayload'] = ResolversParentTypes['LoginPayload']> = ResolversObject<{
   accessToken?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  clientMutationId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   reason?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
@@ -570,6 +606,7 @@ export type LoginPayloadResolvers<ContextType = RequestContext, ParentType exten
 export type MutationResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   createAlert?: Resolver<Maybe<ResolversTypes['CreateAlertPayload']>, ParentType, ContextType, RequireFields<MutationCreateAlertArgs, 'input'>>;
   createConnection?: Resolver<Maybe<ResolversTypes['CreateConnectionPayload']>, ParentType, ContextType, RequireFields<MutationCreateConnectionArgs, 'input'>>;
+  deleteConnection?: Resolver<Maybe<ResolversTypes['DeleteConnectionPayload']>, ParentType, ContextType, RequireFields<MutationDeleteConnectionArgs, 'input'>>;
   inviteClients?: Resolver<Maybe<ResolversTypes['InviteClientsPayload']>, ParentType, ContextType, RequireFields<MutationInviteClientsArgs, 'input'>>;
   inviteMembers?: Resolver<Maybe<ResolversTypes['InviteMembersPayload']>, ParentType, ContextType, RequireFields<MutationInviteMembersArgs, 'input'>>;
   login?: Resolver<Maybe<ResolversTypes['LoginPayload']>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'input'>>;
@@ -624,6 +661,7 @@ export type Resolvers<ContextType = RequestContext> = ResolversObject<{
   ConnectionConnection?: ConnectionConnectionResolvers<ContextType>;
   CreateAlertPayload?: CreateAlertPayloadResolvers<ContextType>;
   CreateConnectionPayload?: CreateConnectionPayloadResolvers<ContextType>;
+  DeleteConnectionPayload?: DeleteConnectionPayloadResolvers<ContextType>;
   InviteClientsPayload?: InviteClientsPayloadResolvers<ContextType>;
   InviteMembersPayload?: InviteMembersPayloadResolvers<ContextType>;
   LoginPayload?: LoginPayloadResolvers<ContextType>;

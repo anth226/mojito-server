@@ -26,6 +26,10 @@ export class ConnectionDatasource implements types.ConnectionDatasource {
         return conn ? conn.toObject() : null
     }
 
+    async delete(id: string): Promise<void> {
+        await ConnectionModel.deleteOne({ _id: id })
+    }
+
     async search(
         query: types.ConnectionQuery
     ): Promise<[types.Connection[], number]> {
