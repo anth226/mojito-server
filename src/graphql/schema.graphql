@@ -18,7 +18,9 @@ type Mutation {
 
     createConnection(input: CreateConnectionInput!): CreateConnectionPayload
     deleteConnection(input: DeleteConnectionInput!): DeleteConnectionPayload
-    createAlert(input: CreateAlertInput!): CreateAlertPayload
+
+    createAlerts(input: CreateAlertsInput!): CreateAlertsPayload
+    archiveAlert(input: ArchiveAlertInput!): ArchiveAlertPayload
 }
 
 type User {
@@ -112,6 +114,12 @@ type Agency {
         orderBy: ConnectionOrder
     ): ConnectionConnection
 
+    alerts(
+        take: Int
+        skip: Int
+        orderBy: AlertOrder
+    ): AlertConnection
+
     createdAt: String!
     updatedAt: String!
 }
@@ -152,9 +160,26 @@ type Alert {
     operation: AlertOperation!
     parameter: String!
     value: String!
-    connection: Connection!
+    connection: Connection
+    archived: Boolean!
     createdAt: String!
     updatedAt: String!
+}
+
+type AlertConnection {
+    nodes: [Alert]
+    totalCount: Int!
+    hasMore: Boolean!
+}
+
+enum AlertOrderField {
+    CREATED_AT
+    NAME
+}
+
+input AlertOrder {
+    direction: OrderDirection!
+    field: AlertOrderField!
 }
 
 enum AlertOperation {
@@ -189,8 +214,12 @@ type DeleteConnectionPayload {
     clientMutationId: String
 }
 
-input CreateAlertInput {
+input CreateAlertsInput {
     clientMutationId: String
+    alerts: [CreateAlertInput]!
+}
+
+input CreateAlertInput {
     name: String!
     connectionId: String!
     operation: AlertOperation!
@@ -198,9 +227,18 @@ input CreateAlertInput {
     value: String!
 }
 
-type CreateAlertPayload {
+type CreateAlertsPayload {
     clientMutationId: String
-    alert: Alert
+    alerts: [Alert]
+}
+
+input ArchiveAlertInput {
+    clientMutationId: String
+    id: String!
+}
+
+type ArchiveAlertPayload {
+    clientMutationId: String
 }
 
 input InviteClientsInput {

@@ -6,13 +6,14 @@ import { ISpending } from "./spending"
 import { UserDatasource } from "./user"
 import { AgencyDatasource } from "./agency"
 import { ConnectionDatasource } from "./connection"
-import { BusinessDatasource } from "../datasources"
+import { AlertDatasource } from "./alert"
 
 export interface Datasources {
     user: UserDatasource
     agency: AgencyDatasource
     connection: ConnectionDatasource
     business: BusinessDatasource
+    alert: AlertDatasource
     // alert: IAlertDataSource
     // connections: IConnectionDataSource
     // campaigns: ICampaignDataSource

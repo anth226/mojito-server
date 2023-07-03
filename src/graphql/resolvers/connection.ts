@@ -113,3 +113,30 @@ export const getConnectionsFromBusiness: gql.BusinessResolvers["connections"] =
             totalCount: count,
         }
     }
+
+export const getConnectionFromAlert: gql.AlertResolvers["connection"] = async (
+    parent,
+    _args,
+    context,
+    _info
+): Promise<gql.Connection | null> => {
+    const alert = await context.datasources.alert.getById(parent._id)
+
+    if (!alert) {
+        return null
+    }
+
+    const connection = await context.datasources.connection.getById(
+        alert.connectionId
+    )
+
+    if (!connection) {
+        return null
+    }
+
+    return {
+        ...connection,
+        createdAt: connection.createdAt.toISOString(),
+        updatedAt: connection.updatedAt.toISOString(),
+    }
+}
