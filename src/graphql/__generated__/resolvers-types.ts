@@ -26,12 +26,20 @@ export enum AccountType {
 export type Agency = {
   __typename?: 'Agency';
   _id: Scalars['String']['output'];
+  alerts?: Maybe<AlertConnection>;
   clients?: Maybe<UserConnection>;
   connections?: Maybe<ConnectionConnection>;
   createdAt: Scalars['String']['output'];
   members?: Maybe<UserConnection>;
   name?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['String']['output'];
+};
+
+
+export type AgencyAlertsArgs = {
+  orderBy?: InputMaybe<AlertOrder>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  take?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -60,7 +68,8 @@ export type AgencyMembersArgs = {
 export type Alert = {
   __typename?: 'Alert';
   _id: Scalars['String']['output'];
-  connection: Connection;
+  archived: Scalars['Boolean']['output'];
+  connection?: Maybe<Connection>;
   createdAt: Scalars['String']['output'];
   name: Scalars['String']['output'];
   operation: AlertOperation;
@@ -69,11 +78,38 @@ export type Alert = {
   value: Scalars['String']['output'];
 };
 
+export type AlertConnection = {
+  __typename?: 'AlertConnection';
+  hasMore: Scalars['Boolean']['output'];
+  nodes?: Maybe<Array<Maybe<Alert>>>;
+  totalCount: Scalars['Int']['output'];
+};
+
 export enum AlertOperation {
   Equal = 'EQUAL',
   GreaterThan = 'GREATER_THAN',
   LessThan = 'LESS_THAN'
 }
+
+export type AlertOrder = {
+  direction: OrderDirection;
+  field: AlertOrderField;
+};
+
+export enum AlertOrderField {
+  CreatedAt = 'CREATED_AT',
+  Name = 'NAME'
+}
+
+export type ArchiveAlertInput = {
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+};
+
+export type ArchiveAlertPayload = {
+  __typename?: 'ArchiveAlertPayload';
+  clientMutationId?: Maybe<Scalars['String']['output']>;
+};
 
 export enum BillingPlan {
   Professional = 'PROFESSIONAL',
@@ -139,7 +175,6 @@ export enum ConnectionSource {
 }
 
 export type CreateAlertInput = {
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
   connectionId: Scalars['String']['input'];
   name: Scalars['String']['input'];
   operation: AlertOperation;
@@ -147,9 +182,14 @@ export type CreateAlertInput = {
   value: Scalars['String']['input'];
 };
 
-export type CreateAlertPayload = {
-  __typename?: 'CreateAlertPayload';
-  alert?: Maybe<Alert>;
+export type CreateAlertsInput = {
+  alerts: Array<InputMaybe<CreateAlertInput>>;
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type CreateAlertsPayload = {
+  __typename?: 'CreateAlertsPayload';
+  alerts?: Maybe<Array<Maybe<Alert>>>;
   clientMutationId?: Maybe<Scalars['String']['output']>;
 };
 
@@ -226,7 +266,8 @@ export type LoginPayload = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createAlert?: Maybe<CreateAlertPayload>;
+  archiveAlert?: Maybe<ArchiveAlertPayload>;
+  createAlerts?: Maybe<CreateAlertsPayload>;
   createConnection?: Maybe<CreateConnectionPayload>;
   deleteConnection?: Maybe<DeleteConnectionPayload>;
   inviteClients?: Maybe<InviteClientsPayload>;
@@ -237,8 +278,13 @@ export type Mutation = {
 };
 
 
-export type MutationCreateAlertArgs = {
-  input: CreateAlertInput;
+export type MutationArchiveAlertArgs = {
+  input: ArchiveAlertInput;
+};
+
+
+export type MutationCreateAlertsArgs = {
+  input: CreateAlertsInput;
 };
 
 
@@ -440,7 +486,12 @@ export type ResolversTypes = ResolversObject<{
   AccountType: AccountType;
   Agency: ResolverTypeWrapper<Agency>;
   Alert: ResolverTypeWrapper<Alert>;
+  AlertConnection: ResolverTypeWrapper<AlertConnection>;
   AlertOperation: AlertOperation;
+  AlertOrder: AlertOrder;
+  AlertOrderField: AlertOrderField;
+  ArchiveAlertInput: ArchiveAlertInput;
+  ArchiveAlertPayload: ResolverTypeWrapper<ArchiveAlertPayload>;
   BillingPlan: BillingPlan;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   Business: ResolverTypeWrapper<Business>;
@@ -450,7 +501,8 @@ export type ResolversTypes = ResolversObject<{
   ConnectionOrderField: ConnectionOrderField;
   ConnectionSource: ConnectionSource;
   CreateAlertInput: CreateAlertInput;
-  CreateAlertPayload: ResolverTypeWrapper<CreateAlertPayload>;
+  CreateAlertsInput: CreateAlertsInput;
+  CreateAlertsPayload: ResolverTypeWrapper<CreateAlertsPayload>;
   CreateConnectionInput: CreateConnectionInput;
   CreateConnectionPayload: ResolverTypeWrapper<CreateConnectionPayload>;
   DeleteConnectionInput: DeleteConnectionInput;
@@ -483,13 +535,18 @@ export type ResolversTypes = ResolversObject<{
 export type ResolversParentTypes = ResolversObject<{
   Agency: Agency;
   Alert: Alert;
+  AlertConnection: AlertConnection;
+  AlertOrder: AlertOrder;
+  ArchiveAlertInput: ArchiveAlertInput;
+  ArchiveAlertPayload: ArchiveAlertPayload;
   Boolean: Scalars['Boolean']['output'];
   Business: Business;
   Connection: Connection;
   ConnectionConnection: ConnectionConnection;
   ConnectionOrder: ConnectionOrder;
   CreateAlertInput: CreateAlertInput;
-  CreateAlertPayload: CreateAlertPayload;
+  CreateAlertsInput: CreateAlertsInput;
+  CreateAlertsPayload: CreateAlertsPayload;
   CreateConnectionInput: CreateConnectionInput;
   CreateConnectionPayload: CreateConnectionPayload;
   DeleteConnectionInput: DeleteConnectionInput;
@@ -517,6 +574,7 @@ export type ResolversParentTypes = ResolversObject<{
 
 export type AgencyResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['Agency'] = ResolversParentTypes['Agency']> = ResolversObject<{
   _id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  alerts?: Resolver<Maybe<ResolversTypes['AlertConnection']>, ParentType, ContextType, Partial<AgencyAlertsArgs>>;
   clients?: Resolver<Maybe<ResolversTypes['UserConnection']>, ParentType, ContextType, Partial<AgencyClientsArgs>>;
   connections?: Resolver<Maybe<ResolversTypes['ConnectionConnection']>, ParentType, ContextType, Partial<AgencyConnectionsArgs>>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -528,13 +586,26 @@ export type AgencyResolvers<ContextType = RequestContext, ParentType extends Res
 
 export type AlertResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['Alert'] = ResolversParentTypes['Alert']> = ResolversObject<{
   _id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  connection?: Resolver<ResolversTypes['Connection'], ParentType, ContextType>;
+  archived?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  connection?: Resolver<Maybe<ResolversTypes['Connection']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   operation?: Resolver<ResolversTypes['AlertOperation'], ParentType, ContextType>;
   parameter?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   value?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type AlertConnectionResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['AlertConnection'] = ResolversParentTypes['AlertConnection']> = ResolversObject<{
+  hasMore?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  nodes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Alert']>>>, ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type ArchiveAlertPayloadResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['ArchiveAlertPayload'] = ResolversParentTypes['ArchiveAlertPayload']> = ResolversObject<{
+  clientMutationId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -565,8 +636,8 @@ export type ConnectionConnectionResolvers<ContextType = RequestContext, ParentTy
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type CreateAlertPayloadResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['CreateAlertPayload'] = ResolversParentTypes['CreateAlertPayload']> = ResolversObject<{
-  alert?: Resolver<Maybe<ResolversTypes['Alert']>, ParentType, ContextType>;
+export type CreateAlertsPayloadResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['CreateAlertsPayload'] = ResolversParentTypes['CreateAlertsPayload']> = ResolversObject<{
+  alerts?: Resolver<Maybe<Array<Maybe<ResolversTypes['Alert']>>>, ParentType, ContextType>;
   clientMutationId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -604,7 +675,8 @@ export type LoginPayloadResolvers<ContextType = RequestContext, ParentType exten
 }>;
 
 export type MutationResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
-  createAlert?: Resolver<Maybe<ResolversTypes['CreateAlertPayload']>, ParentType, ContextType, RequireFields<MutationCreateAlertArgs, 'input'>>;
+  archiveAlert?: Resolver<Maybe<ResolversTypes['ArchiveAlertPayload']>, ParentType, ContextType, RequireFields<MutationArchiveAlertArgs, 'input'>>;
+  createAlerts?: Resolver<Maybe<ResolversTypes['CreateAlertsPayload']>, ParentType, ContextType, RequireFields<MutationCreateAlertsArgs, 'input'>>;
   createConnection?: Resolver<Maybe<ResolversTypes['CreateConnectionPayload']>, ParentType, ContextType, RequireFields<MutationCreateConnectionArgs, 'input'>>;
   deleteConnection?: Resolver<Maybe<ResolversTypes['DeleteConnectionPayload']>, ParentType, ContextType, RequireFields<MutationDeleteConnectionArgs, 'input'>>;
   inviteClients?: Resolver<Maybe<ResolversTypes['InviteClientsPayload']>, ParentType, ContextType, RequireFields<MutationInviteClientsArgs, 'input'>>;
@@ -656,10 +728,12 @@ export type UserConnectionResolvers<ContextType = RequestContext, ParentType ext
 export type Resolvers<ContextType = RequestContext> = ResolversObject<{
   Agency?: AgencyResolvers<ContextType>;
   Alert?: AlertResolvers<ContextType>;
+  AlertConnection?: AlertConnectionResolvers<ContextType>;
+  ArchiveAlertPayload?: ArchiveAlertPayloadResolvers<ContextType>;
   Business?: BusinessResolvers<ContextType>;
   Connection?: ConnectionResolvers<ContextType>;
   ConnectionConnection?: ConnectionConnectionResolvers<ContextType>;
-  CreateAlertPayload?: CreateAlertPayloadResolvers<ContextType>;
+  CreateAlertsPayload?: CreateAlertsPayloadResolvers<ContextType>;
   CreateConnectionPayload?: CreateConnectionPayloadResolvers<ContextType>;
   DeleteConnectionPayload?: DeleteConnectionPayloadResolvers<ContextType>;
   InviteClientsPayload?: InviteClientsPayloadResolvers<ContextType>;

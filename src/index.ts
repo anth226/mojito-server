@@ -76,6 +76,7 @@ async function startServers(): Promise<void> {
                             agency: new datasources.AgencyDatasource(),
                             connection: new datasources.ConnectionDatasource(),
                             business: new datasources.BusinessDatasource(),
+                            alert: new datasources.AlertDatasource(),
                         },
                     }
 
@@ -147,6 +148,7 @@ async function startServers(): Promise<void> {
                     agency: new datasources.AgencyDatasource(),
                     connection: new datasources.ConnectionDatasource(),
                     business: new datasources.BusinessDatasource(),
+                    alert: new datasources.AlertDatasource(),
                 }
 
                 next()
