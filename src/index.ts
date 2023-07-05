@@ -157,6 +157,7 @@ async function startServers(): Promise<void> {
 
         restServer.get("/health", handlers.health)
         restServer.get("/auth/google", handlers.googleCallback)
+        restServer.get("/auth/meta", handlers.metaCallback)
 
         restServer.listen(config.port, "0.0.0.0", () => {
             logger.info(`🚀  Server ready at port ${config.port}`)
