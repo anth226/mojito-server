@@ -5,13 +5,13 @@ import * as gql from "../graphql/__generated__/resolvers-types"
 
 const authUrl: Record<gql.ConnectionSource, string> = {
     GOOGLE: "https://accounts.google.com/o/oauth2/v2/auth",
-    META: "https://accounts.google.com/o/oauth2/v2/auth",
+    META: "https://www.facebook.com/v17.0/dialog/oauth",
     TIKTOK: "https://accounts.google.com/o/oauth2/v2/auth",
 }
 
 const tokenUrl: Record<gql.ConnectionSource, string> = {
     GOOGLE: "https://oauth2.googleapis.com/token",
-    META: "https://oauth2.googleapis.com/token",
+    META: "https://graph.facebook.com/v17.0/oauth/access_token",
     TIKTOK: "https://oauth2.googleapis.com/token",
 }
 
@@ -22,12 +22,7 @@ const scopes: Record<gql.ConnectionSource, Array<string>> = {
         "email",
         "https://www.googleapis.com/auth/adwords",
     ],
-    META: [
-        "openid",
-        "profile",
-        "email",
-        "https://www.googleapis.com/auth/adwords",
-    ],
+    META: ["public_profile", "email", "ads_read"],
     TIKTOK: [
         "openid",
         "profile",
@@ -38,7 +33,7 @@ const scopes: Record<gql.ConnectionSource, Array<string>> = {
 
 const redirectUrl: Record<gql.ConnectionSource, string> = {
     GOOGLE: "https://mojito-server-production.up.railway.app/auth/google",
-    META: "https://mojito-server-production.up.railway.app/auth/meta",
+    META: "https://mojito-server-production.up.railway.app/auth/meta/",
     TIKTOK: "https://mojito-server-production.up.railway.app/auth/tiktok",
 }
 
@@ -63,7 +58,7 @@ type Token = {
 }
 
 export class OAuth2Factory {
-    constructor(private cfg: OAuth2FactoryConfig) {}
+    constructor(private cfg: OAuth2FactoryConfig) { }
 
     create(source: gql.ConnectionSource): OAuth2Client {
         return new OAuth2Client({
@@ -89,7 +84,7 @@ export class OAuth2Factory {
 export class OAuth2Client {
     private token?: Token
 
-    constructor(private cfg: OAuth2Config) {}
+    constructor(private cfg: OAuth2Config) { }
 
     public getToken() {
         return this.token
