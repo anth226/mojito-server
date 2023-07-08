@@ -1,7 +1,7 @@
 import * as gql from "../__generated__/resolvers-types"
 import * as auth from "../../auth"
 import bcrypt from "bcrypt"
-import { GraphQLError } from "graphql"
+import { UNAUTHORIZED_ERROR } from "./errors"
 
 const PASSWORD_DEFAULT_SALT_ROUNDS = 12
 
@@ -184,13 +184,7 @@ export const inviteClients: gql.MutationResolvers["inviteClients"] = async (
     _info
 ): Promise<gql.InviteClientsPayload | null> => {
     if (!context.user || context.user.accountType != gql.AccountType.Agency) {
-        throw new GraphQLError("Unauthorized", {
-            extensions: {
-                http: {
-                    status: 401,
-                },
-            },
-        })
+        throw UNAUTHORIZED_ERROR
     }
 
     const clients = new Array<gql.User>()
@@ -235,13 +229,7 @@ export const inviteMembers: gql.MutationResolvers["inviteMembers"] = async (
     _info
 ): Promise<gql.InviteMembersPayload | null> => {
     if (!context.user) {
-        throw new GraphQLError("Unauthorized", {
-            extensions: {
-                http: {
-                    status: 401,
-                },
-            },
-        })
+        throw UNAUTHORIZED_ERROR
     }
 
     const members = new Array<gql.User>()
@@ -276,6 +264,38 @@ export const inviteMembers: gql.MutationResolvers["inviteMembers"] = async (
     return {
         clientMutationId: args.input.clientMutationId,
         members,
+    }
+}
+
+export const getMembers: gql.QueryResolvers["members"] = async (
+    _parent,
+    args,
+    context,
+    _info
+): Promise<gql.UserConnection> => {
+    if (!context.user) {
+        throw UNAUTHORIZED_ERROR
+    }
+
+    const [members, count] = await context.datasources.user.search({
+        nameOrEmail: args.nameOrEmail!!,
+        businessId: context.user.businessId,
+        agencyId: context.user.agencyId,
+        take: args.take!!,
+        skip: args.skip!!,
+        orderBy: args.orderBy!!,
+    })
+
+    const skip = args.skip || 0
+
+    return {
+        nodes: members.map((c) => ({
+            ...c,
+            createdAt: c.createdAt.toISOString(),
+            updatedAt: c.updatedAt.toISOString(),
+        })),
+        hasMore: args.take ? args.take + skip < count : false,
+        totalCount: count,
     }
 }
 
@@ -324,6 +344,37 @@ export const getMembersFromAgency: gql.AgencyResolvers["members"] = async (
 
     return {
         nodes: members.map((c) => ({
+            ...c,
+            createdAt: c.createdAt.toISOString(),
+            updatedAt: c.updatedAt.toISOString(),
+        })),
+        hasMore: args.take ? args.take + skip < count : false,
+        totalCount: count,
+    }
+}
+
+export const getClients: gql.QueryResolvers["clients"] = async (
+    _parent,
+    args,
+    context,
+    _info
+): Promise<gql.UserConnection> => {
+    if (!context.user || context.user.accountType !== gql.AccountType.Agency) {
+        throw UNAUTHORIZED_ERROR
+    }
+
+    const [clients, count] = await context.datasources.user.search({
+        nameOrEmail: args.nameOrEmail!!,
+        clientFrom: context.user.agencyId,
+        take: args.take!!,
+        skip: args.skip!!,
+        orderBy: args.orderBy!!,
+    })
+
+    const skip = args.skip || 0
+
+    return {
+        nodes: clients.map((c) => ({
             ...c,
             createdAt: c.createdAt.toISOString(),
             updatedAt: c.updatedAt.toISOString(),

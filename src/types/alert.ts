@@ -1,6 +1,8 @@
 import {
     AlertOperation,
     AlertOrder,
+    AlertSeverity,
+    AlertParameter,
 } from "../graphql/__generated__/resolvers-types"
 
 export interface AlertDatasource {
@@ -13,8 +15,9 @@ export interface AlertDatasource {
 export type Alert = {
     _id: string
     name: string
+    severity: AlertSeverity
     operation: AlertOperation
-    parameter: string
+    parameter: AlertParameter
     value: string
     connectionId: string
     agencyId: string

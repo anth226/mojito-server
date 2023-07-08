@@ -1,26 +1,20 @@
-import {
-    AgencyResolvers,
-    AlertResolvers,
-    BusinessResolvers,
-    ConnectionResolvers,
-    MutationResolvers,
-    QueryResolvers,
-    Resolvers,
-    UserResolvers,
-} from "../__generated__/resolvers-types"
-
+import * as gql from "../__generated__/resolvers-types"
 import * as users from "./user"
 import * as agencies from "./agency"
 import * as businesses from "./business"
 import * as connections from "./connection"
 import * as alerts from "./alert"
 
-const query: QueryResolvers = {
+const query: gql.QueryResolvers = {
     user: users.getUserById,
     viewer: users.getCurrentUser,
+    clients: users.getClients,
+    members: users.getMembers,
+    connections: connections.getConnections,
+    alerts: alerts.getAlerts,
 }
 
-const mutation: MutationResolvers = {
+const mutation: gql.MutationResolvers = {
     registerAgency: users.registerUserForAgency,
     registerBusiness: users.registerUserForBusiness,
     login: users.loginUser,
@@ -32,32 +26,32 @@ const mutation: MutationResolvers = {
     archiveAlert: alerts.archiveAlert,
 }
 
-const user: UserResolvers = {
+const user: gql.UserResolvers = {
     agency: agencies.getAgencyFromUser,
     business: businesses.getBusinessFromUser,
 }
 
-const agency: AgencyResolvers = {
+const agency: gql.AgencyResolvers = {
     clients: users.getClientsFromAgency,
     members: users.getMembersFromAgency,
     connections: connections.getConnectionsFromAgency,
     alerts: alerts.getAlertsFromAgency,
 }
 
-const business: BusinessResolvers = {
+const business: gql.BusinessResolvers = {
     members: users.getMembersFromBusiness,
     connections: connections.getConnectionsFromBusiness,
 }
 
-const connection: ConnectionResolvers = {
+const connection: gql.ConnectionResolvers = {
     client: users.getClientFromConnection,
 }
 
-const alert: AlertResolvers = {
+const alert: gql.AlertResolvers = {
     connection: connections.getConnectionFromAlert,
 }
 
-export const resolvers: Resolvers = {
+export const resolvers: gql.Resolvers = {
     Query: query,
     Mutation: mutation,
     User: user,

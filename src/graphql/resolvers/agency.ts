@@ -7,6 +7,7 @@ export const getAgencyFromUser: gql.UserResolvers["agency"] = async (
     _info
 ): Promise<gql.Agency | null> => {
     const user = await context.datasources.user.getById(parent._id)
+
     if (!user || !user.agencyId) {
         return null
     }

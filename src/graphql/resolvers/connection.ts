@@ -1,6 +1,6 @@
-import { GraphQLError } from "graphql"
 import * as gql from "../__generated__/resolvers-types"
 import * as types from "../../types"
+import { UNAUTHORIZED_ERROR } from "./errors"
 
 function authUrl(
     context: types.RequestContext,
@@ -17,13 +17,7 @@ export const createConnection: gql.MutationResolvers["createConnection"] =
         _info
     ): Promise<gql.CreateConnectionPayload | null> => {
         if (!context.user) {
-            throw new GraphQLError("Unauthorized", {
-                extensions: {
-                    http: {
-                        status: 401,
-                    },
-                },
-            })
+            throw UNAUTHORIZED_ERROR
         }
 
         const conn = await context.datasources.connection.create({
@@ -52,19 +46,45 @@ export const deleteConnection: gql.MutationResolvers["deleteConnection"] =
         _info
     ): Promise<gql.DeleteConnectionPayload | null> => {
         if (!context.user) {
-            throw new GraphQLError("Unauthorized", {
-                extensions: {
-                    http: {
-                        status: 401,
-                    },
-                },
-            })
+            throw UNAUTHORIZED_ERROR
         }
 
         await context.datasources.connection.delete(args.input.id)
 
         return { clientMutationId: args.input.clientMutationId }
     }
+
+export const getConnections: gql.QueryResolvers["connections"] = async (
+    _parent,
+    args,
+    context,
+    _info
+): Promise<gql.ConnectionConnection> => {
+    if (!context.user) {
+        throw UNAUTHORIZED_ERROR
+    }
+
+    const [connections, count] = await context.datasources.connection.search({
+        agencyId: context.user.agencyId,
+        businessId: context.user.businessId,
+        take: args.take!!,
+        skip: args.skip!!,
+        orderBy: args.orderBy!!,
+    })
+
+    const skip = args.skip || 0
+
+    return {
+        nodes: connections.map((conn) => ({
+            ...conn,
+            authUrl: authUrl(context, conn),
+            createdAt: conn.createdAt.toISOString(),
+            updatedAt: conn.updatedAt.toISOString(),
+        })),
+        hasMore: args.take ? args.take + skip < count : false,
+        totalCount: count,
+    }
+}
 
 export const getConnectionsFromAgency: gql.AgencyResolvers["connections"] =
     async (parent, args, context, _info): Promise<gql.ConnectionConnection> => {
