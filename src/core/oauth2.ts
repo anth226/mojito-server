@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios"
+import axios, { AxiosRequestConfig, AxiosResponse, AxiosInstance } from "axios"
 import dayjs from "dayjs"
 import { URL } from "url"
 import * as gql from "../graphql/__generated__/resolvers-types"
@@ -58,7 +58,7 @@ type Token = {
 }
 
 export class OAuth2Factory {
-    constructor(private cfg: OAuth2FactoryConfig) {}
+    constructor(private cfg: OAuth2FactoryConfig) { }
 
     create(source: gql.ConnectionSource): OAuth2Client {
         return new OAuth2Client({
@@ -93,7 +93,7 @@ export class OAuth2Factory {
 export class OAuth2Client {
     private token?: Token
 
-    constructor(private cfg: OAuth2Config) {}
+    constructor(private cfg: OAuth2Config) { }
 
     public getToken() {
         return this.token
@@ -152,33 +152,8 @@ export class OAuth2Client {
         await this.tryRefreshToken()
     }
 
-    public async get<T>(
-        path: string,
-        config?: AxiosRequestConfig
-    ): Promise<AxiosResponse<T>> {
-        await this.tryRefreshToken()
-
-        return axios.get<T>(path, this.authorizedAxiosConfig(config))
-    }
-
-    public async post<T>(
-        path: string,
-        data: any,
-        config?: AxiosRequestConfig
-    ): Promise<AxiosResponse<T>> {
-        await this.tryRefreshToken()
-
-        return axios.post<T>(path, data, this.authorizedAxiosConfig(config))
-    }
-
-    public async put<T>(
-        path: string,
-        data: any,
-        config?: AxiosRequestConfig
-    ): Promise<AxiosResponse<T>> {
-        await this.tryRefreshToken()
-
-        return axios.put<T>(path, data, this.authorizedAxiosConfig(config))
+    public axios(config?: AxiosRequestConfig): AxiosInstance {
+        return axios.create(this.authorizedAxiosConfig(config))
     }
 
     private authorizedAxiosConfig(
