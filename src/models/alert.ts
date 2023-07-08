@@ -1,12 +1,17 @@
 import mongoose from "mongoose"
 import { v4 as uuid } from "uuid"
-import { AlertOperation } from "../graphql/__generated__/resolvers-types"
+import {
+    AlertOperation,
+    AlertParameter,
+    AlertSeverity,
+} from "../graphql/__generated__/resolvers-types"
 
 export interface AlertDocument extends mongoose.Document {
     _id: string
     name: string
+    severity: AlertSeverity
     operation: AlertOperation
-    parameter: string
+    parameter: AlertParameter
     value: string
     connectionId: string
     agencyId: string
@@ -23,6 +28,9 @@ const alertSchema = new mongoose.Schema<AlertDocument>(
             default: uuid,
         },
         name: {
+            type: String,
+        },
+        severity: {
             type: String,
         },
         operation: {

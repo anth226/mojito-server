@@ -101,6 +101,24 @@ export enum AlertOrderField {
   Name = 'NAME'
 }
 
+export enum AlertParameter {
+  AdSpend = 'AD_SPEND',
+  ConversionRate = 'CONVERSION_RATE',
+  Cpm = 'CPM',
+  Ctr = 'CTR',
+  Revenue = 'REVENUE',
+  Roas = 'ROAS',
+  Traffic = 'TRAFFIC'
+}
+
+export enum AlertSeverity {
+  Critical = 'CRITICAL',
+  High = 'HIGH',
+  Low = 'LOW',
+  Normal = 'NORMAL',
+  Urgent = 'URGENT'
+}
+
 export type ArchiveAlertInput = {
   clientMutationId?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
@@ -178,7 +196,8 @@ export type CreateAlertInput = {
   connectionId: Scalars['String']['input'];
   name: Scalars['String']['input'];
   operation: AlertOperation;
-  parameter: Scalars['String']['input'];
+  parameter: AlertParameter;
+  severity: AlertSeverity;
   value: Scalars['String']['input'];
 };
 
@@ -330,7 +349,11 @@ export enum OrderDirection {
 export type Query = {
   __typename?: 'Query';
   alert?: Maybe<Alert>;
+  alerts?: Maybe<AlertConnection>;
+  clients?: Maybe<UserConnection>;
   connection?: Maybe<Connection>;
+  connections?: Maybe<ConnectionConnection>;
+  members?: Maybe<UserConnection>;
   user?: Maybe<User>;
   viewer?: Maybe<User>;
 };
@@ -341,8 +364,38 @@ export type QueryAlertArgs = {
 };
 
 
+export type QueryAlertsArgs = {
+  orderBy?: InputMaybe<AlertOrder>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  take?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryClientsArgs = {
+  nameOrEmail?: InputMaybe<Scalars['String']['input']>;
+  orderBy?: InputMaybe<UserOrder>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  take?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
 export type QueryConnectionArgs = {
   id: Scalars['String']['input'];
+};
+
+
+export type QueryConnectionsArgs = {
+  orderBy?: InputMaybe<ConnectionOrder>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  take?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryMembersArgs = {
+  nameOrEmail?: InputMaybe<Scalars['String']['input']>;
+  orderBy?: InputMaybe<UserOrder>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  take?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -490,6 +543,8 @@ export type ResolversTypes = ResolversObject<{
   AlertOperation: AlertOperation;
   AlertOrder: AlertOrder;
   AlertOrderField: AlertOrderField;
+  AlertParameter: AlertParameter;
+  AlertSeverity: AlertSeverity;
   ArchiveAlertInput: ArchiveAlertInput;
   ArchiveAlertPayload: ResolverTypeWrapper<ArchiveAlertPayload>;
   BillingPlan: BillingPlan;
@@ -688,7 +743,11 @@ export type MutationResolvers<ContextType = RequestContext, ParentType extends R
 
 export type QueryResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   alert?: Resolver<Maybe<ResolversTypes['Alert']>, ParentType, ContextType, RequireFields<QueryAlertArgs, 'id'>>;
+  alerts?: Resolver<Maybe<ResolversTypes['AlertConnection']>, ParentType, ContextType, Partial<QueryAlertsArgs>>;
+  clients?: Resolver<Maybe<ResolversTypes['UserConnection']>, ParentType, ContextType, Partial<QueryClientsArgs>>;
   connection?: Resolver<Maybe<ResolversTypes['Connection']>, ParentType, ContextType, RequireFields<QueryConnectionArgs, 'id'>>;
+  connections?: Resolver<Maybe<ResolversTypes['ConnectionConnection']>, ParentType, ContextType, Partial<QueryConnectionsArgs>>;
+  members?: Resolver<Maybe<ResolversTypes['UserConnection']>, ParentType, ContextType, Partial<QueryMembersArgs>>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
   viewer?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
 }>;

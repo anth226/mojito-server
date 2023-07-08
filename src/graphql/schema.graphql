@@ -3,8 +3,29 @@ type Query {
 
     viewer: User
 
+    clients(
+        nameOrEmail: String
+        take: Int
+        skip: Int
+        orderBy: UserOrder
+    ): UserConnection
+
+    members(
+        nameOrEmail: String
+        take: Int
+        skip: Int
+        orderBy: UserOrder
+    ): UserConnection
+
     connection(id: String!): Connection
+    connections(
+        take: Int
+        skip: Int
+        orderBy: ConnectionOrder
+    ): ConnectionConnection
+
     alert(id: String!): Alert
+    alerts(take: Int, skip: Int, orderBy: AlertOrder): AlertConnection
 }
 
 type Mutation {
@@ -114,11 +135,7 @@ type Agency {
         orderBy: ConnectionOrder
     ): ConnectionConnection
 
-    alerts(
-        take: Int
-        skip: Int
-        orderBy: AlertOrder
-    ): AlertConnection
+    alerts(take: Int, skip: Int, orderBy: AlertOrder): AlertConnection
 
     createdAt: String!
     updatedAt: String!
@@ -188,6 +205,24 @@ enum AlertOperation {
     EQUAL
 }
 
+enum AlertParameter {
+    CPM
+    CTR
+    REVENUE
+    TRAFFIC
+    AD_SPEND
+    ROAS
+    CONVERSION_RATE
+}
+
+enum AlertSeverity {
+    LOW
+    NORMAL
+    HIGH
+    URGENT
+    CRITICAL
+}
+
 enum BillingPlan {
     STARTER
     PROFESSIONAL
@@ -221,10 +256,11 @@ input CreateAlertsInput {
 
 input CreateAlertInput {
     name: String!
-    connectionId: String!
+    severity: AlertSeverity!
+    parameter: AlertParameter!
     operation: AlertOperation!
-    parameter: String!
     value: String!
+    connectionId: String!
 }
 
 type CreateAlertsPayload {

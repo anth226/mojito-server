@@ -10,7 +10,6 @@ import * as types from "./types"
 import cors from "cors"
 import logger from "./utils/logger"
 import { resolvers } from "./graphql/resolvers"
-import { GraphQLError } from "graphql"
 import * as handlers from "./rest"
 import { OAuth2Factory } from "./core/oauth2"
 
@@ -90,17 +89,10 @@ async function startServers(): Promise<void> {
                             context.authPrivateKey,
                             accessToken
                         )
+
                         if (!isTokenValid) {
-                            throw new GraphQLError(
-                                "Invalid access token signature",
-                                {
-                                    extensions: {
-                                        http: {
-                                            status: 401,
-                                        },
-                                    },
-                                }
-                            )
+                            logger.info("Invalid access token signature")
+                            return context
                         }
 
                         const jwtPayload = auth.decodeAccessToken(accessToken)
