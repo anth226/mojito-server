@@ -58,7 +58,7 @@ type Token = {
 }
 
 export class OAuth2Factory {
-    constructor(private cfg: OAuth2FactoryConfig) { }
+    constructor(private cfg: OAuth2FactoryConfig) {}
 
     create(source: gql.ConnectionSource): OAuth2Client {
         return new OAuth2Client({
@@ -79,12 +79,21 @@ export class OAuth2Factory {
         await client.initialize(code)
         return client
     }
+
+    async createAndRecover(
+        source: gql.ConnectionSource,
+        token: Token
+    ): Promise<OAuth2Client> {
+        const client = this.create(source)
+        await client.recover(token)
+        return client
+    }
 }
 
 export class OAuth2Client {
     private token?: Token
 
-    constructor(private cfg: OAuth2Config) { }
+    constructor(private cfg: OAuth2Config) {}
 
     public getToken() {
         return this.token
@@ -138,6 +147,11 @@ export class OAuth2Client {
         }
     }
 
+    public async recover(token: Token) {
+        this.token = token
+        await this.tryRefreshToken()
+    }
+
     public async get<T>(
         path: string,
         config?: AxiosRequestConfig
@@ -171,10 +185,19 @@ export class OAuth2Client {
         config?: AxiosRequestConfig
     ): AxiosRequestConfig {
         const cfg = config || {}
+
+        if (!this.token) return cfg
+
         if (cfg.headers) {
-            cfg.headers.Authorization = `Bearer ${this.token?.accessToken}`
+            cfg.headers.Authorization = `Bearer ${this.token.accessToken}`
         } else {
-            cfg.headers = { Authorization: `Bearer ${this.token?.accessToken}` }
+            cfg.headers = { Authorization: `Bearer ${this.token.accessToken}` }
+        }
+
+        if (cfg.params) {
+            cfg.params["access_token"] = this.token.accessToken
+        } else {
+            cfg.params = { access_tokne: this.token.accessToken }
         }
         return cfg
     }
