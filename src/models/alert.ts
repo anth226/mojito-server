@@ -13,6 +13,7 @@ export interface AlertDocument extends mongoose.Document {
     operation: AlertOperation
     parameter: AlertParameter
     value: string
+    fires: number
     connectionId: string
     agencyId: string
     businessId: string
@@ -54,6 +55,10 @@ const alertSchema = new mongoose.Schema<AlertDocument>(
         archived: {
             type: Boolean,
             default: false,
+        },
+        fires: {
+            type: Number,
+            default: 0,
         },
     },
     {
