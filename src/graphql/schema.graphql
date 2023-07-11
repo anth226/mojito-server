@@ -178,6 +178,7 @@ type Alert {
     parameter: String!
     value: String!
     connection: Connection
+    fires: Int!
     archived: Boolean!
     createdAt: String!
     updatedAt: String!

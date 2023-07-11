@@ -71,6 +71,7 @@ export type Alert = {
   archived: Scalars['Boolean']['output'];
   connection?: Maybe<Connection>;
   createdAt: Scalars['String']['output'];
+  fires: Scalars['Int']['output'];
   name: Scalars['String']['output'];
   operation: AlertOperation;
   parameter: Scalars['String']['output'];
@@ -644,6 +645,7 @@ export type AlertResolvers<ContextType = RequestContext, ParentType extends Reso
   archived?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   connection?: Resolver<Maybe<ResolversTypes['Connection']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  fires?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   operation?: Resolver<ResolversTypes['AlertOperation'], ParentType, ContextType>;
   parameter?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
