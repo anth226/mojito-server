@@ -38,6 +38,7 @@ type Mutation {
     inviteMembers(input: InviteMembersInput!): InviteMembersPayload
 
     createConnection(input: CreateConnectionInput!): CreateConnectionPayload
+    syncConnection(input: SyncConnectionInput!): SyncConnectionPayload
     deleteConnection(input: DeleteConnectionInput!): DeleteConnectionPayload
 
     createAlerts(input: CreateAlertsInput!): CreateAlertsPayload
@@ -146,6 +147,8 @@ type Connection {
     source: ConnectionSource!
     client: User
     authUrl: String
+    status: ConnectionStatus!
+    syncedAt: String
     createdAt: String!
     updatedAt: String!
 }
@@ -154,6 +157,11 @@ enum ConnectionSource {
     TIKTOK
     META
     GOOGLE
+}
+
+enum ConnectionStatus {
+    OK
+    SYNC_FAILED
 }
 
 enum ConnectionOrderField {
@@ -207,6 +215,7 @@ enum AlertOperation {
 }
 
 enum AlertParameter {
+    CLICKS
     CPM
     CTR
     REVENUE
@@ -230,6 +239,40 @@ enum BillingPlan {
     SCALE
 }
 
+type Metric {
+    type: MetricType!
+    value: String!
+    from: String!
+    to: String!
+    createdAt: String!
+}
+
+enum MetricType {
+    CLICKS
+    CPM
+    CTR
+    REVENUE
+    TRAFFIC
+    AD_SPEND
+    ROAS
+    CONVERSION_RATE
+}
+
+type MetricConnection {
+    nodes: [Metric]
+    totalCount: Int!
+    hasMore: Boolean!
+}
+
+enum MetricOrderField {
+    CREATED_AT
+}
+
+input MetricOrder {
+    direction: OrderDirection!
+    field: MetricOrderField!
+}
+
 input CreateConnectionInput {
     clientMutationId: String
     source: ConnectionSource!
@@ -237,6 +280,16 @@ input CreateConnectionInput {
 }
 
 type CreateConnectionPayload {
+    clientMutationId: String
+    connection: Connection
+}
+
+input SyncConnectionInput {
+    clientMutationId: String
+    id: String!
+}
+
+type SyncConnectionPayload {
     clientMutationId: String
     connection: Connection
 }

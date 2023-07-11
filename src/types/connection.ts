@@ -1,7 +1,4 @@
-import {
-    ConnectionOrder,
-    ConnectionSource,
-} from "../graphql/__generated__/resolvers-types"
+import * as gql from "../graphql/__generated__/resolvers-types"
 
 export interface ConnectionDatasource {
     create(conn: Partial<Connection>): Promise<Connection>
@@ -14,7 +11,8 @@ export interface ConnectionDatasource {
 export type Connection = {
     _id: string
 
-    source: ConnectionSource
+    source: gql.ConnectionSource
+    status: gql.ConnectionStatus
 
     // OAuth2 credentials
     accessToken: string
@@ -28,6 +26,7 @@ export type Connection = {
     // Client that granted the authorization, only relevant for Agency accounts
     clientId?: string
 
+    syncedAt?: Date
     createdAt: Date
     updatedAt: Date
 }
@@ -37,5 +36,5 @@ export type ConnectionQuery = {
     businessId?: string
     take?: number
     skip?: number
-    orderBy?: ConnectionOrder
+    orderBy?: gql.ConnectionOrder
 }

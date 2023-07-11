@@ -1,16 +1,21 @@
 import mongoose from "mongoose"
 import { v4 as uuid } from "uuid"
-import { ConnectionSource } from "../graphql/__generated__/resolvers-types"
+import {
+    ConnectionSource,
+    ConnectionStatus,
+} from "../graphql/__generated__/resolvers-types"
 
 export interface ConnectionDocument extends mongoose.Document {
     _id: string
     source: ConnectionSource
+    status: ConnectionStatus
     accessToken: string
     refreshToken: string
     tokenExpiration: Date
     agencyId: string
     businessId: string
     clientId: string
+    syncedAt: Date
     createdAt: Date
     updatedAt: Date
 }
@@ -23,6 +28,10 @@ const connectionSchema = new mongoose.Schema<ConnectionDocument>(
         },
         source: {
             type: String,
+        },
+        status: {
+            type: String,
+            default: ConnectionStatus.Ok,
         },
         accessToken: {
             type: String,
@@ -41,6 +50,9 @@ const connectionSchema = new mongoose.Schema<ConnectionDocument>(
         },
         clientId: {
             type: String,
+        },
+        syncedAt: {
+            type: Date,
         },
     },
     {
