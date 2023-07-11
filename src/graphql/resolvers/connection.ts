@@ -1,6 +1,9 @@
 import * as gql from "../__generated__/resolvers-types"
 import * as types from "../../types"
 import { UNAUTHORIZED_ERROR } from "./errors"
+import { MetaApi } from "../../core/meta"
+import dayjs from "dayjs"
+import logger from "../../utils/logger"
 
 function authUrl(
     context: types.RequestContext,
@@ -34,9 +37,135 @@ export const createConnection: gql.MutationResolvers["createConnection"] =
                 authUrl: authUrl(context, conn),
                 createdAt: conn.createdAt.toISOString(),
                 updatedAt: conn.updatedAt.toISOString(),
+                syncedAt: conn.syncedAt?.toISOString(),
             },
         }
     }
+
+export const syncConnection: gql.MutationResolvers["syncConnection"] = async (
+    _parent,
+    args,
+    context,
+    _info
+): Promise<gql.SyncConnectionPayload | null> => {
+    if (!context.user) {
+        throw UNAUTHORIZED_ERROR
+    }
+
+    let connection = await context.datasources.connection.getById(args.input.id)
+
+    if (!connection) {
+        return null
+    }
+
+    const syncedAt = new Date()
+    let metrics = new Array<Partial<types.Metric>>()
+
+    try {
+        const oauth2Client =
+            await context.core.authFactory.createFromConnection(connection)
+
+        if (connection.source === gql.ConnectionSource.Meta) {
+            const metaApi = new MetaApi(oauth2Client)
+
+            // TODO: we're using the first account of the connection,
+            // we should replace this for the adAccount from connection.adAccountId
+            const accounts = await metaApi.getAdAccounts()
+            const clientAccount = accounts[0]
+
+            const syncFrom =
+                connection.syncedAt ||
+                dayjs()
+                    .utc()
+                    .subtract(Math.min(clientAccount.age, 30 * 30), "day") // Max sync time is 30 months
+                    .toDate()
+            const syncTo = dayjs.utc(syncedAt).subtract(1, "day").toDate()
+
+            const insights = await metaApi.getInsights(
+                clientAccount.id,
+                syncFrom,
+                syncTo
+            )
+
+            for (const insight of insights) {
+                const from = dayjs
+                    .utc(insight.date_start)
+                    .startOf("day")
+                    .toDate()
+                const to = dayjs.utc(insight.date_stop).endOf("day").toDate()
+
+                metrics = metrics.concat([
+                    {
+                        type: gql.MetricType.Cpm,
+                        value: parseFloat(insight.cpm),
+                        connectionId: connection._id,
+                        agencyId: connection.agencyId,
+                        businessId: connection.businessId,
+                        from,
+                        to,
+                    },
+                    {
+                        type: gql.MetricType.Ctr,
+                        value: parseFloat(insight.ctr),
+                        connectionId: connection._id,
+                        agencyId: connection.agencyId,
+                        businessId: connection.businessId,
+                        from,
+                        to,
+                    },
+                    {
+                        type: gql.MetricType.Clicks,
+                        value: parseFloat(insight.clicks),
+                        connectionId: connection._id,
+                        agencyId: connection.agencyId,
+                        businessId: connection.businessId,
+                        from,
+                        to,
+                    },
+                ])
+            }
+        }
+
+        await context.datasources.metric.createMany(metrics)
+    } catch (error) {
+        logger.error(error, `Sync failed for connection ${connection._id}`)
+
+        connection = (await context.datasources.connection.update(
+            connection._id,
+            {
+                status: gql.ConnectionStatus.SyncFailed,
+                syncedAt,
+            }
+        )) as types.Connection
+
+        return {
+            clientMutationId: args.input.clientMutationId,
+            connection: {
+                ...connection,
+                authUrl: authUrl(context, connection),
+                createdAt: connection.createdAt.toISOString(),
+                updatedAt: connection.updatedAt.toISOString(),
+                syncedAt: connection.syncedAt?.toISOString(),
+            },
+        }
+    }
+
+    connection = (await context.datasources.connection.update(connection._id, {
+        status: gql.ConnectionStatus.Ok,
+        syncedAt,
+    })) as types.Connection
+
+    return {
+        clientMutationId: args.input.clientMutationId,
+        connection: {
+            ...connection,
+            authUrl: authUrl(context, connection),
+            createdAt: connection.createdAt.toISOString(),
+            updatedAt: connection.updatedAt.toISOString(),
+            syncedAt: connection.syncedAt?.toISOString(),
+        },
+    }
+}
 
 export const deleteConnection: gql.MutationResolvers["deleteConnection"] =
     async (
@@ -80,6 +209,7 @@ export const getConnections: gql.QueryResolvers["connections"] = async (
             authUrl: authUrl(context, conn),
             createdAt: conn.createdAt.toISOString(),
             updatedAt: conn.updatedAt.toISOString(),
+            syncedAt: conn.syncedAt?.toISOString(),
         })),
         hasMore: args.take ? args.take + skip < count : false,
         totalCount: count,
@@ -104,6 +234,7 @@ export const getConnectionsFromAgency: gql.AgencyResolvers["connections"] =
                 authUrl: authUrl(context, conn),
                 createdAt: conn.createdAt.toISOString(),
                 updatedAt: conn.updatedAt.toISOString(),
+                syncedAt: conn.syncedAt?.toISOString(),
             })),
             hasMore: args.take ? args.take + skip < count : false,
             totalCount: count,
@@ -128,6 +259,7 @@ export const getConnectionsFromBusiness: gql.BusinessResolvers["connections"] =
                 authUrl: authUrl(context, conn),
                 createdAt: conn.createdAt.toISOString(),
                 updatedAt: conn.updatedAt.toISOString(),
+                syncedAt: conn.syncedAt?.toISOString(),
             })),
             hasMore: args.take ? args.take + skip < count : false,
             totalCount: count,
@@ -158,5 +290,6 @@ export const getConnectionFromAlert: gql.AlertResolvers["connection"] = async (
         ...connection,
         createdAt: connection.createdAt.toISOString(),
         updatedAt: connection.updatedAt.toISOString(),
+        syncedAt: connection.syncedAt?.toISOString(),
     }
 }

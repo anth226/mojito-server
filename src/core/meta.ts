@@ -28,6 +28,8 @@ type Insight = {
     ctr: string
     spend: string
     clicks: string
+    date_start: string
+    date_stop: string
 }
 
 export class MetaApi {
@@ -47,8 +49,8 @@ export class MetaApi {
         from: Date,
         to: Date
     ): Promise<Array<Insight>> {
-        const since = dayjs(from).format("YYYY-MM-DD")
-        const until = dayjs(to).format("YYYY-MM-DD")
+        const since = dayjs.utc(from).format("YYYY-MM-DD")
+        const until = dayjs.utc(to).format("YYYY-MM-DD")
 
         return this.getPaginated<Insight>(
             `${API_URL}/${adAccountId}/insights`,

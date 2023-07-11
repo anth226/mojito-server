@@ -104,6 +104,7 @@ export enum AlertOrderField {
 
 export enum AlertParameter {
   AdSpend = 'AD_SPEND',
+  Clicks = 'CLICKS',
   ConversionRate = 'CONVERSION_RATE',
   Cpm = 'CPM',
   Ctr = 'CTR',
@@ -168,6 +169,8 @@ export type Connection = {
   client?: Maybe<User>;
   createdAt: Scalars['String']['output'];
   source: ConnectionSource;
+  status: ConnectionStatus;
+  syncedAt?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['String']['output'];
 };
 
@@ -191,6 +194,11 @@ export enum ConnectionSource {
   Google = 'GOOGLE',
   Meta = 'META',
   Tiktok = 'TIKTOK'
+}
+
+export enum ConnectionStatus {
+  Ok = 'OK',
+  SyncFailed = 'SYNC_FAILED'
 }
 
 export type CreateAlertInput = {
@@ -284,6 +292,42 @@ export type LoginPayload = {
   user?: Maybe<User>;
 };
 
+export type Metric = {
+  __typename?: 'Metric';
+  createdAt: Scalars['String']['output'];
+  from: Scalars['String']['output'];
+  to: Scalars['String']['output'];
+  type: MetricType;
+  value: Scalars['String']['output'];
+};
+
+export type MetricConnection = {
+  __typename?: 'MetricConnection';
+  hasMore: Scalars['Boolean']['output'];
+  nodes?: Maybe<Array<Maybe<Metric>>>;
+  totalCount: Scalars['Int']['output'];
+};
+
+export type MetricOrder = {
+  direction: OrderDirection;
+  field: MetricOrderField;
+};
+
+export enum MetricOrderField {
+  CreatedAt = 'CREATED_AT'
+}
+
+export enum MetricType {
+  AdSpend = 'AD_SPEND',
+  Clicks = 'CLICKS',
+  ConversionRate = 'CONVERSION_RATE',
+  Cpm = 'CPM',
+  Ctr = 'CTR',
+  Revenue = 'REVENUE',
+  Roas = 'ROAS',
+  Traffic = 'TRAFFIC'
+}
+
 export type Mutation = {
   __typename?: 'Mutation';
   archiveAlert?: Maybe<ArchiveAlertPayload>;
@@ -295,6 +339,7 @@ export type Mutation = {
   login?: Maybe<LoginPayload>;
   registerAgency?: Maybe<RegisterAgencyPayload>;
   registerBusiness?: Maybe<RegisterBusinessPayload>;
+  syncConnection?: Maybe<SyncConnectionPayload>;
 };
 
 
@@ -340,6 +385,11 @@ export type MutationRegisterAgencyArgs = {
 
 export type MutationRegisterBusinessArgs = {
   input: RegisterBusinessInput;
+};
+
+
+export type MutationSyncConnectionArgs = {
+  input: SyncConnectionInput;
 };
 
 export enum OrderDirection {
@@ -428,6 +478,17 @@ export type RegisterBusinessPayload = {
   __typename?: 'RegisterBusinessPayload';
   clientMutationId?: Maybe<Scalars['String']['output']>;
   user?: Maybe<User>;
+};
+
+export type SyncConnectionInput = {
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+};
+
+export type SyncConnectionPayload = {
+  __typename?: 'SyncConnectionPayload';
+  clientMutationId?: Maybe<Scalars['String']['output']>;
+  connection?: Maybe<Connection>;
 };
 
 export type User = {
@@ -556,6 +617,7 @@ export type ResolversTypes = ResolversObject<{
   ConnectionOrder: ConnectionOrder;
   ConnectionOrderField: ConnectionOrderField;
   ConnectionSource: ConnectionSource;
+  ConnectionStatus: ConnectionStatus;
   CreateAlertInput: CreateAlertInput;
   CreateAlertsInput: CreateAlertsInput;
   CreateAlertsPayload: ResolverTypeWrapper<CreateAlertsPayload>;
@@ -572,6 +634,11 @@ export type ResolversTypes = ResolversObject<{
   InviteMembersPayload: ResolverTypeWrapper<InviteMembersPayload>;
   LoginInput: LoginInput;
   LoginPayload: ResolverTypeWrapper<LoginPayload>;
+  Metric: ResolverTypeWrapper<Metric>;
+  MetricConnection: ResolverTypeWrapper<MetricConnection>;
+  MetricOrder: MetricOrder;
+  MetricOrderField: MetricOrderField;
+  MetricType: MetricType;
   Mutation: ResolverTypeWrapper<{}>;
   OrderDirection: OrderDirection;
   Query: ResolverTypeWrapper<{}>;
@@ -580,6 +647,8 @@ export type ResolversTypes = ResolversObject<{
   RegisterBusinessInput: RegisterBusinessInput;
   RegisterBusinessPayload: ResolverTypeWrapper<RegisterBusinessPayload>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
+  SyncConnectionInput: SyncConnectionInput;
+  SyncConnectionPayload: ResolverTypeWrapper<SyncConnectionPayload>;
   User: ResolverTypeWrapper<User>;
   UserConnection: ResolverTypeWrapper<UserConnection>;
   UserOrder: UserOrder;
@@ -616,6 +685,9 @@ export type ResolversParentTypes = ResolversObject<{
   InviteMembersPayload: InviteMembersPayload;
   LoginInput: LoginInput;
   LoginPayload: LoginPayload;
+  Metric: Metric;
+  MetricConnection: MetricConnection;
+  MetricOrder: MetricOrder;
   Mutation: {};
   Query: {};
   RegisterAgencyInput: RegisterAgencyInput;
@@ -623,6 +695,8 @@ export type ResolversParentTypes = ResolversObject<{
   RegisterBusinessInput: RegisterBusinessInput;
   RegisterBusinessPayload: RegisterBusinessPayload;
   String: Scalars['String']['output'];
+  SyncConnectionInput: SyncConnectionInput;
+  SyncConnectionPayload: SyncConnectionPayload;
   User: User;
   UserConnection: UserConnection;
   UserOrder: UserOrder;
@@ -682,6 +756,8 @@ export type ConnectionResolvers<ContextType = RequestContext, ParentType extends
   client?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   source?: Resolver<ResolversTypes['ConnectionSource'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['ConnectionStatus'], ParentType, ContextType>;
+  syncedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -731,6 +807,22 @@ export type LoginPayloadResolvers<ContextType = RequestContext, ParentType exten
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type MetricResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['Metric'] = ResolversParentTypes['Metric']> = ResolversObject<{
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  from?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  to?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['MetricType'], ParentType, ContextType>;
+  value?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type MetricConnectionResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['MetricConnection'] = ResolversParentTypes['MetricConnection']> = ResolversObject<{
+  hasMore?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  nodes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Metric']>>>, ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type MutationResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   archiveAlert?: Resolver<Maybe<ResolversTypes['ArchiveAlertPayload']>, ParentType, ContextType, RequireFields<MutationArchiveAlertArgs, 'input'>>;
   createAlerts?: Resolver<Maybe<ResolversTypes['CreateAlertsPayload']>, ParentType, ContextType, RequireFields<MutationCreateAlertsArgs, 'input'>>;
@@ -741,6 +833,7 @@ export type MutationResolvers<ContextType = RequestContext, ParentType extends R
   login?: Resolver<Maybe<ResolversTypes['LoginPayload']>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'input'>>;
   registerAgency?: Resolver<Maybe<ResolversTypes['RegisterAgencyPayload']>, ParentType, ContextType, RequireFields<MutationRegisterAgencyArgs, 'input'>>;
   registerBusiness?: Resolver<Maybe<ResolversTypes['RegisterBusinessPayload']>, ParentType, ContextType, RequireFields<MutationRegisterBusinessArgs, 'input'>>;
+  syncConnection?: Resolver<Maybe<ResolversTypes['SyncConnectionPayload']>, ParentType, ContextType, RequireFields<MutationSyncConnectionArgs, 'input'>>;
 }>;
 
 export type QueryResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
@@ -763,6 +856,12 @@ export type RegisterAgencyPayloadResolvers<ContextType = RequestContext, ParentT
 export type RegisterBusinessPayloadResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['RegisterBusinessPayload'] = ResolversParentTypes['RegisterBusinessPayload']> = ResolversObject<{
   clientMutationId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type SyncConnectionPayloadResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['SyncConnectionPayload'] = ResolversParentTypes['SyncConnectionPayload']> = ResolversObject<{
+  clientMutationId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  connection?: Resolver<Maybe<ResolversTypes['Connection']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -800,10 +899,13 @@ export type Resolvers<ContextType = RequestContext> = ResolversObject<{
   InviteClientsPayload?: InviteClientsPayloadResolvers<ContextType>;
   InviteMembersPayload?: InviteMembersPayloadResolvers<ContextType>;
   LoginPayload?: LoginPayloadResolvers<ContextType>;
+  Metric?: MetricResolvers<ContextType>;
+  MetricConnection?: MetricConnectionResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   RegisterAgencyPayload?: RegisterAgencyPayloadResolvers<ContextType>;
   RegisterBusinessPayload?: RegisterBusinessPayloadResolvers<ContextType>;
+  SyncConnectionPayload?: SyncConnectionPayloadResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   UserConnection?: UserConnectionResolvers<ContextType>;
 }>;

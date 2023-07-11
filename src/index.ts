@@ -12,6 +12,10 @@ import logger from "./utils/logger"
 import { resolvers } from "./graphql/resolvers"
 import * as handlers from "./rest"
 import { OAuth2Factory } from "./core/oauth2"
+import dayjs from "dayjs"
+import utc from "dayjs/plugin/utc"
+
+dayjs.extend(utc)
 
 dotenv.config()
 
@@ -76,6 +80,7 @@ async function startServers(): Promise<void> {
                             connection: new datasources.ConnectionDatasource(),
                             business: new datasources.BusinessDatasource(),
                             alert: new datasources.AlertDatasource(),
+                            metric: new datasources.MetricDatasource(),
                         },
                     }
 
@@ -141,6 +146,7 @@ async function startServers(): Promise<void> {
                     connection: new datasources.ConnectionDatasource(),
                     business: new datasources.BusinessDatasource(),
                     alert: new datasources.AlertDatasource(),
+                    metric: new datasources.MetricDatasource(),
                 }
 
                 next()

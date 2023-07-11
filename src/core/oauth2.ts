@@ -1,7 +1,8 @@
-import axios, { AxiosRequestConfig, AxiosResponse, AxiosInstance } from "axios"
+import axios, { AxiosRequestConfig, AxiosInstance } from "axios"
 import dayjs from "dayjs"
 import { URL } from "url"
 import * as gql from "../graphql/__generated__/resolvers-types"
+import * as types from "../types"
 
 const authUrl: Record<gql.ConnectionSource, string> = {
     GOOGLE: "https://accounts.google.com/o/oauth2/v2/auth",
@@ -58,7 +59,7 @@ type Token = {
 }
 
 export class OAuth2Factory {
-    constructor(private cfg: OAuth2FactoryConfig) { }
+    constructor(private cfg: OAuth2FactoryConfig) {}
 
     create(source: gql.ConnectionSource): OAuth2Client {
         return new OAuth2Client({
@@ -88,12 +89,22 @@ export class OAuth2Factory {
         await client.recover(token)
         return client
     }
+
+    async createFromConnection(conn: types.Connection): Promise<OAuth2Client> {
+        const client = this.create(conn.source)
+        await client.recover({
+            accessToken: conn.accessToken,
+            refreshToken: conn.refreshToken,
+            expiration: conn.tokenExpiration,
+        })
+        return client
+    }
 }
 
 export class OAuth2Client {
     private token?: Token
 
-    constructor(private cfg: OAuth2Config) { }
+    constructor(private cfg: OAuth2Config) {}
 
     public getToken() {
         return this.token
