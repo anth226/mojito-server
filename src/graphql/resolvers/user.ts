@@ -435,3 +435,37 @@ export const getClientFromConnection: gql.ConnectionResolvers["client"] =
             updatedAt: client.updatedAt.toISOString(),
         }
     }
+
+export const getClientsFromAlert: gql.AlertResolvers["clients"] = async (
+    parent,
+    args,
+    context,
+    _info
+): Promise<gql.UserConnection> => {
+    const alert = await context.datasources.alert.getById(parent._id)
+
+    if (!alert) {
+        return { nodes: [], hasMore: false, totalCount: 0 }
+    }
+
+    const [members, count] = await context.datasources.user.search({
+        ids: alert.clientIds,
+        nameOrEmail: args.nameOrEmail!!,
+        clientFrom: alert.agencyId,
+        take: args.take!!,
+        skip: args.skip!!,
+        orderBy: args.orderBy!!,
+    })
+
+    const skip = args.skip || 0
+
+    return {
+        nodes: members.map((c) => ({
+            ...c,
+            createdAt: c.createdAt.toISOString(),
+            updatedAt: c.updatedAt.toISOString(),
+        })),
+        hasMore: args.take ? args.take + skip < count : false,
+        totalCount: count,
+    }
+}

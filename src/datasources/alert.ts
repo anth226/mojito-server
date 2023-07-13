@@ -31,10 +31,11 @@ export class AlertDatasource implements types.AlertDatasource {
 
         if (query.archived) {
             filter.archived = query.archived
+            filter.archived = { $not: "" }
         }
 
-        if (query.connectionId) {
-            filter.connectionId = query.connectionId
+        if (query.clientIds) {
+            filter.clientIds = { $in: query.clientIds }
         }
 
         if (query.agencyId) {

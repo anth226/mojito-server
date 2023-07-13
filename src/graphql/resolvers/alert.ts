@@ -25,7 +25,7 @@ export const createAlerts: gql.MutationResolvers["createAlerts"] = async (
 
         const alert = await context.datasources.alert.create({
             name: input.name,
-            connectionId: input.connectionId,
+            clientIds: input.clientIds || [],
             agencyId: context.user.agencyId,
             businessId: context.user.businessId,
             operation: input.operation,

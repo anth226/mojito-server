@@ -35,6 +35,7 @@ export type User = {
 }
 
 export type UserQuery = {
+    ids?: Array<string>
     nameOrEmail?: string
     clientFrom?: string
     agencyId?: string

@@ -49,7 +49,7 @@ const connection: gql.ConnectionResolvers = {
 }
 
 const alert: gql.AlertResolvers = {
-    connection: connections.getConnectionFromAlert,
+    clients: users.getClientsFromAlert,
 }
 
 export const resolvers: gql.Resolvers = {

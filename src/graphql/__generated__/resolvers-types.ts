@@ -69,14 +69,23 @@ export type Alert = {
   __typename?: 'Alert';
   _id: Scalars['String']['output'];
   archived: Scalars['Boolean']['output'];
-  connection?: Maybe<Connection>;
+  clients?: Maybe<UserConnection>;
   createdAt: Scalars['String']['output'];
   fires: Scalars['Int']['output'];
   name: Scalars['String']['output'];
   operation: AlertOperation;
   parameter: Scalars['String']['output'];
+  severity: AlertSeverity;
   updatedAt: Scalars['String']['output'];
   value: Scalars['String']['output'];
+};
+
+
+export type AlertClientsArgs = {
+  nameOrEmail?: InputMaybe<Scalars['String']['input']>;
+  orderBy?: InputMaybe<UserOrder>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  take?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type AlertConnection = {
@@ -202,7 +211,7 @@ export enum ConnectionStatus {
 }
 
 export type CreateAlertInput = {
-  connectionId: Scalars['String']['input'];
+  clientIds?: InputMaybe<Array<Scalars['String']['input']>>;
   name: Scalars['String']['input'];
   operation: AlertOperation;
   parameter: AlertParameter;
@@ -717,12 +726,13 @@ export type AgencyResolvers<ContextType = RequestContext, ParentType extends Res
 export type AlertResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['Alert'] = ResolversParentTypes['Alert']> = ResolversObject<{
   _id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   archived?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  connection?: Resolver<Maybe<ResolversTypes['Connection']>, ParentType, ContextType>;
+  clients?: Resolver<Maybe<ResolversTypes['UserConnection']>, ParentType, ContextType, Partial<AlertClientsArgs>>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   fires?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   operation?: Resolver<ResolversTypes['AlertOperation'], ParentType, ContextType>;
   parameter?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  severity?: Resolver<ResolversTypes['AlertSeverity'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   value?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
