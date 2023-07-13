@@ -185,9 +185,17 @@ type Alert {
     operation: AlertOperation!
     parameter: String!
     value: String!
-    connection: Connection
+    severity: AlertSeverity!
     fires: Int!
     archived: Boolean!
+
+    clients(
+        nameOrEmail: String
+        take: Int
+        skip: Int
+        orderBy: UserOrder
+    ): UserConnection
+
     createdAt: String!
     updatedAt: String!
 }
@@ -314,7 +322,7 @@ input CreateAlertInput {
     parameter: AlertParameter!
     operation: AlertOperation!
     value: String!
-    connectionId: String!
+    clientIds: [String!]
 }
 
 type CreateAlertsPayload {

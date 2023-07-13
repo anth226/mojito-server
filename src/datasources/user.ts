@@ -46,6 +46,10 @@ export class UserDatasource implements types.UserDatasource {
         const filter: FilterQuery<UserDocument> = {}
         const options: QueryOptions<UserDocument> = {}
 
+        if (query.ids) {
+            filter._id = { $in: query.ids }
+        }
+
         if (query.nameOrEmail) {
             filter.$or = [
                 { name: new RegExp(query.nameOrEmail, "gi") },

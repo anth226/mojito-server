@@ -1,9 +1,4 @@
-import {
-    AlertOperation,
-    AlertOrder,
-    AlertSeverity,
-    AlertParameter,
-} from "../graphql/__generated__/resolvers-types"
+import * as gql from "../graphql/__generated__/resolvers-types"
 
 export interface AlertDatasource {
     create(alert: Partial<Alert>): Promise<Alert>
@@ -15,12 +10,12 @@ export interface AlertDatasource {
 export type Alert = {
     _id: string
     name: string
-    severity: AlertSeverity
-    operation: AlertOperation
-    parameter: AlertParameter
+    severity: gql.AlertSeverity
+    operation: gql.AlertOperation
+    parameter: gql.AlertParameter
     value: string
     fires: number
-    connectionId: string
+    clientIds: Array<string>
     agencyId: string
     businessId: string
     archived: boolean
@@ -31,10 +26,10 @@ export type Alert = {
 export type AlertQuery = {
     name?: string
     archived?: boolean
-    connectionId?: string
+    clientIds?: string
     agencyId?: string
     businessId?: string
     take?: number
     skip?: number
-    orderBy?: AlertOrder
+    orderBy?: gql.AlertOrder
 }
