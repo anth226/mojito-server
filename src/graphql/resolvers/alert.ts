@@ -31,6 +31,7 @@ export const createAlerts: gql.MutationResolvers["createAlerts"] = async (
             operation: input.operation,
             parameter: input.parameter,
             value: input.value,
+            severity: input.severity,
             archived: false,
         })
 
@@ -44,6 +45,39 @@ export const createAlerts: gql.MutationResolvers["createAlerts"] = async (
     return {
         clientMutationId: args.input.clientMutationId,
         alerts,
+    }
+}
+
+export const updateAlert: gql.MutationResolvers["updateAlert"] = async (
+    _parent,
+    args,
+    context,
+    _info
+): Promise<gql.UpdateAlertPayload | null> => {
+    if (!context.user) {
+        throw UNAUTHORIZED_ERROR
+    }
+
+    const alert = await context.datasources.alert.update(args.input.alertId, {
+        name: args.input.name,
+        clientIds: args.input.clientIds || [],
+        severity: args.input.severity,
+        operation: args.input.operation,
+        parameter: args.input.parameter,
+        value: args.input.value,
+    })
+
+    if (!alert) {
+        return null
+    }
+
+    return {
+        clientMutationId: args.input.clientMutationId,
+        alert: {
+            ...alert,
+            createdAt: alert.createdAt.toISOString(),
+            updatedAt: alert.updatedAt.toISOString(),
+        },
     }
 }
 
