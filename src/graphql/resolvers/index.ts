@@ -24,6 +24,7 @@ const mutation: gql.MutationResolvers = {
     syncConnection: connections.syncConnection,
     deleteConnection: connections.deleteConnection,
     createAlerts: alerts.createAlerts,
+    updateAlert: alerts.updateAlert,
     archiveAlert: alerts.archiveAlert,
 }
 

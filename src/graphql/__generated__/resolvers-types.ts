@@ -349,6 +349,7 @@ export type Mutation = {
   registerAgency?: Maybe<RegisterAgencyPayload>;
   registerBusiness?: Maybe<RegisterBusinessPayload>;
   syncConnection?: Maybe<SyncConnectionPayload>;
+  updateAlert?: Maybe<UpdateAlertPayload>;
 };
 
 
@@ -399,6 +400,11 @@ export type MutationRegisterBusinessArgs = {
 
 export type MutationSyncConnectionArgs = {
   input: SyncConnectionInput;
+};
+
+
+export type MutationUpdateAlertArgs = {
+  input: UpdateAlertInput;
 };
 
 export enum OrderDirection {
@@ -498,6 +504,23 @@ export type SyncConnectionPayload = {
   __typename?: 'SyncConnectionPayload';
   clientMutationId?: Maybe<Scalars['String']['output']>;
   connection?: Maybe<Connection>;
+};
+
+export type UpdateAlertInput = {
+  alertId: Scalars['String']['input'];
+  clientIds?: InputMaybe<Array<Scalars['String']['input']>>;
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+  operation: AlertOperation;
+  parameter: AlertParameter;
+  severity: AlertSeverity;
+  value: Scalars['String']['input'];
+};
+
+export type UpdateAlertPayload = {
+  __typename?: 'UpdateAlertPayload';
+  alert?: Maybe<Alert>;
+  clientMutationId?: Maybe<Scalars['String']['output']>;
 };
 
 export type User = {
@@ -658,6 +681,8 @@ export type ResolversTypes = ResolversObject<{
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   SyncConnectionInput: SyncConnectionInput;
   SyncConnectionPayload: ResolverTypeWrapper<SyncConnectionPayload>;
+  UpdateAlertInput: UpdateAlertInput;
+  UpdateAlertPayload: ResolverTypeWrapper<UpdateAlertPayload>;
   User: ResolverTypeWrapper<User>;
   UserConnection: ResolverTypeWrapper<UserConnection>;
   UserOrder: UserOrder;
@@ -706,6 +731,8 @@ export type ResolversParentTypes = ResolversObject<{
   String: Scalars['String']['output'];
   SyncConnectionInput: SyncConnectionInput;
   SyncConnectionPayload: SyncConnectionPayload;
+  UpdateAlertInput: UpdateAlertInput;
+  UpdateAlertPayload: UpdateAlertPayload;
   User: User;
   UserConnection: UserConnection;
   UserOrder: UserOrder;
@@ -844,6 +871,7 @@ export type MutationResolvers<ContextType = RequestContext, ParentType extends R
   registerAgency?: Resolver<Maybe<ResolversTypes['RegisterAgencyPayload']>, ParentType, ContextType, RequireFields<MutationRegisterAgencyArgs, 'input'>>;
   registerBusiness?: Resolver<Maybe<ResolversTypes['RegisterBusinessPayload']>, ParentType, ContextType, RequireFields<MutationRegisterBusinessArgs, 'input'>>;
   syncConnection?: Resolver<Maybe<ResolversTypes['SyncConnectionPayload']>, ParentType, ContextType, RequireFields<MutationSyncConnectionArgs, 'input'>>;
+  updateAlert?: Resolver<Maybe<ResolversTypes['UpdateAlertPayload']>, ParentType, ContextType, RequireFields<MutationUpdateAlertArgs, 'input'>>;
 }>;
 
 export type QueryResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
@@ -872,6 +900,12 @@ export type RegisterBusinessPayloadResolvers<ContextType = RequestContext, Paren
 export type SyncConnectionPayloadResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['SyncConnectionPayload'] = ResolversParentTypes['SyncConnectionPayload']> = ResolversObject<{
   clientMutationId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   connection?: Resolver<Maybe<ResolversTypes['Connection']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type UpdateAlertPayloadResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['UpdateAlertPayload'] = ResolversParentTypes['UpdateAlertPayload']> = ResolversObject<{
+  alert?: Resolver<Maybe<ResolversTypes['Alert']>, ParentType, ContextType>;
+  clientMutationId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -916,6 +950,7 @@ export type Resolvers<ContextType = RequestContext> = ResolversObject<{
   RegisterAgencyPayload?: RegisterAgencyPayloadResolvers<ContextType>;
   RegisterBusinessPayload?: RegisterBusinessPayloadResolvers<ContextType>;
   SyncConnectionPayload?: SyncConnectionPayloadResolvers<ContextType>;
+  UpdateAlertPayload?: UpdateAlertPayloadResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   UserConnection?: UserConnectionResolvers<ContextType>;
 }>;

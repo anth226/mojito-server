@@ -42,6 +42,7 @@ type Mutation {
     deleteConnection(input: DeleteConnectionInput!): DeleteConnectionPayload
 
     createAlerts(input: CreateAlertsInput!): CreateAlertsPayload
+    updateAlert(input: UpdateAlertInput!): UpdateAlertPayload
     archiveAlert(input: ArchiveAlertInput!): ArchiveAlertPayload
 }
 
@@ -328,6 +329,22 @@ input CreateAlertInput {
 type CreateAlertsPayload {
     clientMutationId: String
     alerts: [Alert]
+}
+
+input UpdateAlertInput {
+    clientMutationId: String
+    alertId: String!
+    name: String!
+    severity: AlertSeverity!
+    parameter: AlertParameter!
+    operation: AlertOperation!
+    value: String!
+    clientIds: [String!]
+}
+
+type UpdateAlertPayload {
+    clientMutationId: String
+    alert: Alert
 }
 
 input ArchiveAlertInput {
