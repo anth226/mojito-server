@@ -52,12 +52,18 @@ type User {
     name: String!
     accountType: AccountType!
     status: UserStatus!
+    role: UserRole!
 
     agency: Agency
     business: Business
 
     createdAt: String!
     updatedAt: String!
+}
+
+enum UserRole {
+    ADMIN
+    MEMBER
 }
 
 enum AccountType {
@@ -381,6 +387,7 @@ input InviteMemberInput {
     clientMutationId: String
     name: String!
     email: String!
+    role: UserRole
 }
 
 type InviteMembersPayload {

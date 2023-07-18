@@ -273,6 +273,7 @@ export type InviteMemberInput = {
   clientMutationId?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   name: Scalars['String']['input'];
+  role?: InputMaybe<UserRole>;
 };
 
 export type InviteMembersInput = {
@@ -532,6 +533,7 @@ export type User = {
   createdAt: Scalars['String']['output'];
   email: Scalars['String']['output'];
   name: Scalars['String']['output'];
+  role: UserRole;
   status: UserStatus;
   updatedAt: Scalars['String']['output'];
 };
@@ -551,6 +553,11 @@ export type UserOrder = {
 export enum UserOrderField {
   CreatedAt = 'CREATED_AT',
   Name = 'NAME'
+}
+
+export enum UserRole {
+  Admin = 'ADMIN',
+  Member = 'MEMBER'
 }
 
 export enum UserStatus {
@@ -687,6 +694,7 @@ export type ResolversTypes = ResolversObject<{
   UserConnection: ResolverTypeWrapper<UserConnection>;
   UserOrder: UserOrder;
   UserOrderField: UserOrderField;
+  UserRole: UserRole;
   UserStatus: UserStatus;
 }>;
 
@@ -917,6 +925,7 @@ export type UserResolvers<ContextType = RequestContext, ParentType extends Resol
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  role?: Resolver<ResolversTypes['UserRole'], ParentType, ContextType>;
   status?: Resolver<ResolversTypes['UserStatus'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
