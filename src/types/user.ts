@@ -2,6 +2,7 @@ import {
     AccountType,
     UserOrder,
     UserStatus,
+    UserRole,
 } from "../graphql/__generated__/resolvers-types"
 
 export interface UserDatasource {
@@ -20,6 +21,7 @@ export type User = {
     email: string
     password: string
     accountType: AccountType
+    role: UserRole
 
     // Entity owner of the user
     agencyId: string

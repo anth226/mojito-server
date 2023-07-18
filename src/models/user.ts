@@ -3,6 +3,7 @@ import { v4 as uuid } from "uuid"
 import {
     AccountType,
     UserStatus,
+    UserRole,
 } from "../graphql/__generated__/resolvers-types"
 
 export interface UserDocument extends mongoose.Document {
@@ -11,6 +12,7 @@ export interface UserDocument extends mongoose.Document {
     password: string
     name: string
     accountType: AccountType
+    role: UserRole
     agencyId: string
     businessId: string
     status: UserStatus
@@ -34,6 +36,10 @@ const userSchema = new mongoose.Schema<UserDocument>(
         },
         accountType: {
             type: String,
+        },
+        role: {
+            type: String,
+            default: UserRole.Member,
         },
         password: {
             type: String,
