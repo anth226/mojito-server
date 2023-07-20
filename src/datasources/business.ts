@@ -6,6 +6,14 @@ export class BusinessDatasource implements types.BusinessDatasource {
         return (await BusinessModel.create(business)).toObject()
     }
 
+    async update(
+        id: string,
+        changes: Partial<types.Business>
+    ): Promise<types.Business | null> {
+        const business = await BusinessModel.findByIdAndUpdate(id, changes)
+        return business ? business.toObject() : null
+    }
+
     async getById(businessId: string): Promise<types.Business | null> {
         const business = await BusinessModel.findById(businessId)
         return business ? business.toObject() : null
