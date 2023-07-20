@@ -59,12 +59,12 @@ export const updateAlert: gql.MutationResolvers["updateAlert"] = async (
     }
 
     const alert = await context.datasources.alert.update(args.input.alertId, {
-        name: args.input.name,
+        name: args.input.name ?? undefined,
         clientIds: args.input.clientIds || [],
-        severity: args.input.severity,
-        operation: args.input.operation,
-        parameter: args.input.parameter,
-        value: args.input.value,
+        severity: args.input.severity ?? undefined,
+        operation: args.input.operation ?? undefined,
+        parameter: args.input.parameter ?? undefined,
+        value: args.input.value ?? undefined,
     })
 
     if (!alert) {

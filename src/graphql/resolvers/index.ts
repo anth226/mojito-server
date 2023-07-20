@@ -16,7 +16,9 @@ const query: gql.QueryResolvers = {
 
 const mutation: gql.MutationResolvers = {
     registerAgency: users.registerUserForAgency,
+    updateAgency: agencies.updateAgency,
     registerBusiness: users.registerUserForBusiness,
+    updateBusiness: businesses.updateBusiness,
     login: users.loginUser,
     inviteClients: users.inviteClients,
     inviteMembers: users.inviteMembers,

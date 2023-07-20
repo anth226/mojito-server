@@ -4,6 +4,7 @@ import { v4 as uuid } from "uuid"
 interface AgencyDocument extends mongoose.Document {
     _id: string
     name: string
+    logo: string
     createdAt: Date
     updatedAt: Date
 }
@@ -15,6 +16,9 @@ const userSchema = new mongoose.Schema<AgencyDocument>(
             default: uuid,
         },
         name: {
+            type: String,
+        },
+        logo: {
             type: String,
         },
     },

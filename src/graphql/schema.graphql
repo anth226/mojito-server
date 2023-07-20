@@ -32,7 +32,10 @@ type Mutation {
     login(input: LoginInput!): LoginPayload
 
     registerAgency(input: RegisterAgencyInput!): RegisterAgencyPayload
+    updateAgency(input: UpdateAgencyInput!): UpdateAgencyPayload
+
     registerBusiness(input: RegisterBusinessInput!): RegisterBusinessPayload
+    updateBusiness(input: UpdateBusinessInput!): UpdateBusinessPayload
 
     inviteClients(input: InviteClientsInput!): InviteClientsPayload
     inviteMembers(input: InviteMembersInput!): InviteMembersPayload
@@ -100,7 +103,9 @@ type UserConnection {
 
 type Business {
     _id: String!
+
     name: String
+    logo: String
 
     members(
         nameOrEmail: String
@@ -121,7 +126,9 @@ type Business {
 
 type Agency {
     _id: String!
+
     name: String
+    logo: String
 
     clients(
         nameOrEmail: String
@@ -340,11 +347,11 @@ type CreateAlertsPayload {
 input UpdateAlertInput {
     clientMutationId: String
     alertId: String!
-    name: String!
-    severity: AlertSeverity!
-    parameter: AlertParameter!
-    operation: AlertOperation!
-    value: String!
+    name: String
+    severity: AlertSeverity
+    parameter: AlertParameter
+    operation: AlertOperation
+    value: String
     clientIds: [String!]
 }
 
@@ -407,6 +414,18 @@ type RegisterAgencyPayload {
     user: User
 }
 
+input UpdateAgencyInput {
+    clientMutationId: String
+    name: String
+    logo: String
+}
+
+type UpdateAgencyPayload {
+    clientMutationId: String
+    agency: Agency
+}
+
+
 input RegisterBusinessInput {
     clientMutationId: String
     businessName: String!
@@ -417,6 +436,17 @@ input RegisterBusinessInput {
 type RegisterBusinessPayload {
     clientMutationId: String
     user: User
+}
+
+input UpdateBusinessInput {
+    clientMutationId: String
+    name: String
+    logo: String
+}
+
+type UpdateBusinessPayload {
+    clientMutationId: String
+    business: Business
 }
 
 input LoginInput {
