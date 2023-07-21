@@ -16,7 +16,7 @@ export class UserDatasource implements types.UserDatasource {
         id: string,
         changes: Partial<types.User>
     ): Promise<types.User | null> {
-        const user = await UserModel.findByIdAndUpdate(id, changes)
+        const user = await UserModel.findByIdAndUpdate(id, changes, { new: true })
         return user ? user.toObject() : null
     }
 

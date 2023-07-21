@@ -22,7 +22,9 @@ export class ConnectionDatasource implements types.ConnectionDatasource {
         id: string,
         changes: Partial<types.Connection>
     ): Promise<types.Connection | null> {
-        const conn = await ConnectionModel.findByIdAndUpdate(id, changes)
+        const conn = await ConnectionModel.findByIdAndUpdate(id, changes, {
+            new: true,
+        })
         return conn ? conn.toObject() : null
     }
 

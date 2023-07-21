@@ -13,7 +13,9 @@ export class MetricDatasource implements types.MetricDatasource {
         id: string,
         changes: Partial<types.Metric>
     ): Promise<types.Metric | null> {
-        const metric = await MetricModel.findByIdAndUpdate(id, changes)
+        const metric = await MetricModel.findByIdAndUpdate(id, changes, {
+            new: true,
+        })
         return metric ? metric.toObject() : null
     }
 

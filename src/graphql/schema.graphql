@@ -41,6 +41,7 @@ type Mutation {
     inviteMembers(input: InviteMembersInput!): InviteMembersPayload
 
     createConnection(input: CreateConnectionInput!): CreateConnectionPayload
+    updateConnection(input: UpdateConnectionInput!): UpdateConnectionPayload
     syncConnection(input: SyncConnectionInput!): SyncConnectionPayload
     deleteConnection(input: DeleteConnectionInput!): DeleteConnectionPayload
 
@@ -161,10 +162,18 @@ type Connection {
     source: ConnectionSource!
     client: User
     authUrl: String
+    availableAccounts: [AdAccount]
+    sourceAccount: AdAccount
     status: ConnectionStatus!
     syncedAt: String
+    syncFailedAt: String
     createdAt: String!
     updatedAt: String!
+}
+
+type AdAccount {
+    id: String
+    name: String
 }
 
 enum ConnectionSource {
@@ -306,6 +315,17 @@ type CreateConnectionPayload {
     connection: Connection
 }
 
+input UpdateConnectionInput {
+    clientMutationId: String
+    connectionId: String!
+    sourceAccount: String!
+}
+
+type UpdateConnectionPayload {
+    clientMutationId: String
+    connection: Connection
+}
+
 input SyncConnectionInput {
     clientMutationId: String
     id: String!
@@ -424,7 +444,6 @@ type UpdateAgencyPayload {
     clientMutationId: String
     agency: Agency
 }
-
 
 input RegisterBusinessInput {
     clientMutationId: String

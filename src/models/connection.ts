@@ -1,21 +1,22 @@
 import mongoose from "mongoose"
 import { v4 as uuid } from "uuid"
-import {
-    ConnectionSource,
-    ConnectionStatus,
-} from "../graphql/__generated__/resolvers-types"
+import * as gql from "../graphql/__generated__/resolvers-types"
+import { AdAccount } from "../types"
 
 export interface ConnectionDocument extends mongoose.Document {
     _id: string
-    source: ConnectionSource
-    status: ConnectionStatus
+    source: gql.ConnectionSource
+    status: gql.ConnectionStatus
     accessToken: string
     refreshToken: string
     tokenExpiration: Date
+    availableAccounts: Array<AdAccount>
+    sourceAccount: string
     agencyId: string
     businessId: string
     clientId: string
     syncedAt: Date
+    syncFailedAt: Date
     createdAt: Date
     updatedAt: Date
 }
@@ -31,7 +32,7 @@ const connectionSchema = new mongoose.Schema<ConnectionDocument>(
         },
         status: {
             type: String,
-            default: ConnectionStatus.Ok,
+            default: gql.ConnectionStatus.Ok,
         },
         accessToken: {
             type: String,
@@ -41,6 +42,14 @@ const connectionSchema = new mongoose.Schema<ConnectionDocument>(
         },
         tokenExpiration: {
             type: Date,
+        },
+        availableAccounts: [
+            {
+                type: new mongoose.Schema({ name: String, id: String }),
+            },
+        ],
+        sourceAccount: {
+            type: String,
         },
         agencyId: {
             type: String,
@@ -52,6 +61,9 @@ const connectionSchema = new mongoose.Schema<ConnectionDocument>(
             type: String,
         },
         syncedAt: {
+            type: Date,
+        },
+        syncFailedAt: {
             type: Date,
         },
     },

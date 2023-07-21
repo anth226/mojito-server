@@ -23,6 +23,12 @@ export enum AccountType {
   Client = 'CLIENT'
 }
 
+export type AdAccount = {
+  __typename?: 'AdAccount';
+  id?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+};
+
 export type Agency = {
   __typename?: 'Agency';
   _id: Scalars['String']['output'];
@@ -177,10 +183,13 @@ export type Connection = {
   __typename?: 'Connection';
   _id: Scalars['String']['output'];
   authUrl?: Maybe<Scalars['String']['output']>;
+  availableAccounts?: Maybe<Array<Maybe<AdAccount>>>;
   client?: Maybe<User>;
   createdAt: Scalars['String']['output'];
   source: ConnectionSource;
+  sourceAccount?: Maybe<AdAccount>;
   status: ConnectionStatus;
+  syncFailedAt?: Maybe<Scalars['String']['output']>;
   syncedAt?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['String']['output'];
 };
@@ -355,6 +364,7 @@ export type Mutation = {
   updateAgency?: Maybe<UpdateAgencyPayload>;
   updateAlert?: Maybe<UpdateAlertPayload>;
   updateBusiness?: Maybe<UpdateBusinessPayload>;
+  updateConnection?: Maybe<UpdateConnectionPayload>;
 };
 
 
@@ -420,6 +430,11 @@ export type MutationUpdateAlertArgs = {
 
 export type MutationUpdateBusinessArgs = {
   input: UpdateBusinessInput;
+};
+
+
+export type MutationUpdateConnectionArgs = {
+  input: UpdateConnectionInput;
 };
 
 export enum OrderDirection {
@@ -562,6 +577,18 @@ export type UpdateBusinessPayload = {
   clientMutationId?: Maybe<Scalars['String']['output']>;
 };
 
+export type UpdateConnectionInput = {
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
+  connectionId: Scalars['String']['input'];
+  sourceAccount: Scalars['String']['input'];
+};
+
+export type UpdateConnectionPayload = {
+  __typename?: 'UpdateConnectionPayload';
+  clientMutationId?: Maybe<Scalars['String']['output']>;
+  connection?: Maybe<Connection>;
+};
+
 export type User = {
   __typename?: 'User';
   _id: Scalars['String']['output'];
@@ -676,6 +703,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   AccountType: AccountType;
+  AdAccount: ResolverTypeWrapper<AdAccount>;
   Agency: ResolverTypeWrapper<Agency>;
   Alert: ResolverTypeWrapper<Alert>;
   AlertConnection: ResolverTypeWrapper<AlertConnection>;
@@ -732,6 +760,8 @@ export type ResolversTypes = ResolversObject<{
   UpdateAlertPayload: ResolverTypeWrapper<UpdateAlertPayload>;
   UpdateBusinessInput: UpdateBusinessInput;
   UpdateBusinessPayload: ResolverTypeWrapper<UpdateBusinessPayload>;
+  UpdateConnectionInput: UpdateConnectionInput;
+  UpdateConnectionPayload: ResolverTypeWrapper<UpdateConnectionPayload>;
   User: ResolverTypeWrapper<User>;
   UserConnection: ResolverTypeWrapper<UserConnection>;
   UserOrder: UserOrder;
@@ -742,6 +772,7 @@ export type ResolversTypes = ResolversObject<{
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
+  AdAccount: AdAccount;
   Agency: Agency;
   Alert: Alert;
   AlertConnection: AlertConnection;
@@ -787,9 +818,17 @@ export type ResolversParentTypes = ResolversObject<{
   UpdateAlertPayload: UpdateAlertPayload;
   UpdateBusinessInput: UpdateBusinessInput;
   UpdateBusinessPayload: UpdateBusinessPayload;
+  UpdateConnectionInput: UpdateConnectionInput;
+  UpdateConnectionPayload: UpdateConnectionPayload;
   User: User;
   UserConnection: UserConnection;
   UserOrder: UserOrder;
+}>;
+
+export type AdAccountResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['AdAccount'] = ResolversParentTypes['AdAccount']> = ResolversObject<{
+  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type AgencyResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['Agency'] = ResolversParentTypes['Agency']> = ResolversObject<{
@@ -846,10 +885,13 @@ export type BusinessResolvers<ContextType = RequestContext, ParentType extends R
 export type ConnectionResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['Connection'] = ResolversParentTypes['Connection']> = ResolversObject<{
   _id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   authUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  availableAccounts?: Resolver<Maybe<Array<Maybe<ResolversTypes['AdAccount']>>>, ParentType, ContextType>;
   client?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   source?: Resolver<ResolversTypes['ConnectionSource'], ParentType, ContextType>;
+  sourceAccount?: Resolver<Maybe<ResolversTypes['AdAccount']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['ConnectionStatus'], ParentType, ContextType>;
+  syncFailedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   syncedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -930,6 +972,7 @@ export type MutationResolvers<ContextType = RequestContext, ParentType extends R
   updateAgency?: Resolver<Maybe<ResolversTypes['UpdateAgencyPayload']>, ParentType, ContextType, RequireFields<MutationUpdateAgencyArgs, 'input'>>;
   updateAlert?: Resolver<Maybe<ResolversTypes['UpdateAlertPayload']>, ParentType, ContextType, RequireFields<MutationUpdateAlertArgs, 'input'>>;
   updateBusiness?: Resolver<Maybe<ResolversTypes['UpdateBusinessPayload']>, ParentType, ContextType, RequireFields<MutationUpdateBusinessArgs, 'input'>>;
+  updateConnection?: Resolver<Maybe<ResolversTypes['UpdateConnectionPayload']>, ParentType, ContextType, RequireFields<MutationUpdateConnectionArgs, 'input'>>;
 }>;
 
 export type QueryResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
@@ -979,6 +1022,12 @@ export type UpdateBusinessPayloadResolvers<ContextType = RequestContext, ParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type UpdateConnectionPayloadResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['UpdateConnectionPayload'] = ResolversParentTypes['UpdateConnectionPayload']> = ResolversObject<{
+  clientMutationId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  connection?: Resolver<Maybe<ResolversTypes['Connection']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type UserResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
   _id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   accountType?: Resolver<ResolversTypes['AccountType'], ParentType, ContextType>;
@@ -1001,6 +1050,7 @@ export type UserConnectionResolvers<ContextType = RequestContext, ParentType ext
 }>;
 
 export type Resolvers<ContextType = RequestContext> = ResolversObject<{
+  AdAccount?: AdAccountResolvers<ContextType>;
   Agency?: AgencyResolvers<ContextType>;
   Alert?: AlertResolvers<ContextType>;
   AlertConnection?: AlertConnectionResolvers<ContextType>;
@@ -1024,6 +1074,7 @@ export type Resolvers<ContextType = RequestContext> = ResolversObject<{
   UpdateAgencyPayload?: UpdateAgencyPayloadResolvers<ContextType>;
   UpdateAlertPayload?: UpdateAlertPayloadResolvers<ContextType>;
   UpdateBusinessPayload?: UpdateBusinessPayloadResolvers<ContextType>;
+  UpdateConnectionPayload?: UpdateConnectionPayloadResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   UserConnection?: UserConnectionResolvers<ContextType>;
 }>;

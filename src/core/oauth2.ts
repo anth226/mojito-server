@@ -183,7 +183,7 @@ export class OAuth2Client {
         if (cfg.params) {
             cfg.params["access_token"] = this.token.accessToken
         } else {
-            cfg.params = { access_tokne: this.token.accessToken }
+            cfg.params = { access_token: this.token.accessToken }
         }
         return cfg
     }

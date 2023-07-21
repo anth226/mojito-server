@@ -13,7 +13,9 @@ export class AlertDatasource implements types.AlertDatasource {
         id: string,
         changes: Partial<types.Alert>
     ): Promise<types.Alert | null> {
-        const alert = await AlertModel.findByIdAndUpdate(id, changes)
+        const alert = await AlertModel.findByIdAndUpdate(id, changes, {
+            new: true,
+        })
         return alert ? alert.toObject() : null
     }
 

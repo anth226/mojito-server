@@ -6,8 +6,13 @@ export class AgencyDatasource implements types.AgencyDatasource {
         return (await AgencyModel.create(agency)).toObject()
     }
 
-    async update(id: string, changes: Partial<types.Agency>): Promise<types.Agency | null> {
-        const agency = await AgencyModel.findByIdAndUpdate(id, changes)
+    async update(
+        id: string,
+        changes: Partial<types.Agency>
+    ): Promise<types.Agency | null> {
+        const agency = await AgencyModel.findByIdAndUpdate(id, changes, {
+            new: true,
+        })
         return agency ? agency.toObject() : null
     }
 
