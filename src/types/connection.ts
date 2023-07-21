@@ -19,6 +19,9 @@ export type Connection = {
     refreshToken: string
     tokenExpiration: Date
 
+    availableAccounts: Array<AdAccount>
+    sourceAccount: string
+
     // Entity owner of the connection
     agencyId?: string
     businessId?: string
@@ -27,8 +30,14 @@ export type Connection = {
     clientId?: string
 
     syncedAt?: Date
+    syncFailedAt?: Date
     createdAt: Date
     updatedAt: Date
+}
+
+export type AdAccount = {
+    name: string
+    id: string
 }
 
 export type ConnectionQuery = {

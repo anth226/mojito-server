@@ -70,10 +70,17 @@ export async function metaCallback(req: Request, res: Response) {
         return res.status(500).send("Something went wrong")
     }
 
+    const metaApi = new MetaApi(authClient)
+    const accounts = await metaApi.getAdAccounts()
+
     await req.datasources.connection.update(conn._id, {
         accessToken: token.accessToken,
         refreshToken: token.refreshToken,
         tokenExpiration: token.expiration,
+        availableAccounts: accounts.map((acc) => ({
+            name: acc.name,
+            id: acc.id,
+        })),
     })
 
     await req.datasources.user.update(conn._id, {})

@@ -33,7 +33,7 @@ type Insight = {
 }
 
 export class MetaApi {
-    constructor(private client: OAuth2Client) { }
+    constructor(private client: OAuth2Client) {}
 
     async getAdAccounts(): Promise<Array<AdAccount>> {
         return this.getPaginated<AdAccount>(`${API_URL}/me/adaccounts`, {

@@ -4,13 +4,7 @@ import { UNAUTHORIZED_ERROR } from "./errors"
 import { MetaApi } from "../../core/meta"
 import dayjs from "dayjs"
 import logger from "../../utils/logger"
-
-function authUrl(
-    context: types.RequestContext,
-    conn: types.Connection
-): string {
-    return context.core.authFactory.create(conn.source).authUrl(conn._id)
-}
+import * as mappings from "./mappings"
 
 export const createConnection: gql.MutationResolvers["createConnection"] =
     async (
@@ -32,13 +26,35 @@ export const createConnection: gql.MutationResolvers["createConnection"] =
 
         return {
             clientMutationId: args.input.clientMutationId,
-            connection: {
-                ...conn,
-                authUrl: authUrl(context, conn),
-                createdAt: conn.createdAt.toISOString(),
-                updatedAt: conn.updatedAt.toISOString(),
-                syncedAt: conn.syncedAt?.toISOString(),
-            },
+            connection: mappings.toConnection(context, conn),
+        }
+    }
+
+export const updateConnection: gql.MutationResolvers["updateConnection"] =
+    async (
+        _parent,
+        args,
+        context,
+        _info
+    ): Promise<gql.UpdateConnectionPayload | null> => {
+        if (!context.user) {
+            throw UNAUTHORIZED_ERROR
+        }
+
+        const connection = await context.datasources.connection.update(
+            args.input.connectionId,
+            {
+                sourceAccount: args.input.sourceAccount,
+            }
+        )
+
+        if (!connection) {
+            return null
+        }
+
+        return {
+            clientMutationId: args.input.clientMutationId,
+            connection: mappings.toConnection(context, connection),
         }
     }
 
@@ -71,7 +87,21 @@ export const syncConnection: gql.MutationResolvers["syncConnection"] = async (
             // TODO: we're using the first account of the connection,
             // we should replace this for the adAccount from connection.adAccountId
             const accounts = await metaApi.getAdAccounts()
-            const clientAccount = accounts[0]
+
+            await context.datasources.connection.update(args.input.id, {
+                availableAccounts: accounts.map((acc) => ({
+                    name: acc.name,
+                    id: acc.id,
+                })),
+            })
+
+            const clientAccount = accounts.find(
+                (acc) => acc.id == connection?.sourceAccount
+            )
+
+            if (!clientAccount) {
+                throw new Error("Account source not selected")
+            }
 
             const syncFrom =
                 connection.syncedAt ||
@@ -79,6 +109,7 @@ export const syncConnection: gql.MutationResolvers["syncConnection"] = async (
                     .utc()
                     .subtract(Math.min(clientAccount.age, 30 * 30), "day") // Max sync time is 30 months
                     .toDate()
+
             const syncTo = dayjs.utc(syncedAt).subtract(1, "day").toDate()
 
             const insights = await metaApi.getInsights(
@@ -134,19 +165,13 @@ export const syncConnection: gql.MutationResolvers["syncConnection"] = async (
             connection._id,
             {
                 status: gql.ConnectionStatus.SyncFailed,
-                syncedAt,
+                syncFailedAt: syncedAt,
             }
         )) as types.Connection
 
         return {
             clientMutationId: args.input.clientMutationId,
-            connection: {
-                ...connection,
-                authUrl: authUrl(context, connection),
-                createdAt: connection.createdAt.toISOString(),
-                updatedAt: connection.updatedAt.toISOString(),
-                syncedAt: connection.syncedAt?.toISOString(),
-            },
+            connection: mappings.toConnection(context, connection),
         }
     }
 
@@ -157,13 +182,7 @@ export const syncConnection: gql.MutationResolvers["syncConnection"] = async (
 
     return {
         clientMutationId: args.input.clientMutationId,
-        connection: {
-            ...connection,
-            authUrl: authUrl(context, connection),
-            createdAt: connection.createdAt.toISOString(),
-            updatedAt: connection.updatedAt.toISOString(),
-            syncedAt: connection.syncedAt?.toISOString(),
-        },
+        connection: mappings.toConnection(context, connection),
     }
 }
 
@@ -204,13 +223,7 @@ export const getConnections: gql.QueryResolvers["connections"] = async (
     const skip = args.skip || 0
 
     return {
-        nodes: connections.map((conn) => ({
-            ...conn,
-            authUrl: authUrl(context, conn),
-            createdAt: conn.createdAt.toISOString(),
-            updatedAt: conn.updatedAt.toISOString(),
-            syncedAt: conn.syncedAt?.toISOString(),
-        })),
+        nodes: connections.map((conn) => mappings.toConnection(context, conn)),
         hasMore: args.take ? args.take + skip < count : false,
         totalCount: count,
     }
@@ -229,13 +242,9 @@ export const getConnectionsFromAgency: gql.AgencyResolvers["connections"] =
         const skip = args.skip || 0
 
         return {
-            nodes: connections.map((conn) => ({
-                ...conn,
-                authUrl: authUrl(context, conn),
-                createdAt: conn.createdAt.toISOString(),
-                updatedAt: conn.updatedAt.toISOString(),
-                syncedAt: conn.syncedAt?.toISOString(),
-            })),
+            nodes: connections.map((conn) =>
+                mappings.toConnection(context, conn)
+            ),
             hasMore: args.take ? args.take + skip < count : false,
             totalCount: count,
         }
@@ -254,13 +263,9 @@ export const getConnectionsFromBusiness: gql.BusinessResolvers["connections"] =
         const skip = args.skip || 0
 
         return {
-            nodes: connections.map((conn) => ({
-                ...conn,
-                authUrl: authUrl(context, conn),
-                createdAt: conn.createdAt.toISOString(),
-                updatedAt: conn.updatedAt.toISOString(),
-                syncedAt: conn.syncedAt?.toISOString(),
-            })),
+            nodes: connections.map((conn) =>
+                mappings.toConnection(context, conn)
+            ),
             hasMore: args.take ? args.take + skip < count : false,
             totalCount: count,
         }

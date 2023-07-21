@@ -23,6 +23,7 @@ const mutation: gql.MutationResolvers = {
     inviteClients: users.inviteClients,
     inviteMembers: users.inviteMembers,
     createConnection: connections.createConnection,
+    updateConnection: connections.updateConnection,
     syncConnection: connections.syncConnection,
     deleteConnection: connections.deleteConnection,
     createAlerts: alerts.createAlerts,
