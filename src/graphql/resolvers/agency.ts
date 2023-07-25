@@ -36,10 +36,13 @@ export const updateAgency: gql.MutationResolvers["updateAgency"] = async (
         throw UNAUTHORIZED_ERROR
     }
 
-    const agency = await context.datasources.agency.update(context.user._id, {
-        name: args.input.name ?? undefined,
-        logo: args.input.logo ?? undefined,
-    })
+    const agency = await context.datasources.agency.update(
+        context.user.agencyId,
+        {
+            name: args.input.name ?? undefined,
+            logo: args.input.logo ?? undefined,
+        }
+    )
 
     if (!agency) {
         return null

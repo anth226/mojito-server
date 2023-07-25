@@ -36,7 +36,7 @@ export const updateBusiness: gql.MutationResolvers["updateBusiness"] = async (
         throw UNAUTHORIZED_ERROR
     }
 
-    const business = await context.datasources.agency.update(context.user._id, {
+    const business = await context.datasources.agency.update(context.user.businessId, {
         name: args.input.name ?? undefined,
         logo: args.input.logo ?? undefined,
     })

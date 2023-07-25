@@ -46,7 +46,7 @@ async function startServers(): Promise<void> {
         restServer.use(
             "/gql",
             cors({ origin: "*" }),
-            json(),
+            json({ limit: "5mb" }),
             expressMiddleware(gqlServer as any, {
                 context: async ({ req }) => {
                     try {
