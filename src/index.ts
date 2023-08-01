@@ -14,6 +14,7 @@ import * as handlers from "./rest"
 import { OAuth2Factory } from "./core/oauth2"
 import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
+import { AWS } from "./core/aws"
 
 dayjs.extend(utc)
 
@@ -23,6 +24,10 @@ const config = {
     port: parseInt(process.env.PORT || "7000"),
     databaseUrl: process.env.DATABASE_URL as string,
     authPrivateKey: process.env.AUTH_PRIVATE_KEY as string,
+    awsAccessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
+    awsSecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
+    awsDefaultBucket: process.env.AWS_BUCKET as string,
+    awsRegion: process.env.AWS_REGION as string,
     googleClientId: process.env.GOOGLE_CLIENT_ID as string,
     googleClientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     metaClientId: process.env.META_CLIENT_ID as string,
@@ -58,6 +63,11 @@ async function startServers(): Promise<void> {
 
                     const context: types.RequestContext = {
                         core: {
+                            aws: new AWS(
+                                config.awsAccessKeyId,
+                                config.awsSecretAccessKey,
+                                config.awsRegion
+                            ),
                             authFactory: new OAuth2Factory({
                                 GOOGLE: {
                                     clientId: config.googleClientId,
@@ -74,6 +84,7 @@ async function startServers(): Promise<void> {
                             }),
                         },
                         authPrivateKey: config.authPrivateKey,
+                        defaultAwsBucket: config.awsDefaultBucket,
                         datasources: {
                             user: new datasources.UserDatasource(),
                             agency: new datasources.AgencyDatasource(),
@@ -125,6 +136,11 @@ async function startServers(): Promise<void> {
                 }
 
                 req.core = {
+                    aws: new AWS(
+                        config.awsAccessKeyId,
+                        config.awsSecretAccessKey,
+                        config.awsRegion
+                    ),
                     authFactory: new OAuth2Factory({
                         GOOGLE: {
                             clientId: config.googleClientId,

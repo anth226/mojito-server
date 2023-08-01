@@ -6,6 +6,7 @@ import { Core } from "../core"
 export interface RequestContext extends BaseContext {
     core: Core
     authPrivateKey: string
+    defaultAwsBucket: string
     datasources: Datasources
     user?: User
 }

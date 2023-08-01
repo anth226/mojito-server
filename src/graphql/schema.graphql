@@ -31,6 +31,8 @@ type Query {
 type Mutation {
     login(input: LoginInput!): LoginPayload
 
+    createFile(input: CreateFileInput!): CreateFilePayload
+
     registerAgency(input: RegisterAgencyInput!): RegisterAgencyPayload
     updateAgency(input: UpdateAgencyInput!): UpdateAgencyPayload
 
@@ -480,4 +482,15 @@ type LoginPayload {
     reason: String
     accessToken: String
     user: User
+}
+
+input CreateFileInput {
+    clientMutationId: String
+    key: String!
+}
+
+type CreateFilePayload {
+    clientMutationId: String
+    URL: String
+    expiresAt: String
 }
