@@ -4,6 +4,7 @@ import * as agencies from "./agency"
 import * as businesses from "./business"
 import * as connections from "./connection"
 import * as alerts from "./alert"
+import * as files from "./file"
 
 const query: gql.QueryResolvers = {
     user: users.getUserById,
@@ -29,6 +30,7 @@ const mutation: gql.MutationResolvers = {
     createAlerts: alerts.createAlerts,
     updateAlert: alerts.updateAlert,
     archiveAlert: alerts.archiveAlert,
+    createFile: files.createFile
 }
 
 const user: gql.UserResolvers = {

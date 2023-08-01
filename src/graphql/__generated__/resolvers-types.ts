@@ -253,6 +253,18 @@ export type CreateConnectionPayload = {
   connection?: Maybe<Connection>;
 };
 
+export type CreateFileInput = {
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
+  key: Scalars['String']['input'];
+};
+
+export type CreateFilePayload = {
+  __typename?: 'CreateFilePayload';
+  URL?: Maybe<Scalars['String']['output']>;
+  clientMutationId?: Maybe<Scalars['String']['output']>;
+  expiresAt?: Maybe<Scalars['String']['output']>;
+};
+
 export type DeleteConnectionInput = {
   clientMutationId?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
@@ -354,6 +366,7 @@ export type Mutation = {
   archiveAlert?: Maybe<ArchiveAlertPayload>;
   createAlerts?: Maybe<CreateAlertsPayload>;
   createConnection?: Maybe<CreateConnectionPayload>;
+  createFile?: Maybe<CreateFilePayload>;
   deleteConnection?: Maybe<DeleteConnectionPayload>;
   inviteClients?: Maybe<InviteClientsPayload>;
   inviteMembers?: Maybe<InviteMembersPayload>;
@@ -380,6 +393,11 @@ export type MutationCreateAlertsArgs = {
 
 export type MutationCreateConnectionArgs = {
   input: CreateConnectionInput;
+};
+
+
+export type MutationCreateFileArgs = {
+  input: CreateFileInput;
 };
 
 
@@ -728,6 +746,8 @@ export type ResolversTypes = ResolversObject<{
   CreateAlertsPayload: ResolverTypeWrapper<CreateAlertsPayload>;
   CreateConnectionInput: CreateConnectionInput;
   CreateConnectionPayload: ResolverTypeWrapper<CreateConnectionPayload>;
+  CreateFileInput: CreateFileInput;
+  CreateFilePayload: ResolverTypeWrapper<CreateFilePayload>;
   DeleteConnectionInput: DeleteConnectionInput;
   DeleteConnectionPayload: ResolverTypeWrapper<DeleteConnectionPayload>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
@@ -789,6 +809,8 @@ export type ResolversParentTypes = ResolversObject<{
   CreateAlertsPayload: CreateAlertsPayload;
   CreateConnectionInput: CreateConnectionInput;
   CreateConnectionPayload: CreateConnectionPayload;
+  CreateFileInput: CreateFileInput;
+  CreateFilePayload: CreateFilePayload;
   DeleteConnectionInput: DeleteConnectionInput;
   DeleteConnectionPayload: DeleteConnectionPayload;
   Int: Scalars['Int']['output'];
@@ -916,6 +938,13 @@ export type CreateConnectionPayloadResolvers<ContextType = RequestContext, Paren
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type CreateFilePayloadResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['CreateFilePayload'] = ResolversParentTypes['CreateFilePayload']> = ResolversObject<{
+  URL?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  clientMutationId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  expiresAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type DeleteConnectionPayloadResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['DeleteConnectionPayload'] = ResolversParentTypes['DeleteConnectionPayload']> = ResolversObject<{
   clientMutationId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -962,6 +991,7 @@ export type MutationResolvers<ContextType = RequestContext, ParentType extends R
   archiveAlert?: Resolver<Maybe<ResolversTypes['ArchiveAlertPayload']>, ParentType, ContextType, RequireFields<MutationArchiveAlertArgs, 'input'>>;
   createAlerts?: Resolver<Maybe<ResolversTypes['CreateAlertsPayload']>, ParentType, ContextType, RequireFields<MutationCreateAlertsArgs, 'input'>>;
   createConnection?: Resolver<Maybe<ResolversTypes['CreateConnectionPayload']>, ParentType, ContextType, RequireFields<MutationCreateConnectionArgs, 'input'>>;
+  createFile?: Resolver<Maybe<ResolversTypes['CreateFilePayload']>, ParentType, ContextType, RequireFields<MutationCreateFileArgs, 'input'>>;
   deleteConnection?: Resolver<Maybe<ResolversTypes['DeleteConnectionPayload']>, ParentType, ContextType, RequireFields<MutationDeleteConnectionArgs, 'input'>>;
   inviteClients?: Resolver<Maybe<ResolversTypes['InviteClientsPayload']>, ParentType, ContextType, RequireFields<MutationInviteClientsArgs, 'input'>>;
   inviteMembers?: Resolver<Maybe<ResolversTypes['InviteMembersPayload']>, ParentType, ContextType, RequireFields<MutationInviteMembersArgs, 'input'>>;
@@ -1060,6 +1090,7 @@ export type Resolvers<ContextType = RequestContext> = ResolversObject<{
   ConnectionConnection?: ConnectionConnectionResolvers<ContextType>;
   CreateAlertsPayload?: CreateAlertsPayloadResolvers<ContextType>;
   CreateConnectionPayload?: CreateConnectionPayloadResolvers<ContextType>;
+  CreateFilePayload?: CreateFilePayloadResolvers<ContextType>;
   DeleteConnectionPayload?: DeleteConnectionPayloadResolvers<ContextType>;
   InviteClientsPayload?: InviteClientsPayloadResolvers<ContextType>;
   InviteMembersPayload?: InviteMembersPayloadResolvers<ContextType>;
