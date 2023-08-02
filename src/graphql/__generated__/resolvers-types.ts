@@ -371,7 +371,7 @@ export enum MetricType {
 
 export type MetricsToDate = {
   __typename?: 'MetricsToDate';
-  metrics?: Maybe<Array<Maybe<Metric>>>;
+  metrics: Array<Metric>;
 };
 
 export type MetricsYearly = {
@@ -536,14 +536,12 @@ export type QueryMembersArgs = {
 
 export type QueryMetricsToDateArgs = {
   clientId?: InputMaybe<Scalars['String']['input']>;
-  connectionId?: InputMaybe<Scalars['String']['input']>;
   period: MetricToDatePeriod;
 };
 
 
 export type QueryMetricsYearlyArgs = {
   clientId?: InputMaybe<Scalars['String']['input']>;
-  connectionId?: InputMaybe<Scalars['String']['input']>;
   fromYear: Scalars['Int']['input'];
 };
 
@@ -1032,7 +1030,7 @@ export type MetricConnectionResolvers<ContextType = RequestContext, ParentType e
 }>;
 
 export type MetricsToDateResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['MetricsToDate'] = ResolversParentTypes['MetricsToDate']> = ResolversObject<{
-  metrics?: Resolver<Maybe<Array<Maybe<ResolversTypes['Metric']>>>, ParentType, ContextType>;
+  metrics?: Resolver<Array<ResolversTypes['Metric']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

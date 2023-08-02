@@ -15,6 +15,7 @@ const query: gql.QueryResolvers = {
     connections: connections.getConnections,
     alerts: alerts.getAlerts,
     metricsYearly: metrics.getMetricsYearly,
+    metricsToDate: metrics.getMetricsToDate,
 }
 
 const mutation: gql.MutationResolvers = {

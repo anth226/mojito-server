@@ -29,13 +29,11 @@ type Query {
 
     metricsYearly(
         fromYear: Int!
-        connectionId: String
         clientId: String
     ): MetricsYearly
 
     metricsToDate(
         period: MetricToDatePeriod!
-        connectionId: String
         clientId: String
     ): MetricsToDate
 }
@@ -290,7 +288,7 @@ type MetricsYearly {
 }
 
 type MetricsToDate {
-    metrics: [Metric]
+    metrics: [Metric!]!
 }
 
 type Metric {
