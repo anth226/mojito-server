@@ -327,11 +327,13 @@ export type LoginPayload = {
 
 export type Metric = {
   __typename?: 'Metric';
+  connectionId?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['String']['output'];
-  from: Scalars['String']['output'];
-  to: Scalars['String']['output'];
+  lastPeriodValue: Scalars['Float']['output'];
+  month?: Maybe<Scalars['Int']['output']>;
   type: MetricType;
-  value: Scalars['String']['output'];
+  value: Scalars['Float']['output'];
+  year?: Maybe<Scalars['Int']['output']>;
 };
 
 export type MetricConnection = {
@@ -350,6 +352,12 @@ export enum MetricOrderField {
   CreatedAt = 'CREATED_AT'
 }
 
+export enum MetricToDatePeriod {
+  MonthToDate = 'MONTH_TO_DATE',
+  QuarterToDate = 'QUARTER_TO_DATE',
+  YearToDate = 'YEAR_TO_DATE'
+}
+
 export enum MetricType {
   AdSpend = 'AD_SPEND',
   Clicks = 'CLICKS',
@@ -360,6 +368,17 @@ export enum MetricType {
   Roas = 'ROAS',
   Traffic = 'TRAFFIC'
 }
+
+export type MetricsToDate = {
+  __typename?: 'MetricsToDate';
+  metrics?: Maybe<Array<Maybe<Metric>>>;
+};
+
+export type MetricsYearly = {
+  __typename?: 'MetricsYearly';
+  metricsForYear: Array<Metric>;
+  metricsPerMonth: Array<Metric>;
+};
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -468,6 +487,8 @@ export type Query = {
   connection?: Maybe<Connection>;
   connections?: Maybe<ConnectionConnection>;
   members?: Maybe<UserConnection>;
+  metricsToDate?: Maybe<MetricsToDate>;
+  metricsYearly?: Maybe<MetricsYearly>;
   user?: Maybe<User>;
   viewer?: Maybe<User>;
 };
@@ -510,6 +531,20 @@ export type QueryMembersArgs = {
   orderBy?: InputMaybe<UserOrder>;
   skip?: InputMaybe<Scalars['Int']['input']>;
   take?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryMetricsToDateArgs = {
+  clientId?: InputMaybe<Scalars['String']['input']>;
+  connectionId?: InputMaybe<Scalars['String']['input']>;
+  period: MetricToDatePeriod;
+};
+
+
+export type QueryMetricsYearlyArgs = {
+  clientId?: InputMaybe<Scalars['String']['input']>;
+  connectionId?: InputMaybe<Scalars['String']['input']>;
+  fromYear: Scalars['Int']['input'];
 };
 
 
@@ -750,6 +785,7 @@ export type ResolversTypes = ResolversObject<{
   CreateFilePayload: ResolverTypeWrapper<CreateFilePayload>;
   DeleteConnectionInput: DeleteConnectionInput;
   DeleteConnectionPayload: ResolverTypeWrapper<DeleteConnectionPayload>;
+  Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   InviteClientInput: InviteClientInput;
   InviteClientsInput: InviteClientsInput;
@@ -763,7 +799,10 @@ export type ResolversTypes = ResolversObject<{
   MetricConnection: ResolverTypeWrapper<MetricConnection>;
   MetricOrder: MetricOrder;
   MetricOrderField: MetricOrderField;
+  MetricToDatePeriod: MetricToDatePeriod;
   MetricType: MetricType;
+  MetricsToDate: ResolverTypeWrapper<MetricsToDate>;
+  MetricsYearly: ResolverTypeWrapper<MetricsYearly>;
   Mutation: ResolverTypeWrapper<{}>;
   OrderDirection: OrderDirection;
   Query: ResolverTypeWrapper<{}>;
@@ -813,6 +852,7 @@ export type ResolversParentTypes = ResolversObject<{
   CreateFilePayload: CreateFilePayload;
   DeleteConnectionInput: DeleteConnectionInput;
   DeleteConnectionPayload: DeleteConnectionPayload;
+  Float: Scalars['Float']['output'];
   Int: Scalars['Int']['output'];
   InviteClientInput: InviteClientInput;
   InviteClientsInput: InviteClientsInput;
@@ -825,6 +865,8 @@ export type ResolversParentTypes = ResolversObject<{
   Metric: Metric;
   MetricConnection: MetricConnection;
   MetricOrder: MetricOrder;
+  MetricsToDate: MetricsToDate;
+  MetricsYearly: MetricsYearly;
   Mutation: {};
   Query: {};
   RegisterAgencyInput: RegisterAgencyInput;
@@ -972,11 +1014,13 @@ export type LoginPayloadResolvers<ContextType = RequestContext, ParentType exten
 }>;
 
 export type MetricResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['Metric'] = ResolversParentTypes['Metric']> = ResolversObject<{
+  connectionId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  from?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  to?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  lastPeriodValue?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  month?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   type?: Resolver<ResolversTypes['MetricType'], ParentType, ContextType>;
-  value?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  value?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  year?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -984,6 +1028,17 @@ export type MetricConnectionResolvers<ContextType = RequestContext, ParentType e
   hasMore?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   nodes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Metric']>>>, ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type MetricsToDateResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['MetricsToDate'] = ResolversParentTypes['MetricsToDate']> = ResolversObject<{
+  metrics?: Resolver<Maybe<Array<Maybe<ResolversTypes['Metric']>>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type MetricsYearlyResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['MetricsYearly'] = ResolversParentTypes['MetricsYearly']> = ResolversObject<{
+  metricsForYear?: Resolver<Array<ResolversTypes['Metric']>, ParentType, ContextType>;
+  metricsPerMonth?: Resolver<Array<ResolversTypes['Metric']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1012,6 +1067,8 @@ export type QueryResolvers<ContextType = RequestContext, ParentType extends Reso
   connection?: Resolver<Maybe<ResolversTypes['Connection']>, ParentType, ContextType, RequireFields<QueryConnectionArgs, 'id'>>;
   connections?: Resolver<Maybe<ResolversTypes['ConnectionConnection']>, ParentType, ContextType, Partial<QueryConnectionsArgs>>;
   members?: Resolver<Maybe<ResolversTypes['UserConnection']>, ParentType, ContextType, Partial<QueryMembersArgs>>;
+  metricsToDate?: Resolver<Maybe<ResolversTypes['MetricsToDate']>, ParentType, ContextType, RequireFields<QueryMetricsToDateArgs, 'period'>>;
+  metricsYearly?: Resolver<Maybe<ResolversTypes['MetricsYearly']>, ParentType, ContextType, RequireFields<QueryMetricsYearlyArgs, 'fromYear'>>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
   viewer?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
 }>;
@@ -1097,6 +1154,8 @@ export type Resolvers<ContextType = RequestContext> = ResolversObject<{
   LoginPayload?: LoginPayloadResolvers<ContextType>;
   Metric?: MetricResolvers<ContextType>;
   MetricConnection?: MetricConnectionResolvers<ContextType>;
+  MetricsToDate?: MetricsToDateResolvers<ContextType>;
+  MetricsYearly?: MetricsYearlyResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   RegisterAgencyPayload?: RegisterAgencyPayloadResolvers<ContextType>;

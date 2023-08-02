@@ -26,6 +26,18 @@ type Query {
 
     alert(id: String!): Alert
     alerts(take: Int, skip: Int, orderBy: AlertOrder): AlertConnection
+
+    metricsYearly(
+        fromYear: Int!
+        connectionId: String
+        clientId: String
+    ): MetricsYearly
+
+    metricsToDate(
+        period: MetricToDatePeriod!
+        connectionId: String
+        clientId: String
+    ): MetricsToDate
 }
 
 type Mutation {
@@ -272,11 +284,26 @@ enum BillingPlan {
     SCALE
 }
 
+type MetricsYearly {
+    metricsForYear: [Metric!]!
+    metricsPerMonth: [Metric!]!
+}
+
+type MetricsToDate {
+    metrics: [Metric]
+}
+
 type Metric {
     type: MetricType!
-    value: String!
-    from: String!
-    to: String!
+
+    connectionId: String
+
+    value: Float!
+    lastPeriodValue: Float!
+
+    month: Int
+    year: Int
+
     createdAt: String!
 }
 
@@ -289,6 +316,12 @@ enum MetricType {
     AD_SPEND
     ROAS
     CONVERSION_RATE
+}
+
+enum MetricToDatePeriod {
+    MONTH_TO_DATE
+    QUARTER_TO_DATE
+    YEAR_TO_DATE
 }
 
 type MetricConnection {

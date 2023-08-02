@@ -2,16 +2,22 @@ import { FilterQuery, QueryOptions } from "mongoose"
 import { ConnectionDocument, ConnectionModel } from "../models"
 import * as types from "../types"
 import { ConnectionOrderField } from "../graphql/__generated__/resolvers-types"
+import NodeCache from "node-cache"
 
 export class ConnectionDatasource implements types.ConnectionDatasource {
-    async getById(id: string): Promise<types.Connection | null> {
-        const conn = await ConnectionModel.findById(id)
-        return conn ? conn.toObject() : null
-    }
+    constructor(private cache: NodeCache) { }
 
-    async getByEmail(email: string): Promise<types.Connection | null> {
-        const connection = await ConnectionModel.findOne({ email })
-        return connection ? connection.toObject() : null
+    async getById(id: string): Promise<types.Connection | null> {
+        if (this.cache.has(id)) {
+            return this.cache.get<any>(id)
+        }
+
+        const conn = await ConnectionModel.findById(id)
+        if (!conn) return null
+
+        this.cache.set(id, conn.toObject())
+
+        return conn.toObject()
     }
 
     async create(conn: Partial<types.Connection>): Promise<types.Connection> {
@@ -22,6 +28,10 @@ export class ConnectionDatasource implements types.ConnectionDatasource {
         id: string,
         changes: Partial<types.Connection>
     ): Promise<types.Connection | null> {
+        if (this.cache.has(id)) {
+            this.cache.del(id)
+        }
+
         const conn = await ConnectionModel.findByIdAndUpdate(id, changes, {
             new: true,
         })
@@ -29,6 +39,11 @@ export class ConnectionDatasource implements types.ConnectionDatasource {
     }
 
     async delete(id: string): Promise<void> {
+        if (this.cache.has(id)) {
+            this.cache.del(id)
+            this.cache.del
+        }
+
         await ConnectionModel.deleteOne({ _id: id })
     }
 

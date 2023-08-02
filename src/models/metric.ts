@@ -28,24 +28,31 @@ const metricSchema = new mongoose.Schema<MetricDocument>(
         },
         from: {
             type: Date,
+            index: true,
         },
         to: {
             type: Date,
+            index: true,
         },
         connectionId: {
             type: String,
+            index: true,
         },
         agencyId: {
             type: String,
+            index: true,
         },
         businessId: {
             type: String,
+            index: true,
         },
     },
     {
         timestamps: true,
     }
 )
+
+metricSchema.index({ agencyId: 1, business: 1, from: 1, to: 1 })
 
 export const MetricModel = mongoose.model<MetricDocument>(
     "Metric",

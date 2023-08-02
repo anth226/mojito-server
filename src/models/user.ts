@@ -46,9 +46,11 @@ const userSchema = new mongoose.Schema<UserDocument>(
         },
         agencyId: {
             type: String,
+            index: true,
         },
         businessId: {
             type: String,
+            index: true,
         },
         status: {
             type: String,

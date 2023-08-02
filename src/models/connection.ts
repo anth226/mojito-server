@@ -53,12 +53,15 @@ const connectionSchema = new mongoose.Schema<ConnectionDocument>(
         },
         agencyId: {
             type: String,
+            index: true,
         },
         businessId: {
             type: String,
+            index: true,
         },
         clientId: {
             type: String,
+            index: true,
         },
         syncedAt: {
             type: Date,
