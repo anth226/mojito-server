@@ -15,11 +15,13 @@ import { OAuth2Factory } from "./core/oauth2"
 import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
 import customParseFormat from "dayjs/plugin/customParseFormat"
+import quarterOfYear from "dayjs/plugin/quarterOfYear"
 import { AWS } from "./core/aws"
 import NodeCache from "node-cache"
 
 dayjs.extend(utc)
 dayjs.extend(customParseFormat)
+dayjs.extend(quarterOfYear)
 
 dotenv.config()
 

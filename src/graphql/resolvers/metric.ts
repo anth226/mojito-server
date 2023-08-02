@@ -3,6 +3,140 @@ import * as types from "../../types"
 import { UNAUTHORIZED_ERROR } from "./errors"
 import dayjs from "dayjs"
 
+export const getMetricsToDate: gql.QueryResolvers["metricsToDate"] = async (
+    _parent,
+    args,
+    context,
+    _info
+): Promise<gql.MetricsToDate | null> => {
+    const metricsForCurrentPeriod = await getMetricsToDateForPeriod(
+        context,
+        args.period,
+        false
+    )
+    const metricsForLastPeriod = await getMetricsToDateForPeriod(
+        context,
+        args.period,
+        true
+    )
+
+    for (const metric of metricsForCurrentPeriod.metrics) {
+        metric.lastPeriodValue =
+            metricsForLastPeriod.metrics.find(
+                (m) =>
+                    m.type === metric.type &&
+                    m.connectionId === metric.connectionId
+            )?.value || 0
+    }
+
+    return metricsForCurrentPeriod
+}
+
+export const getMetricsYearly: gql.QueryResolvers["metricsYearly"] = async (
+    _parent,
+    args,
+    context,
+    _info
+): Promise<gql.MetricsYearly | null> => {
+    if (!context.user) {
+        throw UNAUTHORIZED_ERROR
+    }
+
+    const metricsYearlyForCurrentYear = await getMetricsYearlyForYear(
+        context,
+        args.fromYear
+    )
+    const metricsYearlyForLastYear = await getMetricsYearlyForYear(
+        context,
+        args.fromYear - 1
+    )
+
+    for (const metric of metricsYearlyForCurrentYear.metricsForYear) {
+        metric.lastPeriodValue =
+            metricsYearlyForLastYear.metricsForYear.find(
+                (m) =>
+                    m.type === metric.type &&
+                    m.connectionId === metric.connectionId &&
+                    m.year === metric.year!! - 1
+            )?.value || 0
+    }
+
+    for (const metric of metricsYearlyForCurrentYear.metricsPerMonth) {
+        metric.lastPeriodValue =
+            metricsYearlyForLastYear.metricsPerMonth.find(
+                (m) =>
+                    m.type === metric.type &&
+                    m.connectionId === metric.connectionId &&
+                    m.month === metric.month
+            )?.value || 0
+    }
+
+    return metricsYearlyForCurrentYear
+}
+
+async function getMetricsToDateForPeriod(
+    context: types.RequestContext,
+    period: gql.MetricToDatePeriod,
+    last: boolean
+): Promise<gql.MetricsToDate> {
+    if (!context.user) {
+        throw UNAUTHORIZED_ERROR
+    }
+
+    function getPeriod(unit: dayjs.QUnitType): [Date, Date] {
+        const startOfPeriod = last
+            ? dayjs.utc().subtract(1, unit).startOf(unit).toDate()
+            : dayjs.utc().startOf(unit).toDate()
+        const endOfPeriod = last
+            ? dayjs.utc().subtract(1, unit).endOf(unit).toDate()
+            : dayjs.utc().subtract(1, "day").endOf("day").toDate()
+
+        return [startOfPeriod, endOfPeriod]
+    }
+
+    let startOfPeriod: Date
+    let endOfPeriod = dayjs.utc().subtract(1, "day").endOf("day").toDate()
+    switch (period) {
+        case gql.MetricToDatePeriod.QuarterToDate:
+            ;[startOfPeriod, endOfPeriod] = getPeriod("quarter")
+            break
+        case gql.MetricToDatePeriod.YearToDate:
+            ;[startOfPeriod, endOfPeriod] = getPeriod("year")
+            break
+        case gql.MetricToDatePeriod.MonthToDate:
+            ;[startOfPeriod, endOfPeriod] = getPeriod("month")
+            break
+    }
+
+    const [allMetrics, _] = await context.datasources.metric.search({
+        agencyId: context.user.agencyId,
+        businessId: context.user.businessId,
+        inRange: { from: startOfPeriod, to: endOfPeriod },
+    })
+
+    const metricsByConnection = new Map<string, [types.Metric]>()
+    const metricsAllConnections = new Map<string, [types.Metric]>()
+
+    for (const metric of allMetrics) {
+        aggregateMetricByKey(
+            metricByConnectionForPeriodKey(metric, period),
+            metric,
+            metricsByConnection
+        )
+        aggregateMetricByKey(
+            metricAllConnectionsForPeriodKey(metric, period),
+            metric,
+            metricsAllConnections
+        )
+    }
+
+    const metrics = accumulateMetrics(metricsByConnection).concat(
+        accumulateMetrics(metricsAllConnections)
+    )
+
+    return { metrics }
+}
+
 async function getMetricsYearlyForYear(
     context: types.RequestContext,
     year: number
@@ -62,48 +196,6 @@ async function getMetricsYearlyForYear(
     }
 }
 
-export const getMetricsYearly: gql.QueryResolvers["metricsYearly"] = async (
-    _parent,
-    args,
-    context,
-    _info
-): Promise<gql.MetricsYearly | null> => {
-    if (!context.user) {
-        throw UNAUTHORIZED_ERROR
-    }
-
-    const metricsYearlyForCurrentYear = await getMetricsYearlyForYear(
-        context,
-        args.fromYear
-    )
-    const metricsYearlyForLastYear = await getMetricsYearlyForYear(
-        context,
-        args.fromYear - 1
-    )
-
-    for (const metric of metricsYearlyForCurrentYear.metricsForYear) {
-        metric.lastPeriodValue =
-            metricsYearlyForLastYear.metricsForYear.find(
-                (m) =>
-                    m.type === metric.type &&
-                    m.connectionId === metric.connectionId &&
-                    m.year === metric.year!! - 1
-            )?.value || 0
-    }
-
-    for (const metric of metricsYearlyForCurrentYear.metricsPerMonth) {
-        metric.lastPeriodValue =
-            metricsYearlyForLastYear.metricsPerMonth.find(
-                (m) =>
-                    m.type === metric.type &&
-                    m.connectionId === metric.connectionId &&
-                    m.month === metric.month
-            )?.value || 0
-    }
-
-    return metricsYearlyForCurrentYear
-}
-
 function metricByConnectionPerMonthKey(metric: types.Metric): string {
     return `M${metric.type}/${metric.connectionId}/${metric.from.getUTCMonth()}`
 }
@@ -120,6 +212,20 @@ function metricByConnectionForYearKey(metric: types.Metric): string {
 
 function metricAllConnectionsForYearKey(metric: types.Metric): string {
     return `Y${metric.type}/${metric.from.getUTCFullYear()}`
+}
+
+function metricByConnectionForPeriodKey(
+    metric: types.Metric,
+    period: string
+): string {
+    return `Y${metric.type}/${metric.connectionId}/${period}`
+}
+
+function metricAllConnectionsForPeriodKey(
+    metric: types.Metric,
+    period: string
+): string {
+    return `Y${metric.type}/${period}`
 }
 
 function aggregateMetricByKey(
