@@ -1,22 +1,40 @@
 import { FilterQuery, QueryOptions } from "mongoose"
 import { UserModel, UserDocument } from "../models"
 import * as types from "../types/user"
+import NodeCache from "node-cache"
 import {
     UserOrderField,
     AccountType,
 } from "../graphql/__generated__/resolvers-types"
 
 export class UserDatasource implements types.UserDatasource {
+    constructor(private cache: NodeCache) { }
+
     async getById(id: string): Promise<types.User | null> {
+        if (this.cache.has(id)) {
+            return this.cache.get<any>(id)
+        }
+
         const user = await UserModel.findById(id)
-        return user ? user.toObject() : null
+        if (!user) return null
+
+        this.cache.set(id, user.toObject())
+
+        return user.toObject()
     }
 
     async update(
         id: string,
         changes: Partial<types.User>
     ): Promise<types.User | null> {
-        const user = await UserModel.findByIdAndUpdate(id, changes, { new: true })
+        if (this.cache.has(id)) {
+            this.cache.del(id)
+        }
+
+        const user = await UserModel.findByIdAndUpdate(id, changes, {
+            new: true,
+        })
+
         return user ? user.toObject() : null
     }
 

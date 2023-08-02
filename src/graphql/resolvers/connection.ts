@@ -3,7 +3,6 @@ import * as types from "../../types"
 import { UNAUTHORIZED_ERROR } from "./errors"
 import { MetaApi } from "../../core/meta"
 import dayjs from "dayjs"
-import logger from "../../utils/logger"
 import * as mappings from "./mappings"
 
 export const createConnection: gql.MutationResolvers["createConnection"] =
@@ -86,6 +85,10 @@ export const syncConnection: gql.MutationResolvers["syncConnection"] = async (
 
             // TODO: we're using the first account of the connection,
             // we should replace this for the adAccount from connection.adAccountId
+            context.logger.info(
+                { connectionId: connection._id },
+                "Sync: updating accounts"
+            )
             const accounts = await metaApi.getAdAccounts()
 
             await context.datasources.connection.update(args.input.id, {
@@ -100,6 +103,9 @@ export const syncConnection: gql.MutationResolvers["syncConnection"] = async (
             )
 
             if (!clientAccount) {
+                context.logger.error(
+                    `Sync: missing source account from ${connection._id}`
+                )
                 throw new Error("Account source not selected")
             }
 
@@ -112,10 +118,20 @@ export const syncConnection: gql.MutationResolvers["syncConnection"] = async (
 
             const syncTo = dayjs.utc(syncedAt).subtract(1, "day").toDate()
 
+            context.logger.info(
+                { connectionId: connection._id },
+                `Sync: fetching metrics from ${syncFrom.toISOString()} to ${syncTo.toISOString()}`
+            )
+
             const insights = await metaApi.getInsights(
                 clientAccount.id,
                 syncFrom,
                 syncTo
+            )
+
+            context.logger.info(
+                { connectionId: connection._id },
+                `Sync: pushing ${insights.length} metrics`
             )
 
             for (const insight of insights) {
@@ -153,13 +169,27 @@ export const syncConnection: gql.MutationResolvers["syncConnection"] = async (
                         from,
                         to,
                     },
+                    {
+                        type: gql.MetricType.AdSpend,
+                        value: parseFloat(insight.spend),
+                        connectionId: connection._id,
+                        agencyId: connection.agencyId,
+                        businessId: connection.businessId,
+                        from,
+                        to,
+                    },
                 ])
             }
         }
 
         await context.datasources.metric.createMany(metrics)
+
+        context.logger.info({ connectionId: connection._id }, "Sync: OK")
     } catch (error) {
-        logger.error(error, `Sync failed for connection ${connection._id}`)
+        context.logger.error(
+            { err: error, connectionId: connection._id },
+            "Sync: FAILED"
+        )
 
         connection = (await context.datasources.connection.update(
             connection._id,

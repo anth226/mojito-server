@@ -59,7 +59,7 @@ type Token = {
 }
 
 export class OAuth2Factory {
-    constructor(private cfg: OAuth2FactoryConfig) {}
+    constructor(private cfg: OAuth2FactoryConfig) { }
 
     create(source: gql.ConnectionSource): OAuth2Client {
         return new OAuth2Client({
@@ -104,7 +104,7 @@ export class OAuth2Factory {
 export class OAuth2Client {
     private token?: Token
 
-    constructor(private cfg: OAuth2Config) {}
+    constructor(private cfg: OAuth2Config) { }
 
     public getToken() {
         return this.token
@@ -148,8 +148,6 @@ export class OAuth2Client {
                 `oauth2: token exchange failed with status ${resp.status}`
             )
         }
-
-        console.log(resp.data)
 
         this.token = {
             accessToken: resp.data["access_token"],

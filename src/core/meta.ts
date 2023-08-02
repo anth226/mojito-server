@@ -60,7 +60,7 @@ export class MetaApi {
                     time_increment: 1,
                     time_range: `{"since":"${since}","until":"${until}"}`,
                     action_attribution_windows: "1d_click,7d_click,1d_view",
-                    limit: 50,
+                    limit: 100,
                 },
             }
         )

@@ -25,5 +25,6 @@ export type MetricQuery = {
     businessId?: string
     take?: number
     skip?: number
+    inRange?: { from?: Date; to?: Date }
     orderBy?: gql.MetricOrder
 }

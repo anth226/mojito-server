@@ -2,12 +2,14 @@ import { BaseContext } from "@apollo/server"
 import { Datasources } from "./datasource"
 import { User } from "./user"
 import { Core } from "../core"
+import { Logger } from "pino"
 
 export interface RequestContext extends BaseContext {
     core: Core
     authPrivateKey: string
     defaultAwsBucket: string
     datasources: Datasources
+    logger: Logger
     user?: User
 }
 
@@ -16,6 +18,7 @@ declare global {
         export interface Request {
             core: Core
             datasources: Datasources
+            logger: Logger
         }
     }
 }
