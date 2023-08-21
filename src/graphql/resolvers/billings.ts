@@ -1,7 +1,6 @@
 import * as gql from "../__generated__/resolvers-types"
-import { UNAUTHORIZED_ERROR } from "./errors"
+import { UNAUTHORIZED_ERROR, UNEXPECTED_ERROR } from "./errors"
 
-const stripe = require('stripe')('sk_test_51Mfw0UFvL0m5gmDoGFSyOfdEqpBTlb6d96I0i6jPYjypSy0UnR9OJgHoWZlyyIIKMI9wU9g109fzLkqQoecaEnnZ00Cqff2bdw');
 
 
 export const createSubscription: gql.MutationResolvers["createSubscription"] = async (
@@ -10,52 +9,53 @@ export const createSubscription: gql.MutationResolvers["createSubscription"] = a
     context,
     _info
 ): Promise<gql.CreateSubscriptionPayload | null> => {
-    if (!context.user) {
-        throw UNAUTHORIZED_ERROR
-    }
-    const customer = await stripe.customers.create({
-        email:args.input.email,
-        source: args.input.source,
-        name: args.input.name,
-      });
 
-      const billingDetail = await context.datasources.billing.create({
-        email:args.input.email,
-        name:args.input.name,
-        clientId:args.input.clientId,
-        customerId:customer.id,
-        cardId:customer.default_source,
-        phone:args.input.phone,
-        expiry:args.input.expiry,
-        card:args.input.card,
-        street:args.input.street,
-        country_code:args.input.country_code,
-        apt_suit_number:args.input.apt_suit_number,
-        region:args.input.region,
-        state:args.input.state,
-        city:args.input.city,
-        zip_code:args.input.zip_code,
+    try {
+        if (!context.user) {
+            throw UNAUTHORIZED_ERROR
+        }
 
-
-      })
- console.log(billingDetail)
-
-  
-      const subscription = await stripe.subscriptions.create({
-        customer: customer.id,
-        items: [{ plan: args.input.priceId }],
-      });
-
-     
-     console.log(subscription);
-    return {
-        url:"https://www.google.com",
-        success:true,
-        clientMutationId:"1"
-    }
-
-
+        const customer = await context.core.stripe.customers.create({
+            email:args.input.email,
+            source: args.input.source,
+            name: args.input.name,
+          });
     
+          const billingDetail = await context.datasources.billing.create({
+            email:args.input.email,
+            name:args.input.name,
+            clientId:args.input.clientId,
+            customerId:customer.id,
+            cardId:customer.default_source,
+            phone:args.input.phone,
+            expiry:args.input.expiry,
+            card:args.input.card,
+            street:args.input.street,
+            country_code:args.input.country_code,
+            apt_suit_number:args.input.apt_suit_number,
+            region:args.input.region,
+            state:args.input.state,
+            city:args.input.city,
+            zip_code:args.input.zip_code,
+    
+    
+          })
+      
+          const subscription = await context.core.stripe.subscriptions.create({
+            customer: customer.id,
+            items: [{ plan: args.input.priceId }],
+          });
+        return {
+            url:subscription.items.url,
+            success:true,
+            clientMutationId:args.input.clientMutationId
+        }
+        
+    } catch (error:any) {
+            throw UNEXPECTED_ERROR;
+    
+    }
+        
 }
 
 export const fetchPlans: gql.QueryResolvers["fetchPlans"] = async (
@@ -64,20 +64,27 @@ export const fetchPlans: gql.QueryResolvers["fetchPlans"] = async (
     context,
     _info
 ): Promise<gql.Plans | null> => {
+
+    const getProductNameById = (productId:string,productData:any):string|null => {
+        const filteredProduct = productData.find((product:any) => product.id === productId);
+        return filteredProduct ? filteredProduct.name : null;
+      };
+    
     if (!context.user) {
         throw UNAUTHORIZED_ERROR
     }
 
-    const data= await stripe.plans.list()
-
-    console.log(data.data);
-
-    
+    const data= await context.core.stripe.plans.list()
+    const product= await context.core.stripe.products.list()
+    console.log(data)
  const plans =data.data.map((plan:any)=>({
     id:plan.id,
     amount:plan.amount,
-    planName:"starter",
+    planName:getProductNameById(plan.product,product.data),
     currency:plan.currency,
+    interval:plan.interval,
+    trialPeriodDays:plan.trial_period_days,
+    billingScheme:plan.billing_scheme
 }))
 
  return {plans:plans}

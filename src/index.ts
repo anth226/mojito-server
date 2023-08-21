@@ -39,9 +39,11 @@ const config = {
     metaClientSecret: process.env.META_CLIENT_SECRET as string,
     tiktokClientId: process.env.TIKTOK_CLIENT_ID as string,
     tiktokClientSecret: process.env.TIKTOK_CLIENT_SECRET as string,
+    stripeSecretKey: process.env.STRIPE_SECRET_KEY as string,
 }
 
 const restServer = express()
+const stripe = require('stripe')(config.stripeSecretKey);
 
 const gqlServer = new ApolloServer<types.RequestContext>({
     typeDefs: loadFiles("**/graphql/schema.graphql"),
@@ -91,6 +93,7 @@ async function startServers(): Promise<void> {
                         core: {
                             aws,
                             authFactory: oauth2Factory,
+                            stripe:stripe,
                         },
                         authPrivateKey: config.authPrivateKey,
                         defaultAwsBucket: config.awsDefaultBucket,
@@ -151,6 +154,7 @@ async function startServers(): Promise<void> {
                 req.core = {
                     aws,
                     authFactory: oauth2Factory,
+                    stripe:stripe,
                 }
                 req.datasources = {
                     user: new datasources.UserDatasource(cache),
