@@ -103,6 +103,7 @@ async function startServers(): Promise<void> {
                             business: new datasources.BusinessDatasource(cache),
                             alert: new datasources.AlertDatasource(),
                             metric: new datasources.MetricDatasource(cache),
+                            billing: new datasources.BillingDatasource(),
                         },
                         logger,
                     }
@@ -158,6 +159,7 @@ async function startServers(): Promise<void> {
                     business: new datasources.BusinessDatasource(cache),
                     alert: new datasources.AlertDatasource(),
                     metric: new datasources.MetricDatasource(cache),
+                    billing: new datasources.BillingDatasource()
                 }
                 req.logger = logger
 

@@ -8,6 +8,7 @@ import { AgencyDatasource } from "./agency"
 import { ConnectionDatasource } from "./connection"
 import { AlertDatasource } from "./alert"
 import { MetricDatasource } from "./metric"
+import { BillingDataSource } from "./billingDetail"
 
 export interface Datasources {
     user: UserDatasource
@@ -16,6 +17,7 @@ export interface Datasources {
     business: BusinessDatasource
     alert: AlertDatasource
     metric: MetricDatasource
+    billing:BillingDataSource
     // alert: IAlertDataSource
     // connections: IConnectionDataSource
     // campaigns: ICampaignDataSource
