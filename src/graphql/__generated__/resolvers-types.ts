@@ -269,6 +269,7 @@ export type CreateSubscriptionInput = {
   apt_suit_number: Scalars['String']['input'];
   billingPlan: BillingPlan;
   card: Scalars['Int']['input'];
+  cardBrand: Scalars['String']['input'];
   city: Scalars['String']['input'];
   clientId: Scalars['String']['input'];
   clientMutationId?: InputMaybe<Scalars['String']['input']>;
@@ -278,6 +279,7 @@ export type CreateSubscriptionInput = {
   name: Scalars['String']['input'];
   phone: Scalars['String']['input'];
   priceId: Scalars['String']['input'];
+  quantity: Scalars['Int']['input'];
   region: Scalars['String']['input'];
   source: Scalars['String']['input'];
   state: Scalars['String']['input'];
@@ -722,10 +724,13 @@ export enum UserStatus {
 
 export type Plan = {
   __typename?: 'plan';
-  amount?: Maybe<Scalars['Int']['output']>;
+  amount?: Maybe<Scalars['String']['output']>;
+  billingScheme?: Maybe<Scalars['String']['output']>;
   currency?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['String']['output']>;
+  interval?: Maybe<Scalars['String']['output']>;
   planName?: Maybe<Scalars['String']['output']>;
+  trialPeriodDays?: Maybe<Scalars['String']['output']>;
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -1204,10 +1209,13 @@ export type UserConnectionResolvers<ContextType = RequestContext, ParentType ext
 }>;
 
 export type PlanResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['plan'] = ResolversParentTypes['plan']> = ResolversObject<{
-  amount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  amount?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  billingScheme?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   currency?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  interval?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   planName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  trialPeriodDays?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

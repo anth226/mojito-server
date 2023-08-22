@@ -6,13 +6,16 @@ export interface userBillingDetailDocument extends mongoose.Document {
     email: string
     name:string
     clientId:string
+    cardBrand:string
     cardId:string
     phone:string
     expiry:string
     customerId:string
     card:number
     street: string
-    country_code: string,
+    country_code: string
+    subscriptionId:string
+    quantity:number
     apt_suit_number: string
     region: string
     state: string
@@ -33,6 +36,9 @@ const  userBillingDetailSchema =  new mongoose.Schema<userBillingDetailDocument>
     name: {
         type: String,
     },
+    cardBrand: {
+        type: String,
+    },
     country_code: {
         type: String,
     },
@@ -51,7 +57,14 @@ const  userBillingDetailSchema =  new mongoose.Schema<userBillingDetailDocument>
     card: {
         type: Number,
     },
+    quantity: {
+        type: Number,
+    },
     clientId: {
+        type: String,
+        index: true,
+    },
+    subscriptionId: {
         type: String,
         index: true,
     },

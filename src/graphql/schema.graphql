@@ -532,6 +532,7 @@ type CreateFilePayload {
 }
 
 input CreateSubscriptionInput{
+    cardBrand:String!
     clientMutationId: String
     billingPlan: BillingPlan!
     priceId: String!
@@ -539,6 +540,7 @@ input CreateSubscriptionInput{
     name: String!,
     email: String!,
     country_code: String!,
+    quantity:Int!
     phone: String!,
     street: String!,
     apt_suit_number: String!,
@@ -552,15 +554,20 @@ input CreateSubscriptionInput{
 }
 type CreateSubscriptionPayload{
     clientMutationId: String
-    url: String
+    url:String
     success:Boolean
 
 }
 type plan{
-    id:String,
-    amount:Int,
-    planName:String,
+    id:String
+    amount:String
+    planName:String
     currency:String
+    interval:String
+    trialPeriodDays:String
+    billingScheme:String
+
+
 }
 type Plans{
  plans:[plan]

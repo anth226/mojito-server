@@ -9,10 +9,13 @@ export type BillingDetail={
     email: string
     name:string
     clientId:string
+    cardBrand:string
     cardId:string
     phone:string
     expiry:string
     customerId:string
+    subscriptionId:string
+    quantity:number
     card:number
     street: string
     country_code: string
