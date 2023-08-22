@@ -1,5 +1,4 @@
-import { FilterQuery, QueryOptions } from "mongoose"
-import {UserBillingDetailModel,userBillingDetailDocument } from "../models"
+import {UserBillingDetailModel} from "../models"
 import * as types from "../types/billingDetail"
 
 export class BillingDatasource implements types.BillingDataSource {
