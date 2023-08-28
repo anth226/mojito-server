@@ -267,11 +267,10 @@ export type CreateFilePayload = {
 
 export type CreateSubscriptionInput = {
   apt_suit_number: Scalars['String']['input'];
-  billingPlan: BillingPlan;
-  card: Scalars['Int']['input'];
+  billingPlan: Scalars['String']['input'];
+  card: Scalars['String']['input'];
   cardBrand: Scalars['String']['input'];
   city: Scalars['String']['input'];
-  clientId: Scalars['String']['input'];
   clientMutationId?: InputMaybe<Scalars['String']['input']>;
   country_code: Scalars['String']['input'];
   email: Scalars['String']['input'];
@@ -290,6 +289,7 @@ export type CreateSubscriptionInput = {
 export type CreateSubscriptionPayload = {
   __typename?: 'CreateSubscriptionPayload';
   clientMutationId?: Maybe<Scalars['String']['output']>;
+  reason?: Maybe<Scalars['String']['output']>;
   success?: Maybe<Scalars['Boolean']['output']>;
   url?: Maybe<Scalars['String']['output']>;
 };
@@ -724,9 +724,10 @@ export enum UserStatus {
 
 export type Plan = {
   __typename?: 'plan';
-  amount?: Maybe<Scalars['String']['output']>;
+  amount?: Maybe<Scalars['Int']['output']>;
   billingScheme?: Maybe<Scalars['String']['output']>;
   currency?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['String']['output']>;
   interval?: Maybe<Scalars['String']['output']>;
   planName?: Maybe<Scalars['String']['output']>;
@@ -1047,6 +1048,7 @@ export type CreateFilePayloadResolvers<ContextType = RequestContext, ParentType 
 
 export type CreateSubscriptionPayloadResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['CreateSubscriptionPayload'] = ResolversParentTypes['CreateSubscriptionPayload']> = ResolversObject<{
   clientMutationId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  reason?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   success?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1209,9 +1211,10 @@ export type UserConnectionResolvers<ContextType = RequestContext, ParentType ext
 }>;
 
 export type PlanResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['plan'] = ResolversParentTypes['plan']> = ResolversObject<{
-  amount?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  amount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   billingScheme?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   currency?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   interval?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   planName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

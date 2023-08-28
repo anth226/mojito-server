@@ -16,7 +16,7 @@ export type BillingDetail={
     customerId:string
     subscriptionId:string
     quantity:number
-    card:number
+    card:string
     street: string
     country_code: string
     apt_suit_number: string

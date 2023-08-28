@@ -1,5 +1,6 @@
 import * as gql from "../__generated__/resolvers-types"
 import { UNAUTHORIZED_ERROR, UNEXPECTED_ERROR } from "./errors"
+import { getPlanById,getPriceById,filterPlanByUser } from "../../utils/filters"
 
 export const createSubscription: gql.MutationResolvers["createSubscription"] = async (
     _parent,
@@ -12,7 +13,7 @@ export const createSubscription: gql.MutationResolvers["createSubscription"] = a
         if (!context.user) {
             throw UNAUTHORIZED_ERROR
         }
-
+        
         const customer = await context.core.stripe.customers.create({
             email:args.input.email,
             source: args.input.source,
@@ -37,7 +38,7 @@ export const createSubscription: gql.MutationResolvers["createSubscription"] = a
             cardBrand:args.input.cardBrand,
             email:args.input.email,
             name:args.input.name,
-            clientId:args.input.clientId,
+            clientId:context.user._id,
             customerId:customer.id,
             cardId:customer.default_source,
             phone:args.input.phone,
@@ -65,22 +66,33 @@ export const createSubscription: gql.MutationResolvers["createSubscription"] = a
             date: new Date(),
             status:invoice.paid,
             downloadInvoice:invoice.hosted_invoice_url,
-            userId:args.input.clientId,
+            userId:context.user._id,
             invoiceId:subscription.latest_invoice
 
         })
         return {
             url:invoice.hosted_invoice_url,
+            reason:"Subscription created successfully",
             success:true,
             clientMutationId:args.input.clientMutationId
         }
         
     } catch (error:any) {
         if (error.type==="StripeInvalidRequestError"){
-            throw new Error(error.raw.message)
+            context.logger.error(error.raw.message)
+            return {
+            reason:error.raw.message,
+            success:false,
+            clientMutationId:args.input.clientMutationId
+        }
         }
         else{
-            throw UNEXPECTED_ERROR;
+            context.logger.error(error.message)
+            return {
+                reason:"Payment was Unsuccessfull.",
+                success:false,
+                clientMutationId:args.input.clientMutationId
+            }
         }
     
     }
@@ -93,31 +105,30 @@ export const fetchPlans: gql.QueryResolvers["fetchPlans"] = async (
     context,
     _info
 ): Promise<gql.Plans | null> => {
-
-    const getPlanById = (planId:string,planData:any) => {
-        const filteredPlan = planData.find((plan:any) => plan.id === planId);
-        return filteredPlan ? filteredPlan : null;
-      };
-    
+    try {
+            
     if (!context.user) {
         throw UNAUTHORIZED_ERROR
     }
-
-    const plans= await context.core.stripe.plans.list({ active: true })
+    const plans= await context.core.stripe.plans.list({ active: true , expand: ['data.tiers']})
     const product= await context.core.stripe.products.list({ active: true })
-    const prices =await context.core.stripe.prices.list({ active: true })
 
- const plansData =product.data.map((product:any)=>({
+    const plansData =product.data.map((product:any)=>({
     id:product.default_price,
-    amount:getPlanById(product.default_price,plans.data).amount_decimal,
-    planName:product.name,
+    amount:getPlanById(product.default_price,plans.data).amount_decimal?
+    parseFloat( getPlanById(product.default_price,plans.data).amount_decimal)/100: parseFloat(getPriceById(product.default_price,plans.data))/100,
+    description:product.description,
+    planName:product.name +" plan",
     currency:getPlanById(product.default_price,plans.data).currency,
     interval:getPlanById(product.default_price,plans.data).interval,
     trialPeriodDays:getPlanById(product.default_price,plans.data).trial_period_days,
     billingScheme:getPlanById(product.default_price,plans.data).billing_scheme
 }))
 
- return {plans:plansData}
+ return {plans:filterPlanByUser(context.user.accountType,plansData)}
+} catch (error:any) {
+ throw new Error(error.message)
+}
 }
 
 
