@@ -6,6 +6,7 @@ export interface ConnectionDatasource {
     delete(id: string): Promise<void>
     getById(id: string): Promise<Connection | null>
     search(query: ConnectionQuery): Promise<[Array<Connection>, number]>
+    getAllConnectionsFor(businessId:string):Promise<Array<Connection>>
 }
 
 export type Connection = {
