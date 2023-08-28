@@ -11,7 +11,7 @@ export interface userBillingDetailDocument extends mongoose.Document {
     phone:string
     expiry:string
     customerId:string
-    card:number
+    card:string
     street: string
     country_code: string
     subscriptionId:string
@@ -31,7 +31,6 @@ const  userBillingDetailSchema =  new mongoose.Schema<userBillingDetailDocument>
     },
     email: {
         type: String,
-        unique: true,
     },
     name: {
         type: String,
@@ -55,7 +54,7 @@ const  userBillingDetailSchema =  new mongoose.Schema<userBillingDetailDocument>
         type: String,
     },
     card: {
-        type: Number,
+        type: String,
     },
     quantity: {
         type: Number,
