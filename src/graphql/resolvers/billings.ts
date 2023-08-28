@@ -1,6 +1,7 @@
 import * as gql from "../__generated__/resolvers-types"
 import { UNAUTHORIZED_ERROR, UNEXPECTED_ERROR } from "./errors"
 import { getPlanById,getPriceById,filterPlanByUser } from "../../utils/filters"
+import { AccountType } from "../__generated__/resolvers-types"
 
 export const createSubscription: gql.MutationResolvers["createSubscription"] = async (
     _parent,
@@ -14,14 +15,22 @@ export const createSubscription: gql.MutationResolvers["createSubscription"] = a
             throw UNAUTHORIZED_ERROR
         }
         
+
+        let quantity=0;
+        if(context.user.accountType===AccountType.Agency){
+
+          const clients=await context.datasources.user.getActiveClientsFrom(context.user.agencyId)
+          quantity=clients.length
+      }else{
+          const connections = await context.datasources.connection.getAllConnectionsFor(context.user.businessId)
+          quantity =connections.length
+      }
         const customer = await context.core.stripe.customers.create({
             email:args.input.email,
             source: args.input.source,
             name: args.input.name,
           });
-    
-          
-      
+
           const subscription = await context.core.stripe.subscriptions.create({
             customer: customer.id,
             items: [{ plan: args.input.priceId }],
@@ -29,7 +38,7 @@ export const createSubscription: gql.MutationResolvers["createSubscription"] = a
            await context.core.stripe.subscriptionItems.createUsageRecord(
             subscription.items.data[0].id,
             {
-              quantity:args.input.quantity ,
+              quantity:quantity,
               timestamp: Math.floor(Date.now() / 1000),
               action: 'set',
             }
@@ -44,7 +53,7 @@ export const createSubscription: gql.MutationResolvers["createSubscription"] = a
             phone:args.input.phone,
             expiry:args.input.expiry,
             subscriptionId:subscription.id,
-            quantity:args.input.quantity,
+            quantity:quantity,
             card:args.input.card,
             street:args.input.street,
             country_code:args.input.country_code,
