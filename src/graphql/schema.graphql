@@ -540,7 +540,6 @@ input CreateSubscriptionInput{
     name: String!,
     email: String!,
     country_code: String!,
-    quantity:Int!
     phone: String!,
     street: String!,
     apt_suit_number: String!,

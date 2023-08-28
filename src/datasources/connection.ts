@@ -78,4 +78,10 @@ export class ConnectionDatasource implements types.ConnectionDatasource {
 
         return [connections.map((u) => u.toObject()), total]
     }
+    async getAllConnectionsFor(businessId: string):Promise<Array<types.Connection>> {
+
+        const connections = await ConnectionModel.find({businessId:businessId})
+        return connections.map((conn) => conn.toObject())
+
+    }
 }
