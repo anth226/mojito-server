@@ -5,6 +5,7 @@ import NodeCache from "node-cache"
 import {
     UserOrderField,
     AccountType,
+    UserStatus
 } from "../graphql/__generated__/resolvers-types"
 
 export class UserDatasource implements types.UserDatasource {
@@ -22,7 +23,6 @@ export class UserDatasource implements types.UserDatasource {
 
         return user.toObject()
     }
-
     async update(
         id: string,
         changes: Partial<types.User>
@@ -56,6 +56,14 @@ export class UserDatasource implements types.UserDatasource {
         const clients = await UserModel.find({
             agencyId: agencyId,
             accountType: AccountType.Client,
+        })
+        return clients.map((cl) => cl.toObject())
+    }
+    async getActiveClientsFrom(agencyId: string): Promise<Array<types.User>> {
+        const clients = await UserModel.find({
+            agencyId: agencyId,
+            accountType: AccountType.Client,
+            status:UserStatus.Active
         })
         return clients.map((cl) => cl.toObject())
     }

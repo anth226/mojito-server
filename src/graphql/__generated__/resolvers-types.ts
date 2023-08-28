@@ -278,7 +278,6 @@ export type CreateSubscriptionInput = {
   name: Scalars['String']['input'];
   phone: Scalars['String']['input'];
   priceId: Scalars['String']['input'];
-  quantity: Scalars['Int']['input'];
   region: Scalars['String']['input'];
   source: Scalars['String']['input'];
   state: Scalars['String']['input'];

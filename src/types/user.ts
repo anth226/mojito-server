@@ -12,6 +12,7 @@ export interface UserDatasource {
     getByEmail(email: string): Promise<User | null>
     getByAuthState(state: string): Promise<User | null>
     getClientsFrom(agencyId: string): Promise<Array<User>>
+    getActiveClientsFrom(agencyId: string): Promise<Array<User>>
     search(query: UserQuery): Promise<[Array<User>, number]>
 }
 
