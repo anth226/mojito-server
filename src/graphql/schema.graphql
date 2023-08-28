@@ -36,6 +36,9 @@ type Query {
         period: MetricToDatePeriod!
         clientId: String
     ): MetricsToDate
+
+    fetchPlans: Plans
+
 }
 
 type Mutation {
@@ -60,6 +63,8 @@ type Mutation {
     createAlerts(input: CreateAlertsInput!): CreateAlertsPayload
     updateAlert(input: UpdateAlertInput!): UpdateAlertPayload
     archiveAlert(input: ArchiveAlertInput!): ArchiveAlertPayload
+
+   createSubscription(input: CreateSubscriptionInput!): CreateSubscriptionPayload
 }
 
 type User {
@@ -524,4 +529,47 @@ type CreateFilePayload {
     clientMutationId: String
     URL: String
     expiresAt: String
+}
+
+input CreateSubscriptionInput{
+    cardBrand:String!
+    clientMutationId: String
+    billingPlan:String!
+    priceId: String!
+    source: String!
+    name: String!,
+    email: String!,
+    country_code: String!,
+    quantity:Int!
+    phone: String!,
+    street: String!,
+    apt_suit_number: String!,
+    region: String!,
+    state: String!,
+    city: String!,
+    zip_code: String!,
+    expiry:String!
+    card: String!
+}
+type CreateSubscriptionPayload{
+    clientMutationId: String
+    reason:String
+    url:String
+    success:Boolean
+
+}
+type plan{
+    id:String
+    amount:Int
+    description:String
+    planName:String
+    currency:String
+    interval:String
+    trialPeriodDays:String
+    billingScheme:String
+
+
+}
+type Plans{
+ plans:[plan]
 }

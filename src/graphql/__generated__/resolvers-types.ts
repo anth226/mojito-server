@@ -265,6 +265,35 @@ export type CreateFilePayload = {
   expiresAt?: Maybe<Scalars['String']['output']>;
 };
 
+export type CreateSubscriptionInput = {
+  apt_suit_number: Scalars['String']['input'];
+  billingPlan: Scalars['String']['input'];
+  card: Scalars['String']['input'];
+  cardBrand: Scalars['String']['input'];
+  city: Scalars['String']['input'];
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
+  country_code: Scalars['String']['input'];
+  email: Scalars['String']['input'];
+  expiry: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  phone: Scalars['String']['input'];
+  priceId: Scalars['String']['input'];
+  quantity: Scalars['Int']['input'];
+  region: Scalars['String']['input'];
+  source: Scalars['String']['input'];
+  state: Scalars['String']['input'];
+  street: Scalars['String']['input'];
+  zip_code: Scalars['String']['input'];
+};
+
+export type CreateSubscriptionPayload = {
+  __typename?: 'CreateSubscriptionPayload';
+  clientMutationId?: Maybe<Scalars['String']['output']>;
+  reason?: Maybe<Scalars['String']['output']>;
+  success?: Maybe<Scalars['Boolean']['output']>;
+  url?: Maybe<Scalars['String']['output']>;
+};
+
 export type DeleteConnectionInput = {
   clientMutationId?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
@@ -386,6 +415,7 @@ export type Mutation = {
   createAlerts?: Maybe<CreateAlertsPayload>;
   createConnection?: Maybe<CreateConnectionPayload>;
   createFile?: Maybe<CreateFilePayload>;
+  createSubscription?: Maybe<CreateSubscriptionPayload>;
   deleteConnection?: Maybe<DeleteConnectionPayload>;
   inviteClients?: Maybe<InviteClientsPayload>;
   inviteMembers?: Maybe<InviteMembersPayload>;
@@ -417,6 +447,11 @@ export type MutationCreateConnectionArgs = {
 
 export type MutationCreateFileArgs = {
   input: CreateFileInput;
+};
+
+
+export type MutationCreateSubscriptionArgs = {
+  input: CreateSubscriptionInput;
 };
 
 
@@ -479,6 +514,11 @@ export enum OrderDirection {
   Desc = 'DESC'
 }
 
+export type Plans = {
+  __typename?: 'Plans';
+  plans?: Maybe<Array<Maybe<Plan>>>;
+};
+
 export type Query = {
   __typename?: 'Query';
   alert?: Maybe<Alert>;
@@ -486,6 +526,7 @@ export type Query = {
   clients?: Maybe<UserConnection>;
   connection?: Maybe<Connection>;
   connections?: Maybe<ConnectionConnection>;
+  fetchPlans?: Maybe<Plans>;
   members?: Maybe<UserConnection>;
   metricsToDate?: Maybe<MetricsToDate>;
   metricsYearly?: Maybe<MetricsYearly>;
@@ -681,6 +722,18 @@ export enum UserStatus {
   Invited = 'INVITED'
 }
 
+export type Plan = {
+  __typename?: 'plan';
+  amount?: Maybe<Scalars['Int']['output']>;
+  billingScheme?: Maybe<Scalars['String']['output']>;
+  currency?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
+  interval?: Maybe<Scalars['String']['output']>;
+  planName?: Maybe<Scalars['String']['output']>;
+  trialPeriodDays?: Maybe<Scalars['String']['output']>;
+};
+
 export type WithIndex<TObject> = TObject & Record<string, any>;
 export type ResolversObject<TObject> = WithIndex<TObject>;
 
@@ -781,6 +834,8 @@ export type ResolversTypes = ResolversObject<{
   CreateConnectionPayload: ResolverTypeWrapper<CreateConnectionPayload>;
   CreateFileInput: CreateFileInput;
   CreateFilePayload: ResolverTypeWrapper<CreateFilePayload>;
+  CreateSubscriptionInput: CreateSubscriptionInput;
+  CreateSubscriptionPayload: ResolverTypeWrapper<CreateSubscriptionPayload>;
   DeleteConnectionInput: DeleteConnectionInput;
   DeleteConnectionPayload: ResolverTypeWrapper<DeleteConnectionPayload>;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
@@ -803,6 +858,7 @@ export type ResolversTypes = ResolversObject<{
   MetricsYearly: ResolverTypeWrapper<MetricsYearly>;
   Mutation: ResolverTypeWrapper<{}>;
   OrderDirection: OrderDirection;
+  Plans: ResolverTypeWrapper<Plans>;
   Query: ResolverTypeWrapper<{}>;
   RegisterAgencyInput: RegisterAgencyInput;
   RegisterAgencyPayload: ResolverTypeWrapper<RegisterAgencyPayload>;
@@ -825,6 +881,7 @@ export type ResolversTypes = ResolversObject<{
   UserOrderField: UserOrderField;
   UserRole: UserRole;
   UserStatus: UserStatus;
+  plan: ResolverTypeWrapper<Plan>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -848,6 +905,8 @@ export type ResolversParentTypes = ResolversObject<{
   CreateConnectionPayload: CreateConnectionPayload;
   CreateFileInput: CreateFileInput;
   CreateFilePayload: CreateFilePayload;
+  CreateSubscriptionInput: CreateSubscriptionInput;
+  CreateSubscriptionPayload: CreateSubscriptionPayload;
   DeleteConnectionInput: DeleteConnectionInput;
   DeleteConnectionPayload: DeleteConnectionPayload;
   Float: Scalars['Float']['output'];
@@ -866,6 +925,7 @@ export type ResolversParentTypes = ResolversObject<{
   MetricsToDate: MetricsToDate;
   MetricsYearly: MetricsYearly;
   Mutation: {};
+  Plans: Plans;
   Query: {};
   RegisterAgencyInput: RegisterAgencyInput;
   RegisterAgencyPayload: RegisterAgencyPayload;
@@ -885,6 +945,7 @@ export type ResolversParentTypes = ResolversObject<{
   User: User;
   UserConnection: UserConnection;
   UserOrder: UserOrder;
+  plan: Plan;
 }>;
 
 export type AdAccountResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['AdAccount'] = ResolversParentTypes['AdAccount']> = ResolversObject<{
@@ -985,6 +1046,14 @@ export type CreateFilePayloadResolvers<ContextType = RequestContext, ParentType 
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type CreateSubscriptionPayloadResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['CreateSubscriptionPayload'] = ResolversParentTypes['CreateSubscriptionPayload']> = ResolversObject<{
+  clientMutationId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  reason?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  success?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type DeleteConnectionPayloadResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['DeleteConnectionPayload'] = ResolversParentTypes['DeleteConnectionPayload']> = ResolversObject<{
   clientMutationId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1045,6 +1114,7 @@ export type MutationResolvers<ContextType = RequestContext, ParentType extends R
   createAlerts?: Resolver<Maybe<ResolversTypes['CreateAlertsPayload']>, ParentType, ContextType, RequireFields<MutationCreateAlertsArgs, 'input'>>;
   createConnection?: Resolver<Maybe<ResolversTypes['CreateConnectionPayload']>, ParentType, ContextType, RequireFields<MutationCreateConnectionArgs, 'input'>>;
   createFile?: Resolver<Maybe<ResolversTypes['CreateFilePayload']>, ParentType, ContextType, RequireFields<MutationCreateFileArgs, 'input'>>;
+  createSubscription?: Resolver<Maybe<ResolversTypes['CreateSubscriptionPayload']>, ParentType, ContextType, RequireFields<MutationCreateSubscriptionArgs, 'input'>>;
   deleteConnection?: Resolver<Maybe<ResolversTypes['DeleteConnectionPayload']>, ParentType, ContextType, RequireFields<MutationDeleteConnectionArgs, 'input'>>;
   inviteClients?: Resolver<Maybe<ResolversTypes['InviteClientsPayload']>, ParentType, ContextType, RequireFields<MutationInviteClientsArgs, 'input'>>;
   inviteMembers?: Resolver<Maybe<ResolversTypes['InviteMembersPayload']>, ParentType, ContextType, RequireFields<MutationInviteMembersArgs, 'input'>>;
@@ -1058,12 +1128,18 @@ export type MutationResolvers<ContextType = RequestContext, ParentType extends R
   updateConnection?: Resolver<Maybe<ResolversTypes['UpdateConnectionPayload']>, ParentType, ContextType, RequireFields<MutationUpdateConnectionArgs, 'input'>>;
 }>;
 
+export type PlansResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['Plans'] = ResolversParentTypes['Plans']> = ResolversObject<{
+  plans?: Resolver<Maybe<Array<Maybe<ResolversTypes['plan']>>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type QueryResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   alert?: Resolver<Maybe<ResolversTypes['Alert']>, ParentType, ContextType, RequireFields<QueryAlertArgs, 'id'>>;
   alerts?: Resolver<Maybe<ResolversTypes['AlertConnection']>, ParentType, ContextType, Partial<QueryAlertsArgs>>;
   clients?: Resolver<Maybe<ResolversTypes['UserConnection']>, ParentType, ContextType, Partial<QueryClientsArgs>>;
   connection?: Resolver<Maybe<ResolversTypes['Connection']>, ParentType, ContextType, RequireFields<QueryConnectionArgs, 'id'>>;
   connections?: Resolver<Maybe<ResolversTypes['ConnectionConnection']>, ParentType, ContextType, Partial<QueryConnectionsArgs>>;
+  fetchPlans?: Resolver<Maybe<ResolversTypes['Plans']>, ParentType, ContextType>;
   members?: Resolver<Maybe<ResolversTypes['UserConnection']>, ParentType, ContextType, Partial<QueryMembersArgs>>;
   metricsToDate?: Resolver<Maybe<ResolversTypes['MetricsToDate']>, ParentType, ContextType, RequireFields<QueryMetricsToDateArgs, 'period'>>;
   metricsYearly?: Resolver<Maybe<ResolversTypes['MetricsYearly']>, ParentType, ContextType, RequireFields<QueryMetricsYearlyArgs, 'fromYear'>>;
@@ -1134,6 +1210,18 @@ export type UserConnectionResolvers<ContextType = RequestContext, ParentType ext
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type PlanResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['plan'] = ResolversParentTypes['plan']> = ResolversObject<{
+  amount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  billingScheme?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  currency?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  interval?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  planName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  trialPeriodDays?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type Resolvers<ContextType = RequestContext> = ResolversObject<{
   AdAccount?: AdAccountResolvers<ContextType>;
   Agency?: AgencyResolvers<ContextType>;
@@ -1146,6 +1234,7 @@ export type Resolvers<ContextType = RequestContext> = ResolversObject<{
   CreateAlertsPayload?: CreateAlertsPayloadResolvers<ContextType>;
   CreateConnectionPayload?: CreateConnectionPayloadResolvers<ContextType>;
   CreateFilePayload?: CreateFilePayloadResolvers<ContextType>;
+  CreateSubscriptionPayload?: CreateSubscriptionPayloadResolvers<ContextType>;
   DeleteConnectionPayload?: DeleteConnectionPayloadResolvers<ContextType>;
   InviteClientsPayload?: InviteClientsPayloadResolvers<ContextType>;
   InviteMembersPayload?: InviteMembersPayloadResolvers<ContextType>;
@@ -1155,6 +1244,7 @@ export type Resolvers<ContextType = RequestContext> = ResolversObject<{
   MetricsToDate?: MetricsToDateResolvers<ContextType>;
   MetricsYearly?: MetricsYearlyResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  Plans?: PlansResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   RegisterAgencyPayload?: RegisterAgencyPayloadResolvers<ContextType>;
   RegisterBusinessPayload?: RegisterBusinessPayloadResolvers<ContextType>;
@@ -1165,5 +1255,6 @@ export type Resolvers<ContextType = RequestContext> = ResolversObject<{
   UpdateConnectionPayload?: UpdateConnectionPayloadResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   UserConnection?: UserConnectionResolvers<ContextType>;
+  plan?: PlanResolvers<ContextType>;
 }>;
 
