@@ -65,22 +65,11 @@ export const createSubscription: gql.MutationResolvers["createSubscription"] = a
     
     
           })
-          const invoice = await context.core.stripe.invoices.retrieve(
-            subscription.latest_invoice
-          );
+          await context.datasources.history.updateBy(subscription.latest_invoice,{userId:context.user._id
+          })
 
-          await context.datasources.history.create({
-            title: args.input.billingPlan,
-            amount:invoice.amount_paid ,
-            date: new Date(),
-            status:invoice.paid,
-            downloadInvoice:invoice.hosted_invoice_url,
-            userId:context.user._id,
-            invoiceId:subscription.latest_invoice
-
-        })
         return {
-            url:invoice.hosted_invoice_url,
+            url:"",
             reason:"Subscription created successfully",
             success:true,
             clientMutationId:args.input.clientMutationId

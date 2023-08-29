@@ -85,3 +85,40 @@ export async function metaCallback(req: Request, res: Response) {
 
     res.redirect("https://mojito.online")
 }
+
+export async function stripeWebhook(req: Request, res: Response){
+    const sig = req.headers['stripe-signature'];
+    let customerDetail
+    let product
+    let subscription
+    let event
+
+  try {
+    event = req.core.stripe.webhooks.constructEvent(req.body, sig, process.env.ENDPOINTSECRET);
+  }
+  catch (err:any) {
+    res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  // Storing Billing history
+  switch (event.type) {
+    case 'invoice.payment_succeeded':
+     customerDetail = await req.datasources.billing.getDetailsBy(event.data.object.customer)
+     subscription = await req.core.stripe.subscriptions.retrieve(event.data.object.subscription);
+     product = await req.core.stripe.products.retrieve(subscription.plan.product)
+
+    await req.datasources.history.create({
+        title:product.name,
+        amount:event.data.object.amount_paid ,
+        date: new Date(),
+        status:event.data.object.paid,
+        downloadInvoice:event.data.object.hosted_invoice_url,
+        userId:customerDetail?.clientId,
+        invoiceId:event.data.object.id
+
+    })
+   break;
+  }
+  res.json({received: true});
+
+}
