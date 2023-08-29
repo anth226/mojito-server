@@ -2,6 +2,7 @@ export interface BillingDataSource{
     create(billingDetail: Partial<BillingDetail>): Promise<BillingDetail>
     update(id: string, changes: Partial<BillingDetail>): Promise<BillingDetail | null>
     getById(id: string): Promise<BillingDetail| null>
+    getDetailsBy(custmerId: string): Promise<BillingDetail| null>
 
 }
 export type BillingDetail={
