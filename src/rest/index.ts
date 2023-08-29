@@ -89,7 +89,9 @@ export async function metaCallback(req: Request, res: Response) {
 export async function stripeWebhook(req: Request, res: Response){
     const sig = req.headers['stripe-signature'];
     let customerDetail
-  let event;
+    let product
+    let subscription
+    let event
 
   try {
     event = req.core.stripe.webhooks.constructEvent(req.body, sig, process.env.ENDPOINTSECRET);
@@ -98,13 +100,15 @@ export async function stripeWebhook(req: Request, res: Response){
     res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  // Handle the event
+  // Storing Billing history
   switch (event.type) {
     case 'invoice.payment_succeeded':
-     customerDetail = await req.datasources.billing.getDetailsBy("cus_OXZinFRCJBQkdv")
-     console.log(customerDetail)
+     customerDetail = await req.datasources.billing.getDetailsBy(event.data.object.customer)
+     subscription = await req.core.stripe.subscriptions.retrieve(event.data.object.subscription);
+     product = await req.core.stripe.products.retrieve(subscription.plan.product)
+
     await req.datasources.history.create({
-        title:"professional",
+        title:product.name,
         amount:event.data.object.amount_paid ,
         date: new Date(),
         status:event.data.object.paid,
@@ -113,18 +117,8 @@ export async function stripeWebhook(req: Request, res: Response){
         invoiceId:event.data.object.id
 
     })
-
-      break;
-    case 'payment_method.attached':
-    //   const paymentMethod = event.data.object;
-      console.log('PaymentMethod was attached to a Customer!');
-      break;
-    // ... handle other event types
-    default:
-      console.log(`Unhandled event type ${event.type}`);
+   break;
   }
-
-  // Return a response to acknowledge receipt of the event
   res.json({received: true});
 
 }

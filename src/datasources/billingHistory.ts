@@ -13,6 +13,13 @@ export class BillingHistoryDatasource implements types.BillingHistoryDataSource{
         })
         return detail ? detail.toObject() : null
     }
+    async  updateBy(invoiceId: string,
+        changes: Partial<types.BillingHistory>):Promise<types.BillingHistory | null>{
+         const  detail= await UserBillingHistoryModel.findOneAndUpdate({invoiceId:invoiceId}, changes, {
+            new: true,
+        })
+        return detail ? detail.toObject() : null
+    }
     async getById(id: string): Promise<types.BillingHistory | null> {
         const history = await UserBillingHistoryModel.findById(id)
         if (!history) return null
