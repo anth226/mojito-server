@@ -40,6 +40,8 @@ const config = {
     tiktokClientId: process.env.TIKTOK_CLIENT_ID as string,
     tiktokClientSecret: process.env.TIKTOK_CLIENT_SECRET as string,
     stripeSecretKey: process.env.STRIPE_SECRET_KEY as string,
+    endpointSecret:process.env.ENDPOINT_SECRET as string
+
 }
 
 const restServer = express()
@@ -176,6 +178,7 @@ async function startServers(): Promise<void> {
         restServer.get("/health", handlers.health)
         restServer.get("/auth/google", handlers.googleCallback)
         restServer.get("/auth/meta", handlers.metaCallback)
+        restServer.post("/stripe_webhooks",express.raw({type: 'application/json'}),handlers.stripeWebhook)
 
         restServer.listen(config.port, "0.0.0.0", () => {
             logger.info(`🚀  Server ready at port ${config.port}`)
