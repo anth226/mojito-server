@@ -602,6 +602,7 @@ type updateBillingPayload{
 
 }
 input updateBillingDetailsInput{
+    planId:String,
     cardBrand:String
     clientMutationId: String
     billingPlan:String
