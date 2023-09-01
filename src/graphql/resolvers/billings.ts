@@ -2,6 +2,7 @@ import * as gql from "../__generated__/resolvers-types"
 import { UNAUTHORIZED_ERROR, UNEXPECTED_ERROR } from "./errors"
 import { getPlanById,getPriceById,filterPlanByUser } from "../../utils/filters"
 import { AccountType } from "../__generated__/resolvers-types"
+import { argsToArgsConfig } from "graphql/type/definition"
 
 export const createSubscription: gql.MutationResolvers["createSubscription"] = async (
     _parent,
@@ -139,6 +140,7 @@ export const userBillingDetails: gql.QueryResolvers["userBillingDetails"] = asyn
         throw UNAUTHORIZED_ERROR
     }
 const userBillingDetails = await  context.datasources.billing.getDetailsByUser(context.user._id)
+const allUserHistory =await context.datasources.history.getAllBy(context.user._id)
     const billingDetailsForm = {
         id:userBillingDetails?._id,
         card_number:userBillingDetails?.card,
@@ -160,7 +162,7 @@ const userBillingDetails = await  context.datasources.billing.getDetailsByUser(c
 }
 export const updateBillingDetails: gql.MutationResolvers["updateBillingDetails"] = async (
     _parent,
-    _args,
+     args,
     context,
     _info
 ): Promise<gql.UpdateBillingPayload | null> => {
@@ -168,6 +170,37 @@ export const updateBillingDetails: gql.MutationResolvers["updateBillingDetails"]
     if (!context.user) {
         throw UNAUTHORIZED_ERROR
     }
+    const getBillingDetails = await context.datasources.billing.getDetailsByUser(context.user._id)
+    if(!getBillingDetails){
+        return {
+            clientMutationId:"",
+            reason:"Details not found",
+            url:"",
+            success:false
+        }
+    }
+    console.log(getBillingDetails);
+
+    const changes={
+        email:"agencyTest@gmail.ocm",
+        phone:"078888888888"
+    }
+    const updateCustomer= await context.core.stripe.customers.update(getBillingDetails.customerId,changes)
+  
+    //update plan
+    const updatePlan =await context.core.stripe.subscriptions.update(getBillingDetails.subscriptionId,{
+        items: [
+          {
+            price:args.input.planId ,
+          },
+        ],
+        proration_behavior: 'none',
+      },
+      
+      )
+
+    const updateBillingDetails = await context.datasources.billing.update(getBillingDetails._id,changes)
+    
     return {
         clientMutationId:"",
         reason:"",

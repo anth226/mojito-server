@@ -25,4 +25,10 @@ export class BillingHistoryDatasource implements types.BillingHistoryDataSource{
         if (!history) return null
         return history.toObject()
     }
+    async getAllBy(userId: string): Promise<Array<types.BillingHistory> | null> {
+        const history = await UserBillingHistoryModel.find({userId})
+        if (!history) return null
+        return history.map((hs) => hs.toObject())
+    }
+
 }
