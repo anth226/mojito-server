@@ -3,6 +3,7 @@ export interface BillingDataSource{
     update(id: string, changes: Partial<BillingDetail>): Promise<BillingDetail | null>
     getById(id: string): Promise<BillingDetail| null>
     getDetailsBy(custmerId: string): Promise<BillingDetail| null>
+    getDetailsByUser(clientId: string): Promise<BillingDetail| null>
 
 }
 export type BillingDetail={

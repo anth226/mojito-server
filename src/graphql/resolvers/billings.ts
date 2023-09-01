@@ -129,4 +129,49 @@ export const fetchPlans: gql.QueryResolvers["fetchPlans"] = async (
 }
 }
 
+export const userBillingDetails: gql.QueryResolvers["userBillingDetails"] = async (
+    _parent,
+    _args,
+    context,
+    _info
+): Promise<gql.BillingDetails | null> => {
+    if (!context.user) {
+        throw UNAUTHORIZED_ERROR
+    }
+const userBillingDetails = await  context.datasources.billing.getDetailsByUser(context.user._id)
+    const billingDetailsForm = {
+        id:userBillingDetails?._id,
+        card_number:userBillingDetails?.card,
+        card_expiration:userBillingDetails?.expiry,
+        card_cvv:"111",
+        name: userBillingDetails?.name,
+        email: userBillingDetails?.email,
+        country_code:userBillingDetails?.country_code,
+        phone: userBillingDetails?.phone,
+        street: userBillingDetails?.street,
+        apt_suit_number: userBillingDetails?.apt_suit_number,
+        region:userBillingDetails?.region,
+        state: userBillingDetails?.state,
+        city: userBillingDetails?.city,
+        zip_code: userBillingDetails?.zip_code,
+      };
+    return billingDetailsForm;
 
+}
+export const updateBillingDetails: gql.MutationResolvers["updateBillingDetails"] = async (
+    _parent,
+    _args,
+    context,
+    _info
+): Promise<gql.UpdateBillingPayload | null> => {
+
+    if (!context.user) {
+        throw UNAUTHORIZED_ERROR
+    }
+    return {
+        clientMutationId:"",
+        reason:"",
+        url:"",
+        success:true
+    }
+}
