@@ -23,6 +23,11 @@ export class BillingDatasource implements types.BillingDataSource {
     if (!billingDetails) return null
         return billingDetails.toObject()
     }
+    async getDetailsByUser(clientId:string): Promise<types.BillingDetail | null>{
+    const billingDetails = await UserBillingDetailModel.findOne({clientId:clientId})
+    if (!billingDetails) return null
+        return billingDetails.toObject()
+    }
 
 
 }
