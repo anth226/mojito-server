@@ -30,6 +30,13 @@ export const createSubscription: gql.MutationResolvers["createSubscription"] = a
             email:args.input.email,
             source: args.input.source,
             name: args.input.name,
+            address: {
+                line1: args.input.street,
+                city: args.input.city,
+                postal_code: args.input.zip_code,
+                state: args.input.state,
+                country: args.input.region,
+              },
           });
 
           const subscription = await context.core.stripe.subscriptions.create({
@@ -140,8 +147,9 @@ export const userBillingDetails: gql.QueryResolvers["userBillingDetails"] = asyn
         throw UNAUTHORIZED_ERROR
     }
 const userBillingDetails = await  context.datasources.billing.getDetailsByUser(context.user._id)
-const allUserHistory =await context.datasources.history.getAllBy(context.user._id)
-    const billingDetailsForm = {
+
+
+    const billingDetails= {
         id:userBillingDetails?._id,
         card_number:userBillingDetails?.card,
         card_expiration:userBillingDetails?.expiry,
@@ -157,9 +165,38 @@ const allUserHistory =await context.datasources.history.getAllBy(context.user._i
         city: userBillingDetails?.city,
         zip_code: userBillingDetails?.zip_code,
       };
-    return billingDetailsForm;
+    return billingDetails;
 
 }
+export const userBillingHistory:gql.QueryResolvers["userBillingHistory"] = async (
+    _parent,
+    _args,
+    context,
+    _info
+): Promise<gql.BillingHistory | null> => {
+
+    if (!context.user) {
+        throw UNAUTHORIZED_ERROR
+    }
+    const allUserHistory =await context.datasources.history.getAllBy(context.user._id)
+const history = allUserHistory?.map(history=>({
+invoice:history.downloadInvoice,
+amount:history.amount,
+date:history.date.toISOString(),
+plan:history.title
+
+})) 
+if(!history){
+    return null;
+}
+return {
+    billingHistory: history,
+}
+
+}
+
+
+
 export const updateBillingDetails: gql.MutationResolvers["updateBillingDetails"] = async (
     _parent,
      args,
@@ -179,27 +216,65 @@ export const updateBillingDetails: gql.MutationResolvers["updateBillingDetails"]
             success:false
         }
     }
-    console.log(getBillingDetails);
 
-    const changes={
-        email:"agencyTest@gmail.ocm",
-        phone:"078888888888"
+
+    let quantity=0;
+    if(context.user.accountType===AccountType.Agency){
+
+      const clients=await context.datasources.user.getActiveClientsFrom(context.user.agencyId)
+      quantity=clients.length
+  }else{
+      const connections = await context.datasources.connection.getAllConnectionsFor(context.user.businessId)
+      quantity =connections.length
+  }
+    const stripeCustomerChanges={
+        email:args.input.email ?? undefined,
+        source: args.input.source ?? undefined,
+        name: args.input.name ?? undefined,
+        address: {
+            line1: args.input.street?? undefined,
+            city: args.input.city?? undefined,
+            postal_code: args.input.zip_code ?? undefined,
+            state: args.input.state?? undefined,
+            country: args.input.region?? undefined,
+              },
+
     }
-    const updateCustomer= await context.core.stripe.customers.update(getBillingDetails.customerId,changes)
-  
+    const databaseChanges={
+        email:args.input?.email ?? undefined,
+        phone:args.input?.phone ?? undefined,
+        country_code:args.input?.country_code ?? undefined,
+        cardBrand:args.input.cardBrand ?? undefined,
+        quantity:quantity,
+        apt_suit_number:args.input?.apt_suit_number ?? undefined,
+        region:args.input?.region ?? undefined,
+        street:args.input?.street ?? undefined,
+        city:args.input?.city ?? undefined,
+        zip:args.input?.zip_code ?? undefined,
+        card:args.input?.card ?? undefined,
+        expiry:args.input?.expiry ?? undefined,
+    }
+    //update customer
+     await context.core.stripe.customers.update(getBillingDetails.customerId,stripeCustomerChanges)
+     const getSubscription = await context.core.stripe.subscriptions.retrieve(getBillingDetails.subscriptionId)
     //update plan
-    const updatePlan =await context.core.stripe.subscriptions.update(getBillingDetails.subscriptionId,{
-        items: [
-          {
-            price:args.input.planId ,
-          },
-        ],
-        proration_behavior: 'none',
+    const updatePlan =await context.core.stripe.subscriptionItems.update(getSubscription.items.data[0].id,{
+        price:args.input.planId,
+        proration_behavior: 'none'
       },
       
       )
+    //update quantity
+    await context.core.stripe.subscriptionItems.createUsageRecord(
+        getSubscription.items.data[0].id,
+        {
+          quantity:quantity,
+          timestamp: Math.floor(Date.now() / 1000),
+          action: 'set',
+        }
+      ); 
 
-    const updateBillingDetails = await context.datasources.billing.update(getBillingDetails._id,changes)
+     await context.datasources.billing.update(getBillingDetails._id,databaseChanges)
     
     return {
         clientMutationId:"",
