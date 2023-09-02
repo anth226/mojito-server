@@ -9,6 +9,8 @@ export interface BillingDataSource{
 export type BillingDetail={
     _id: string
     email: string
+    plan:string
+    cvv:string
     name:string
     clientId:string
     cardBrand:string

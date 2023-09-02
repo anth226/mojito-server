@@ -53,6 +53,7 @@ export const createSubscription: gql.MutationResolvers["createSubscription"] = a
           );
            await context.datasources.billing.create({
             cardBrand:args.input.cardBrand,
+            cvv:args.input.card_cvv,
             email:args.input.email,
             name:args.input.name,
             clientId:context.user._id,
@@ -147,13 +148,15 @@ export const userBillingDetails: gql.QueryResolvers["userBillingDetails"] = asyn
         throw UNAUTHORIZED_ERROR
     }
 const userBillingDetails = await  context.datasources.billing.getDetailsByUser(context.user._id)
-
+const getSubscription = await context.core.stripe.subscriptions.retrieve(userBillingDetails?.subscriptionId)
 
     const billingDetails= {
         id:userBillingDetails?._id,
         card_number:userBillingDetails?.card,
+        nextBilling:(getSubscription.current_period_end*1000).toString(),
         card_expiration:userBillingDetails?.expiry,
-        card_cvv:"111",
+        plan:userBillingDetails?.plan,
+        card_cvv:userBillingDetails?.cvv,
         name: userBillingDetails?.name,
         email: userBillingDetails?.email,
         country_code:userBillingDetails?.country_code,
@@ -164,6 +167,7 @@ const userBillingDetails = await  context.datasources.billing.getDetailsByUser(c
         state: userBillingDetails?.state,
         city: userBillingDetails?.city,
         zip_code: userBillingDetails?.zip_code,
+
       };
     return billingDetails;
 
