@@ -18,7 +18,9 @@ const query: gql.QueryResolvers = {
     metricsYearly: metrics.getMetricsYearly,
     metricsToDate: metrics.getMetricsToDate,
     fetchPlans: billings.fetchPlans,
-    userBillingDetails:billings.userBillingDetails
+    userBillingDetails:billings.userBillingDetails,
+    userBillingHistory:billings.userBillingHistory
+
 }
 
 const mutation: gql.MutationResolvers = {

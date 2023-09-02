@@ -38,7 +38,8 @@ type Query {
     ): MetricsToDate
 
     fetchPlans: Plans
-    userBillingDetails: billingDetails
+    userBillingDetails: BillingDetails
+    userBillingHistory: BillingHistory
 
 }
 
@@ -577,7 +578,7 @@ type plan{
 type Plans{
  plans:[plan]
 }
-type billingDetails{
+type BillingDetails{
     id:String
     card_number:String,
     card_expiration: String,
@@ -594,6 +595,7 @@ type billingDetails{
     zip_code: String,
     
 }
+
 type updateBillingPayload{
     clientMutationId: String
     reason:String
@@ -620,4 +622,14 @@ input updateBillingDetailsInput{
     zip_code: String
     expiry:String
     card: String
+}
+type History{
+    invoice:String!
+    amount:Float!
+    date:String!
+    plan:String!
+}
+
+type BillingHistory{
+    billingHistory:[History]
 }
