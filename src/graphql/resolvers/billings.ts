@@ -211,7 +211,7 @@ export const updateBillingDetails: gql.MutationResolvers["updateBillingDetails"]
     if(!getBillingDetails){
         return {
             clientMutationId:"",
-            reason:"Details not found",
+            reason:"Billing details not found",
             url:"",
             success:false
         }
@@ -227,6 +227,7 @@ export const updateBillingDetails: gql.MutationResolvers["updateBillingDetails"]
       const connections = await context.datasources.connection.getAllConnectionsFor(context.user.businessId)
       quantity =connections.length
   }
+    quantity=quantity-getBillingDetails.quantity
     const stripeCustomerChanges={
         email:args.input.email ?? undefined,
         source: args.input.source ?? undefined,
@@ -258,28 +259,48 @@ export const updateBillingDetails: gql.MutationResolvers["updateBillingDetails"]
      await context.core.stripe.customers.update(getBillingDetails.customerId,stripeCustomerChanges)
      const getSubscription = await context.core.stripe.subscriptions.retrieve(getBillingDetails.subscriptionId)
     //update plan
-    const updatePlan =await context.core.stripe.subscriptionItems.update(getSubscription.items.data[0].id,{
-        price:args.input.planId,
-        proration_behavior: 'none'
-      },
-      
-      )
+    if(!args.input.planId){
+        if(!getSubscription){
+            return {
+                clientMutationId:args.input.clientMutationId,
+                reason:"Subscription not found",
+                success:false
+            }
+        }
+    try {
+        await context.core.stripe.subscriptionItems.update(getSubscription.items.data[0].id,{
+            price:args.input.planId,
+            proration_behavior: 'none'
+          },
+          
+          )
+        
+    } catch (error) {
+        return {
+            clientMutationId:args.input.clientMutationId,
+            reason:"Invalid plan",
+            success:false
+        }
+    }}
+   
+     
+
     //update quantity
+    if(quantity&& quantity>0){
     await context.core.stripe.subscriptionItems.createUsageRecord(
         getSubscription.items.data[0].id,
         {
           quantity:quantity,
           timestamp: Math.floor(Date.now() / 1000),
-          action: 'set',
         }
       ); 
+    }
 
      await context.datasources.billing.update(getBillingDetails._id,databaseChanges)
     
     return {
-        clientMutationId:"",
-        reason:"",
-        url:"",
+        clientMutationId:args.input.clientMutationId,
+        reason:"User Billing Details Update Successfully",
         success:true
     }
 }
