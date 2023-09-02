@@ -160,6 +160,7 @@ export type BillingDetails = {
   name?: Maybe<Scalars['String']['output']>;
   nextBilling?: Maybe<Scalars['String']['output']>;
   phone?: Maybe<Scalars['String']['output']>;
+  plan?: Maybe<Scalars['String']['output']>;
   region?: Maybe<Scalars['String']['output']>;
   state?: Maybe<Scalars['String']['output']>;
   street?: Maybe<Scalars['String']['output']>;
@@ -294,7 +295,6 @@ export type CreateSubscriptionInput = {
   billingPlan: Scalars['String']['input'];
   card: Scalars['String']['input'];
   cardBrand: Scalars['String']['input'];
-  card_cvv: Scalars['String']['input'];
   city: Scalars['String']['input'];
   clientMutationId?: InputMaybe<Scalars['String']['input']>;
   country_code: Scalars['String']['input'];
@@ -1085,6 +1085,7 @@ export type BillingDetailsResolvers<ContextType = RequestContext, ParentType ext
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   nextBilling?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   phone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  plan?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   region?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   state?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   street?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

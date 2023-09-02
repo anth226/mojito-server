@@ -538,7 +538,6 @@ type CreateFilePayload {
 input CreateSubscriptionInput{
     cardBrand:String!
     clientMutationId: String
-    card_cvv: String!,
     billingPlan:String!
     priceId: String!
     source: String!
@@ -583,6 +582,7 @@ type BillingDetails{
     id:String
     card_number:String,
     nextBilling:String
+    plan:String
     card_expiration: String,
     card_cvv: String,
     name: String,

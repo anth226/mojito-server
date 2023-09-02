@@ -53,7 +53,7 @@ export const createSubscription: gql.MutationResolvers["createSubscription"] = a
           );
            await context.datasources.billing.create({
             cardBrand:args.input.cardBrand,
-            cvv:args.input.card_cvv,
+            plan: args.input.billingPlan,
             email:args.input.email,
             name:args.input.name,
             clientId:context.user._id,
