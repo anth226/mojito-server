@@ -3,7 +3,9 @@ import { v4 as uuid } from "uuid"
 
 export interface userBillingDetailDocument extends mongoose.Document {
     _id: string
-    email: string
+    email:string
+    plan:string
+    cvv:string
     name:string
     clientId:string
     cardBrand:string
@@ -32,10 +34,16 @@ const  userBillingDetailSchema =  new mongoose.Schema<userBillingDetailDocument>
     email: {
         type: String,
     },
+    plan: {
+        type: String,
+    },
     name: {
         type: String,
     },
     cardBrand: {
+        type: String,
+    },
+    cvv: {
         type: String,
     },
     country_code: {

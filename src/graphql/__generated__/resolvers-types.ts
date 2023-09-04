@@ -147,6 +147,31 @@ export type ArchiveAlertPayload = {
   clientMutationId?: Maybe<Scalars['String']['output']>;
 };
 
+export type BillingDetails = {
+  __typename?: 'BillingDetails';
+  apt_suit_number?: Maybe<Scalars['String']['output']>;
+  card_cvv?: Maybe<Scalars['String']['output']>;
+  card_expiration?: Maybe<Scalars['String']['output']>;
+  card_number?: Maybe<Scalars['String']['output']>;
+  city?: Maybe<Scalars['String']['output']>;
+  country_code?: Maybe<Scalars['String']['output']>;
+  email?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  nextBilling?: Maybe<Scalars['String']['output']>;
+  phone?: Maybe<Scalars['String']['output']>;
+  plan?: Maybe<Scalars['String']['output']>;
+  region?: Maybe<Scalars['String']['output']>;
+  state?: Maybe<Scalars['String']['output']>;
+  street?: Maybe<Scalars['String']['output']>;
+  zip_code?: Maybe<Scalars['String']['output']>;
+};
+
+export type BillingHistory = {
+  __typename?: 'BillingHistory';
+  billingHistory?: Maybe<Array<Maybe<History>>>;
+};
+
 export enum BillingPlan {
   Professional = 'PROFESSIONAL',
   Scale = 'SCALE',
@@ -303,6 +328,14 @@ export type DeleteConnectionPayload = {
   clientMutationId?: Maybe<Scalars['String']['output']>;
 };
 
+export type History = {
+  __typename?: 'History';
+  amount: Scalars['Float']['output'];
+  date: Scalars['String']['output'];
+  invoice: Scalars['String']['output'];
+  plan: Scalars['String']['output'];
+};
+
 export type InviteClientInput = {
   clientMutationId?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
@@ -424,6 +457,7 @@ export type Mutation = {
   syncConnection?: Maybe<SyncConnectionPayload>;
   updateAgency?: Maybe<UpdateAgencyPayload>;
   updateAlert?: Maybe<UpdateAlertPayload>;
+  updateBillingDetails?: Maybe<UpdateBillingPayload>;
   updateBusiness?: Maybe<UpdateBusinessPayload>;
   updateConnection?: Maybe<UpdateConnectionPayload>;
 };
@@ -499,6 +533,11 @@ export type MutationUpdateAlertArgs = {
 };
 
 
+export type MutationUpdateBillingDetailsArgs = {
+  input: UpdateBillingDetailsInput;
+};
+
+
 export type MutationUpdateBusinessArgs = {
   input: UpdateBusinessInput;
 };
@@ -530,6 +569,8 @@ export type Query = {
   metricsToDate?: Maybe<MetricsToDate>;
   metricsYearly?: Maybe<MetricsYearly>;
   user?: Maybe<User>;
+  userBillingDetails?: Maybe<BillingDetails>;
+  userBillingHistory?: Maybe<BillingHistory>;
   viewer?: Maybe<User>;
 };
 
@@ -733,6 +774,35 @@ export type Plan = {
   trialPeriodDays?: Maybe<Scalars['String']['output']>;
 };
 
+export type UpdateBillingDetailsInput = {
+  apt_suit_number?: InputMaybe<Scalars['String']['input']>;
+  billingPlan?: InputMaybe<Scalars['String']['input']>;
+  card?: InputMaybe<Scalars['String']['input']>;
+  cardBrand?: InputMaybe<Scalars['String']['input']>;
+  city?: InputMaybe<Scalars['String']['input']>;
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
+  country_code?: InputMaybe<Scalars['String']['input']>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  expiry?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  phone?: InputMaybe<Scalars['String']['input']>;
+  planId?: InputMaybe<Scalars['String']['input']>;
+  priceId?: InputMaybe<Scalars['String']['input']>;
+  region?: InputMaybe<Scalars['String']['input']>;
+  source?: InputMaybe<Scalars['String']['input']>;
+  state?: InputMaybe<Scalars['String']['input']>;
+  street?: InputMaybe<Scalars['String']['input']>;
+  zip_code?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateBillingPayload = {
+  __typename?: 'updateBillingPayload';
+  clientMutationId?: Maybe<Scalars['String']['output']>;
+  reason?: Maybe<Scalars['String']['output']>;
+  success?: Maybe<Scalars['Boolean']['output']>;
+  url?: Maybe<Scalars['String']['output']>;
+};
+
 export type WithIndex<TObject> = TObject & Record<string, any>;
 export type ResolversObject<TObject> = WithIndex<TObject>;
 
@@ -817,6 +887,8 @@ export type ResolversTypes = ResolversObject<{
   AlertSeverity: AlertSeverity;
   ArchiveAlertInput: ArchiveAlertInput;
   ArchiveAlertPayload: ResolverTypeWrapper<ArchiveAlertPayload>;
+  BillingDetails: ResolverTypeWrapper<BillingDetails>;
+  BillingHistory: ResolverTypeWrapper<BillingHistory>;
   BillingPlan: BillingPlan;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   Business: ResolverTypeWrapper<Business>;
@@ -838,6 +910,7 @@ export type ResolversTypes = ResolversObject<{
   DeleteConnectionInput: DeleteConnectionInput;
   DeleteConnectionPayload: ResolverTypeWrapper<DeleteConnectionPayload>;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
+  History: ResolverTypeWrapper<History>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   InviteClientInput: InviteClientInput;
   InviteClientsInput: InviteClientsInput;
@@ -881,6 +954,8 @@ export type ResolversTypes = ResolversObject<{
   UserRole: UserRole;
   UserStatus: UserStatus;
   plan: ResolverTypeWrapper<Plan>;
+  updateBillingDetailsInput: UpdateBillingDetailsInput;
+  updateBillingPayload: ResolverTypeWrapper<UpdateBillingPayload>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -892,6 +967,8 @@ export type ResolversParentTypes = ResolversObject<{
   AlertOrder: AlertOrder;
   ArchiveAlertInput: ArchiveAlertInput;
   ArchiveAlertPayload: ArchiveAlertPayload;
+  BillingDetails: BillingDetails;
+  BillingHistory: BillingHistory;
   Boolean: Scalars['Boolean']['output'];
   Business: Business;
   Connection: Connection;
@@ -909,6 +986,7 @@ export type ResolversParentTypes = ResolversObject<{
   DeleteConnectionInput: DeleteConnectionInput;
   DeleteConnectionPayload: DeleteConnectionPayload;
   Float: Scalars['Float']['output'];
+  History: History;
   Int: Scalars['Int']['output'];
   InviteClientInput: InviteClientInput;
   InviteClientsInput: InviteClientsInput;
@@ -945,6 +1023,8 @@ export type ResolversParentTypes = ResolversObject<{
   UserConnection: UserConnection;
   UserOrder: UserOrder;
   plan: Plan;
+  updateBillingDetailsInput: UpdateBillingDetailsInput;
+  updateBillingPayload: UpdateBillingPayload;
 }>;
 
 export type AdAccountResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['AdAccount'] = ResolversParentTypes['AdAccount']> = ResolversObject<{
@@ -990,6 +1070,31 @@ export type AlertConnectionResolvers<ContextType = RequestContext, ParentType ex
 
 export type ArchiveAlertPayloadResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['ArchiveAlertPayload'] = ResolversParentTypes['ArchiveAlertPayload']> = ResolversObject<{
   clientMutationId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type BillingDetailsResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['BillingDetails'] = ResolversParentTypes['BillingDetails']> = ResolversObject<{
+  apt_suit_number?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  card_cvv?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  card_expiration?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  card_number?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  city?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  country_code?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  nextBilling?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  phone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  plan?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  region?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  state?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  street?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  zip_code?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type BillingHistoryResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['BillingHistory'] = ResolversParentTypes['BillingHistory']> = ResolversObject<{
+  billingHistory?: Resolver<Maybe<Array<Maybe<ResolversTypes['History']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1058,6 +1163,14 @@ export type DeleteConnectionPayloadResolvers<ContextType = RequestContext, Paren
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type HistoryResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['History'] = ResolversParentTypes['History']> = ResolversObject<{
+  amount?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  date?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  invoice?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  plan?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type InviteClientsPayloadResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['InviteClientsPayload'] = ResolversParentTypes['InviteClientsPayload']> = ResolversObject<{
   clientMutationId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   clients?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
@@ -1123,6 +1236,7 @@ export type MutationResolvers<ContextType = RequestContext, ParentType extends R
   syncConnection?: Resolver<Maybe<ResolversTypes['SyncConnectionPayload']>, ParentType, ContextType, RequireFields<MutationSyncConnectionArgs, 'input'>>;
   updateAgency?: Resolver<Maybe<ResolversTypes['UpdateAgencyPayload']>, ParentType, ContextType, RequireFields<MutationUpdateAgencyArgs, 'input'>>;
   updateAlert?: Resolver<Maybe<ResolversTypes['UpdateAlertPayload']>, ParentType, ContextType, RequireFields<MutationUpdateAlertArgs, 'input'>>;
+  updateBillingDetails?: Resolver<Maybe<ResolversTypes['updateBillingPayload']>, ParentType, ContextType, RequireFields<MutationUpdateBillingDetailsArgs, 'input'>>;
   updateBusiness?: Resolver<Maybe<ResolversTypes['UpdateBusinessPayload']>, ParentType, ContextType, RequireFields<MutationUpdateBusinessArgs, 'input'>>;
   updateConnection?: Resolver<Maybe<ResolversTypes['UpdateConnectionPayload']>, ParentType, ContextType, RequireFields<MutationUpdateConnectionArgs, 'input'>>;
 }>;
@@ -1143,6 +1257,8 @@ export type QueryResolvers<ContextType = RequestContext, ParentType extends Reso
   metricsToDate?: Resolver<Maybe<ResolversTypes['MetricsToDate']>, ParentType, ContextType, RequireFields<QueryMetricsToDateArgs, 'period'>>;
   metricsYearly?: Resolver<Maybe<ResolversTypes['MetricsYearly']>, ParentType, ContextType, RequireFields<QueryMetricsYearlyArgs, 'fromYear'>>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
+  userBillingDetails?: Resolver<Maybe<ResolversTypes['BillingDetails']>, ParentType, ContextType>;
+  userBillingHistory?: Resolver<Maybe<ResolversTypes['BillingHistory']>, ParentType, ContextType>;
   viewer?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
 }>;
 
@@ -1221,12 +1337,22 @@ export type PlanResolvers<ContextType = RequestContext, ParentType extends Resol
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type UpdateBillingPayloadResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['updateBillingPayload'] = ResolversParentTypes['updateBillingPayload']> = ResolversObject<{
+  clientMutationId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  reason?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  success?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type Resolvers<ContextType = RequestContext> = ResolversObject<{
   AdAccount?: AdAccountResolvers<ContextType>;
   Agency?: AgencyResolvers<ContextType>;
   Alert?: AlertResolvers<ContextType>;
   AlertConnection?: AlertConnectionResolvers<ContextType>;
   ArchiveAlertPayload?: ArchiveAlertPayloadResolvers<ContextType>;
+  BillingDetails?: BillingDetailsResolvers<ContextType>;
+  BillingHistory?: BillingHistoryResolvers<ContextType>;
   Business?: BusinessResolvers<ContextType>;
   Connection?: ConnectionResolvers<ContextType>;
   ConnectionConnection?: ConnectionConnectionResolvers<ContextType>;
@@ -1235,6 +1361,7 @@ export type Resolvers<ContextType = RequestContext> = ResolversObject<{
   CreateFilePayload?: CreateFilePayloadResolvers<ContextType>;
   CreateSubscriptionPayload?: CreateSubscriptionPayloadResolvers<ContextType>;
   DeleteConnectionPayload?: DeleteConnectionPayloadResolvers<ContextType>;
+  History?: HistoryResolvers<ContextType>;
   InviteClientsPayload?: InviteClientsPayloadResolvers<ContextType>;
   InviteMembersPayload?: InviteMembersPayloadResolvers<ContextType>;
   LoginPayload?: LoginPayloadResolvers<ContextType>;
@@ -1255,5 +1382,6 @@ export type Resolvers<ContextType = RequestContext> = ResolversObject<{
   User?: UserResolvers<ContextType>;
   UserConnection?: UserConnectionResolvers<ContextType>;
   plan?: PlanResolvers<ContextType>;
+  updateBillingPayload?: UpdateBillingPayloadResolvers<ContextType>;
 }>;
 

@@ -38,6 +38,8 @@ type Query {
     ): MetricsToDate
 
     fetchPlans: Plans
+    userBillingDetails: BillingDetails
+    userBillingHistory: BillingHistory
 
 }
 
@@ -65,6 +67,8 @@ type Mutation {
     archiveAlert(input: ArchiveAlertInput!): ArchiveAlertPayload
 
    createSubscription(input: CreateSubscriptionInput!): CreateSubscriptionPayload
+   updateBillingDetails(input: updateBillingDetailsInput!): updateBillingPayload
+
 }
 
 type User {
@@ -550,6 +554,7 @@ input CreateSubscriptionInput{
     expiry:String!
     card: String!
 }
+
 type CreateSubscriptionPayload{
     clientMutationId: String
     reason:String
@@ -557,6 +562,7 @@ type CreateSubscriptionPayload{
     success:Boolean
 
 }
+
 type plan{
     id:String
     amount:Int
@@ -571,4 +577,61 @@ type plan{
 }
 type Plans{
  plans:[plan]
+}
+type BillingDetails{
+    id:String
+    card_number:String,
+    nextBilling:String
+    plan:String
+    card_expiration: String,
+    card_cvv: String,
+    name: String,
+    email: String,
+    country_code: String,
+    phone: String,
+    street: String,
+    apt_suit_number:String,
+    region: String,
+    state: String,
+    city: String,
+    zip_code: String,
+    
+}
+
+type updateBillingPayload{
+    clientMutationId: String
+    reason:String
+    url:String
+    success:Boolean
+
+}
+input updateBillingDetailsInput{
+    planId:String,
+    cardBrand:String
+    clientMutationId: String
+    billingPlan:String
+    priceId: String
+    source: String
+    name: String
+    email: String
+    country_code: String
+    phone: String
+    street: String
+    apt_suit_number: String
+    region: String
+    state: String
+    city: String
+    zip_code: String
+    expiry:String
+    card: String
+}
+type History{
+    invoice:String!
+    amount:Float!
+    date:String!
+    plan:String!
+}
+
+type BillingHistory{
+    billingHistory:[History]
 }

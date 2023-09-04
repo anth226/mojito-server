@@ -3,6 +3,7 @@ export interface BillingHistoryDataSource{
     update(id: string, changes: Partial<BillingHistory>): Promise<BillingHistory | null>
     updateBy(invoiceId: string, changes: Partial<BillingHistory>): Promise<BillingHistory | null>
     getById(id: string): Promise<BillingHistory| null>
+    getAllBy(userId: string):  Promise<Array<BillingHistory> | null> 
 
 }
 
