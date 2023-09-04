@@ -2,7 +2,6 @@ import * as gql from "../__generated__/resolvers-types"
 import { UNAUTHORIZED_ERROR, UNEXPECTED_ERROR } from "./errors"
 import { getPlanById,getPriceById,filterPlanByUser } from "../../utils/filters"
 import { AccountType } from "../__generated__/resolvers-types"
-import { argsToArgsConfig } from "graphql/type/definition"
 
 export const createSubscription: gql.MutationResolvers["createSubscription"] = async (
     _parent,
@@ -149,10 +148,11 @@ export const userBillingDetails: gql.QueryResolvers["userBillingDetails"] = asyn
     }
 const userBillingDetails = await  context.datasources.billing.getDetailsByUser(context.user._id)
 const getSubscription = await context.core.stripe.subscriptions.retrieve(userBillingDetails?.subscriptionId)
-
     const billingDetails= {
         id:userBillingDetails?._id,
         card_number:userBillingDetails?.card,
+        priceId:getSubscription.plan.id,
+        cardBrand:userBillingDetails?.cardBrand,
         nextBilling:(getSubscription.current_period_end*1000).toString(),
         card_expiration:userBillingDetails?.expiry,
         plan:userBillingDetails?.plan,
@@ -246,6 +246,8 @@ export const updateBillingDetails: gql.MutationResolvers["updateBillingDetails"]
 
     }
     const databaseChanges={
+        name:args.input.name ?? undefined,
+        plan:args.input.billingPlan ?? undefined,
         email:args.input?.email ?? undefined,
         phone:args.input?.phone ?? undefined,
         country_code:args.input?.country_code ?? undefined,
@@ -260,10 +262,12 @@ export const updateBillingDetails: gql.MutationResolvers["updateBillingDetails"]
         expiry:args.input?.expiry ?? undefined,
     }
     //update customer
+    if(stripeCustomerChanges){
      await context.core.stripe.customers.update(getBillingDetails.customerId,stripeCustomerChanges)
+    }
      const getSubscription = await context.core.stripe.subscriptions.retrieve(getBillingDetails.subscriptionId)
     //update plan
-    if(!args.input.planId){
+    if(args.input.planId){
         if(!getSubscription){
             return {
                 clientMutationId:args.input.clientMutationId,
@@ -272,7 +276,7 @@ export const updateBillingDetails: gql.MutationResolvers["updateBillingDetails"]
             }
         }
     try {
-        await context.core.stripe.subscriptionItems.update(getSubscription.items.data[0].id,{
+      await context.core.stripe.subscriptionItems.update(getSubscription.items.data[0].id,{
             price:args.input.planId,
             proration_behavior: 'none'
           },
@@ -287,8 +291,6 @@ export const updateBillingDetails: gql.MutationResolvers["updateBillingDetails"]
         }
     }}
    
-     
-
     //update quantity
     if(quantity&& quantity>0){
     await context.core.stripe.subscriptionItems.createUsageRecord(
@@ -299,8 +301,9 @@ export const updateBillingDetails: gql.MutationResolvers["updateBillingDetails"]
         }
       ); 
     }
-
+    if(databaseChanges){
      await context.datasources.billing.update(getBillingDetails._id,databaseChanges)
+    }
     
     return {
         clientMutationId:args.input.clientMutationId,
