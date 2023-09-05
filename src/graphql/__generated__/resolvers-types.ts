@@ -150,6 +150,7 @@ export type ArchiveAlertPayload = {
 export type BillingDetails = {
   __typename?: 'BillingDetails';
   apt_suit_number?: Maybe<Scalars['String']['output']>;
+  cardBrand?: Maybe<Scalars['String']['output']>;
   card_cvv?: Maybe<Scalars['String']['output']>;
   card_expiration?: Maybe<Scalars['String']['output']>;
   card_number?: Maybe<Scalars['String']['output']>;
@@ -161,6 +162,7 @@ export type BillingDetails = {
   nextBilling?: Maybe<Scalars['String']['output']>;
   phone?: Maybe<Scalars['String']['output']>;
   plan?: Maybe<Scalars['String']['output']>;
+  priceId?: Maybe<Scalars['String']['output']>;
   region?: Maybe<Scalars['String']['output']>;
   state?: Maybe<Scalars['String']['output']>;
   street?: Maybe<Scalars['String']['output']>;
@@ -1075,6 +1077,7 @@ export type ArchiveAlertPayloadResolvers<ContextType = RequestContext, ParentTyp
 
 export type BillingDetailsResolvers<ContextType = RequestContext, ParentType extends ResolversParentTypes['BillingDetails'] = ResolversParentTypes['BillingDetails']> = ResolversObject<{
   apt_suit_number?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  cardBrand?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   card_cvv?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   card_expiration?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   card_number?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -1086,6 +1089,7 @@ export type BillingDetailsResolvers<ContextType = RequestContext, ParentType ext
   nextBilling?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   phone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   plan?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  priceId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   region?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   state?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   street?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

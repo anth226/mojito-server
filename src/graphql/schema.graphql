@@ -580,22 +580,23 @@ type Plans{
 }
 type BillingDetails{
     id:String
-    card_number:String,
+    card_number:String
+    cardBrand:String
+    priceId:String
     nextBilling:String
     plan:String
-    card_expiration: String,
-    card_cvv: String,
-    name: String,
-    email: String,
-    country_code: String,
-    phone: String,
-    street: String,
-    apt_suit_number:String,
-    region: String,
-    state: String,
-    city: String,
-    zip_code: String,
-    
+    card_expiration: String
+    card_cvv: String
+    name: String
+    email: String
+    country_code: String
+    phone: String
+    street: String
+    apt_suit_number:String
+    region: String
+    state: String
+    city: String
+    zip_code: String   
 }
 
 type updateBillingPayload{
